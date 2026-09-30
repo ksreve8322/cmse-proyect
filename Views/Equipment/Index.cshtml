@@ -1,0 +1,32 @@
+﻿@{
+    ViewData["Title"] = "Equipos";
+}
+
+<h1>Equipment</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Add Equipment</a>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Equipment</th>
+            <th>Type</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Example Equipment</td>
+            <td>Laptop</td>
+            <td>Available</td>
+            <td>
+                <a asp-action="Details" asp-route-id="1">Details</a> |
+                <a asp-action="Edit" asp-route-id="1">Edit</a> |
+                <a asp-action="Delete" asp-route-id="1">Delete</a>
+            </td>
+        </tr>
+    </tbody>
+</table>
