@@ -1,7 +1,20 @@
+using cmse.Repositories;
+using cmse.Repositories;
+using cmse.Utilities;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddAuthentication("CMSECookie")
+    .AddCookie("CMSECookie");
+
+builder.Services.AddDbContext<CMSEContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("CMSE")));
+builder.Services.AddScoped<UsuarioRepository>();
+builder.Services.AddScoped<PasswordService>();
 
 var app = builder.Build();
 
@@ -15,7 +28,7 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseRouting();
-
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapStaticAssets();

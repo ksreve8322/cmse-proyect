@@ -1,17 +1,136 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Inicio";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="cmse-home">
+
+    <section class="cmse-home-hero">
+
+        <div class="cmse-home-hero-content">
+
+            @if (User.Identity != null && User.Identity.IsAuthenticated)
+            {
+                <span class="cmse-home-badge">
+                    Sistema CMSE
+                </span>
+
+                <h1>
+                    Bienvenido, @User.Identity.Name
+                </h1>
+
+                <p>
+                    Control y mantenimiento de sistemas y equipos
+                    desde un solo lugar.
+                </p>
+
+                <div class="cmse-home-actions">
+
+                    <a asp-controller="Home"
+                       asp-action="Index"
+                       class="cmse-home-primary">
+                        Ir al sistema
+                    </a>
+
+                </div>
+            }
+            else
+            {
+                <span class="cmse-home-badge">
+                    Sistema CMSE
+                </span>
+
+                <h1>
+                    Control y Mantenimiento
+                    de Sistemas y Equipos
+                </h1>
+
+                <p>
+                    Administra equipos, incidencias y mantenimientos
+                    de manera organizada y sencilla.
+                </p>
+
+                <div class="cmse-home-actions">
+
+                    <a asp-controller="Account"
+                       asp-action="Login"
+                       class="cmse-home-primary">
+                        Iniciar sesión
+                    </a>
+
+                    <a asp-controller="Account"
+                       asp-action="Register"
+                       class="cmse-home-secondary">
+                        Crear una cuenta
+                    </a>
+
+                </div>
+            }
+
+        </div>
+
+        <div class="cmse-home-visual">
+
+            <div class="cmse-home-icon">
+                ⚙
+            </div>
+
+            <div class="cmse-home-circle cmse-home-circle-1"></div>
+            <div class="cmse-home-circle cmse-home-circle-2"></div>
+
+        </div>
+
+    </section>
+
+
+    <section class="cmse-home-modules">
+
+        <div class="cmse-section-title">
+
+            <span>Módulos principales</span>
+
+            <h2>
+                Todo el sistema en un solo lugar
+            </h2>
+
+        </div>
+
+        <div class="cmse-module-grid">
+
+            <div class="cmse-module-card">
+                <div class="cmse-module-icon">💻</div>
+
+                <h3>Equipos</h3>
+
+                <p>
+                    Consulta y administra los equipos registrados
+                    en el sistema.
+                </p>
+            </div>
+
+            <div class="cmse-module-card">
+                <div class="cmse-module-icon">⚠</div>
+
+                <h3>Incidencias</h3>
+
+                <p>
+                    Registra y realiza seguimiento a problemas
+                    reportados en los equipos.
+                </p>
+            </div>
+
+            <div class="cmse-module-card">
+                <div class="cmse-module-icon">🔧</div>
+
+                <h3>Mantenimientos</h3>
+
+                <p>
+                    Gestiona los mantenimientos realizados
+                    y programados.
+                </p>
+            </div>
+
+        </div>
+
+    </section>
+
 </div>
-
-@{
-
-    if (true)
-    {
-        
-    <p>This is a test.</p>}
-
-}
