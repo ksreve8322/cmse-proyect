@@ -1,0 +1,98 @@
+﻿@model cmse.Dtos.RegistroDto
+
+@{
+    ViewData["Title"] = "Registro";
+}
+
+<div class="cmse-auth-page">
+
+    <div class="cmse-auth-card cmse-register-card">
+
+        <div class="cmse-auth-header">
+            <h1>CMSE</h1>
+            <p>Control y Mantenimiento de Sistemas y Equipos</p>
+        </div>
+
+        <div class="cmse-auth-content">
+
+            <h2>Crear cuenta</h2>
+
+            <p class="cmse-auth-subtitle">
+                Registra tus datos para acceder al sistema.
+            </p>
+
+            <form asp-action="Register" method="post" class="cmse-auth-form">
+
+                <div class="cmse-form-group">
+                    <label asp-for="Nombres">Nombres</label>
+                    <input asp-for="Nombres" placeholder="Ingresa tus nombres" />
+                    <span asp-validation-for="Nombres"></span>
+                </div>
+
+                <div class="cmse-form-group">
+                    <label asp-for="Apellidos">Apellidos</label>
+                    <input asp-for="Apellidos" placeholder="Ingresa tus apellidos" />
+                    <span asp-validation-for="Apellidos"></span>
+                </div>
+
+                <div class="cmse-form-group">
+                    <label asp-for="IdTipoDocumento">Tipo de documento</label>
+
+                    <select asp-for="IdTipoDocumento">
+                        <option value="">Seleccione un tipo de documento</option>
+
+                        @foreach (var tipo in ViewBag.TiposDocumento)
+                        {
+                            <option value="@tipo.IdTipoDocumento">
+                                @tipo.Nombre
+                            </option>
+                        }
+                    </select>
+
+                    <span asp-validation-for="IdTipoDocumento"></span>
+                </div>
+
+                <div class="cmse-form-group">
+                    <label asp-for="NumeroDocumento">Número de documento</label>
+                    <input asp-for="NumeroDocumento" placeholder="Ingresa tu número de documento" />
+                    <span asp-validation-for="NumeroDocumento"></span>
+                </div>
+
+                <div class="cmse-form-group">
+                    <label asp-for="Correo">Correo</label>
+                    <input asp-for="Correo" type="email" placeholder="Ingresa tu correo" />
+                    <span asp-validation-for="Correo"></span>
+                </div>
+
+                <div class="cmse-form-group">
+                    <label asp-for="Telefono">Teléfono</label>
+                    <input asp-for="Telefono" placeholder="Ingresa tu teléfono" />
+                    <span asp-validation-for="Telefono"></span>
+                </div>
+
+                <div class="cmse-form-group">
+                    <label asp-for="Contrasena">Contraseña</label>
+                    <input asp-for="Contrasena" type="password" placeholder="Crea una contraseña" />
+                    <span asp-validation-for="Contrasena"></span>
+                </div>
+
+                <div asp-validation-summary="ModelOnly" class="cmse-validation"></div>
+
+                <button type="submit" class="cmse-auth-button">
+                    Crear cuenta
+                </button>
+
+            </form>
+
+            <div class="cmse-auth-links">
+                <span>¿Ya tienes una cuenta?</span>
+                <a asp-controller="Account" asp-action="Login">
+                    Iniciar sesión
+                </a>
+            </div>
+
+        </div>
+
+    </div>
+    
+</div>

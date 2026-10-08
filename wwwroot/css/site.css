@@ -1,37 +1,646 @@
+/* =========================
+   Configuración general
+   ========================= */
+
 html {
-  font-size: 14px;
+    font-size: 14px;
+    position: relative;
+    min-height: 100%;
 }
 
 @media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
-}
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-  position: relative;
-  min-height: 100%;
+    html {
+        font-size: 16px;
+    }
 }
 
 body {
-  margin-bottom: 60px;
+    margin: 0;
+    margin-bottom: 60px;
+    background: #f4f8fc;
 }
 
-.form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
-  color: var(--bs-secondary-color);
-  text-align: end;
+
+/* =========================
+   Controles Bootstrap
+   ========================= */
+
+.btn:focus,
+.btn:active:focus,
+.btn-link.nav-link:focus,
+.form-control:focus,
+.form-check-input:focus {
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
 
-.form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
-  text-align: start;
+.form-floating > .form-control-plaintext::placeholder,
+.form-floating > .form-control::placeholder {
+    color: var(--bs-secondary-color);
+    text-align: end;
 }
-body {
-    background-image: url('/images/erickboldrecord.png');
-    background-size: cover;
-    background-position: center;
-    background-attachment: fixed;
+
+.form-floating > .form-control-plaintext:focus::placeholder,
+.form-floating > .form-control:focus::placeholder {
+    text-align: start;
+}
+
+
+/* =========================
+   CMSE - Barra de navegación
+   ========================= */
+
+.cmse-navbar {
+    width: 100%;
+    background: #ffffff;
+    border-bottom: 1px solid #d9e5f0;
+    box-shadow: 0 2px 10px rgba(30, 70, 100, 0.08);
+}
+
+.cmse-navbar-container {
+    width: 100%;
+    max-width: 1400px;
+    min-height: 70px;
+    margin: 0 auto;
+    padding: 0 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.cmse-navbar-brand {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+}
+
+.cmse-navbar-logo {
+    width: 150px;
+    height: 50px;
+    object-fit: cover;
+    object-position: center;
+    border-radius: 8px;
+}
+
+.cmse-navbar-toggle {
+    display: none !important;
+}
+
+.cmse-navbar-menu {
+    display: flex !important;
+    align-items: center;
+    justify-content: space-between;
+    flex: 1;
+    margin-left: 25px;
+}
+
+.cmse-navbar-links {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+    .cmse-navbar-links a,
+    .cmse-navbar-account a {
+        display: inline-flex;
+        align-items: center;
+        padding: 9px 14px;
+        color: #374151;
+        font-size: 15px;
+        font-weight: 500;
+        text-decoration: none;
+        border-radius: 8px;
+    }
+
+        .cmse-navbar-links a:hover,
+        .cmse-navbar-account a:hover {
+            color: #0d6efd;
+            background: #f0f6ff;
+        }
+
+.cmse-navbar-account {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+    .cmse-navbar-account form {
+        margin: 0;
+    }
+
+.cmse-navbar-login {
+    border: 1px solid #0d6efd;
+    color: #0d6efd !important;
+}
+
+    .cmse-navbar-login:hover {
+        background: #0d6efd !important;
+        color: #ffffff !important;
+    }
+
+.cmse-navbar-register {
+    background: #0d6efd;
+    color: #ffffff !important;
+}
+
+    .cmse-navbar-register:hover {
+        background: #0b5ed7 !important;
+    }
+
+.cmse-navbar-user {
+    font-weight: 600 !important;
+}
+
+.cmse-user-icon {
+    margin-right: 7px;
+    color: #0d6efd;
+    font-size: 10px;
+}
+
+.cmse-navbar-logout {
+    padding: 9px 14px;
+    border: 1px solid #dc3545;
+    border-radius: 8px;
+    background: transparent;
+    color: #dc3545;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+    .cmse-navbar-logout:hover {
+        background: #dc3545;
+        color: #ffffff;
+    }
+
+
+/* =========================
+   CMSE - Autenticación
+   ========================= */
+
+.cmse-auth-page {
+    min-height: calc(100vh - 120px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 20px;
+    background: #f4f8fc;
+}
+
+.cmse-auth-card {
+    width: 100%;
+    max-width: 460px;
+    background: #ffffff;
+    border: 1px solid #d9e5f0;
+    border-radius: 14px;
+    box-shadow: 0 8px 25px rgba(30, 70, 100, 0.10);
+    overflow: hidden;
+}
+
+.cmse-register-card {
+    max-width: 520px;
+}
+
+.cmse-auth-header {
+    padding: 28px 30px;
+    text-align: center;
+    background: #0d6efd;
+    color: #ffffff;
+}
+
+    .cmse-auth-header h1 {
+        margin: 0;
+        font-size: 32px;
+        font-weight: 700;
+    }
+
+    .cmse-auth-header p {
+        margin: 8px 0 0;
+        font-size: 14px;
+        opacity: 0.9;
+    }
+
+.cmse-auth-content {
+    padding: 30px;
+}
+
+    .cmse-auth-content h2 {
+        margin: 0;
+        text-align: center;
+        color: #1f2937;
+        font-size: 24px;
+    }
+
+.cmse-auth-subtitle {
+    margin: 8px 0 25px;
+    text-align: center;
+    color: #6b7280;
+    font-size: 14px;
+}
+
+.cmse-auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.cmse-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+    .cmse-form-group label {
+        color: #374151;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    .cmse-form-group input,
+    .cmse-form-group select {
+        width: 100%;
+        padding: 11px 13px;
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        background: #ffffff;
+        font-size: 15px;
+        box-sizing: border-box;
+        outline: none;
+    }
+
+        .cmse-form-group input:focus,
+        .cmse-form-group select:focus {
+            border-color: #0d6efd;
+            box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.12);
+        }
+
+    .cmse-form-group select {
+        cursor: pointer;
+    }
+
+    .cmse-form-group span {
+        color: #dc3545;
+        font-size: 13px;
+    }
+
+.cmse-remember label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #4b5563;
+    font-size: 14px;
+}
+
+.cmse-remember input {
+    width: 16px;
+    height: 16px;
+}
+
+.cmse-validation {
+    color: #dc3545;
+    font-size: 14px;
+}
+
+.cmse-auth-button {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    background: #0d6efd;
+    color: #ffffff;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+    .cmse-auth-button:hover {
+        background: #0b5ed7;
+    }
+
+.cmse-auth-links {
+    margin-top: 24px;
+    text-align: center;
+    color: #6b7280;
+    font-size: 14px;
+}
+
+    .cmse-auth-links a {
+        display: block;
+        margin-top: 6px;
+        color: #0d6efd;
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+        .cmse-auth-links a:hover {
+            text-decoration: underline;
+        }
+
+
+/* =========================
+   CMSE - Página de inicio
+   ========================= */
+
+.cmse-home {
+    width: 100%;
+}
+
+.cmse-home-hero {
+    min-height: 430px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 50px;
+    padding: 65px 70px;
+    margin: 25px 0 55px;
+    background: linear-gradient(135deg, #0d6efd, #084298);
+    border-radius: 20px;
+    color: #ffffff;
+    overflow: hidden;
+}
+
+.cmse-home-hero-content {
+    max-width: 650px;
+}
+
+.cmse-home-badge {
+    display: inline-block;
+    padding: 7px 14px;
+    margin-bottom: 18px;
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.cmse-home-hero h1 {
+    margin: 0;
+    font-size: 48px;
+    line-height: 1.1;
+    font-weight: 700;
+}
+
+.cmse-home-hero p {
+    max-width: 570px;
+    margin: 22px 0 30px;
+    color: rgba(255, 255, 255, 0.88);
+    font-size: 18px;
+    line-height: 1.6;
+}
+
+.cmse-home-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.cmse-home-primary,
+.cmse-home-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 22px;
+    border-radius: 9px;
+    font-size: 15px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.cmse-home-primary {
+    background: #ffffff;
+    color: #0d6efd;
+}
+
+    .cmse-home-primary:hover {
+        background: #eef5ff;
+        color: #084298;
+        transform: translateY(-2px);
+    }
+
+.cmse-home-secondary {
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    color: #ffffff;
+}
+
+    .cmse-home-secondary:hover {
+        background: rgba(255, 255, 255, 0.12);
+        color: #ffffff;
+        transform: translateY(-2px);
+    }
+
+.cmse-home-visual {
+    position: relative;
+    width: 280px;
+    height: 280px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.cmse-home-icon {
+    position: relative;
+    z-index: 2;
+    width: 150px;
+    height: 150px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.14);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 35px;
+    font-size: 75px;
+    transform: rotate(-8deg);
+}
+
+.cmse-home-circle {
+    position: absolute;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 50%;
+}
+
+.cmse-home-circle-1 {
+    width: 250px;
+    height: 250px;
+}
+
+.cmse-home-circle-2 {
+    width: 340px;
+    height: 340px;
+}
+
+.cmse-home-modules {
+    padding: 0 10px 50px;
+}
+
+.cmse-section-title {
+    margin-bottom: 25px;
+}
+
+    .cmse-section-title span {
+        color: #0d6efd;
+        font-size: 13px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .cmse-section-title h2 {
+        margin: 7px 0 0;
+        color: #1f2937;
+        font-size: 28px;
+        font-weight: 700;
+    }
+
+.cmse-module-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+.cmse-module-card {
+    padding: 25px;
+    background: #ffffff;
+    border: 1px solid #d9e5f0;
+    border-radius: 14px;
+    box-shadow: 0 5px 18px rgba(30, 70, 100, 0.06);
+    transition: all 0.2s ease;
+}
+
+    .cmse-module-card:hover {
+        transform: translateY(-5px);
+        border-color: #9ec5fe;
+        box-shadow: 0 10px 25px rgba(30, 70, 100, 0.12);
+    }
+
+.cmse-module-icon {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 17px;
+    background: #eaf3ff;
+    border-radius: 10px;
+    font-size: 22px;
+}
+
+.cmse-module-card h3 {
+    margin: 0 0 8px;
+    color: #1f2937;
+    font-size: 19px;
+}
+
+.cmse-module-card p {
+    margin: 0;
+    color: #6b7280;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+
+/* =========================
+   Responsive
+   ========================= */
+
+@media (max-width: 767px) {
+
+    .cmse-navbar-container {
+        min-height: 65px;
+        padding: 0 8px;
+    }
+
+    .cmse-navbar-logo {
+        width: 150px;
+        height: 50px;
+    }
+
+    .cmse-navbar-toggle {
+        display: none !important;
+    }
+
+    .cmse-navbar-menu {
+        display: flex !important;
+        margin-left: 15px;
+        padding: 0;
+    }
+
+    .cmse-navbar-links {
+        display: flex;
+    }
+
+        .cmse-navbar-links li {
+            margin-bottom: 4px;
+        }
+
+        .cmse-navbar-links a {
+            width: auto;
+        }
+
+    .cmse-navbar-account {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 5px;
+    }
+
+        .cmse-navbar-account a,
+        .cmse-navbar-logout {
+            width: auto;
+            justify-content: center;
+            box-sizing: border-box;
+        }
+
+    .cmse-auth-page {
+        padding: 25px 15px;
+    }
+
+    .cmse-auth-content {
+        padding: 25px 20px;
+    }
+
+    .cmse-home-hero {
+        min-height: auto;
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 40px 28px;
+        margin-top: 15px;
+    }
+
+        .cmse-home-hero h1 {
+            font-size: 34px;
+        }
+
+        .cmse-home-hero p {
+            font-size: 16px;
+        }
+
+    .cmse-home-visual {
+        width: 100%;
+        height: 190px;
+    }
+
+    .cmse-home-icon {
+        width: 110px;
+        height: 110px;
+        font-size: 55px;
+    }
+
+    .cmse-home-circle-1 {
+        width: 180px;
+        height: 180px;
+    }
+
+    .cmse-home-circle-2 {
+        width: 240px;
+        height: 240px;
+    }
+
+    .cmse-module-grid {
+        grid-template-columns: 1fr;
+    }
 }
