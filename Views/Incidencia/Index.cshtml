@@ -1,0 +1,34 @@
+﻿<div class="cmse-module-card">
+    <div class="cmse-module-icon">🛠️</div>
+
+    <h3>Incidencias</h3>
+
+    <p>
+        Registra problemas de los equipos y consulta el estado de las incidencias reportadas.
+    </p>
+
+    @if (Context.Session.GetInt32("UsuarioId").HasValue)
+    {
+        <div class="cmse-home-actions">
+            <a asp-controller="Incidencia"
+               asp-action="Index"
+               class="cmse-home-primary">
+                Consultar incidencias
+            </a>
+
+            <a asp-controller="Incidencia"
+               asp-action="Create"
+               class="cmse-home-secondary">
+                Registrar incidencia
+            </a>
+        </div>
+    }
+    else
+    {
+        <a asp-controller="Account"
+           asp-action="Login"
+           class="cmse-home-primary">
+            Iniciar sesión
+        </a>
+    }
+</div>
