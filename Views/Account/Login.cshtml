@@ -16,10 +16,54 @@
 
         <div class="cmse-auth-content">
 
-            <h2>Iniciar sesión</h2>
-            <p class="cmse-auth-subtitle">
-                Ingresa tus datos para acceder al sistema.
-            </p>
+            
+            @if (TempData["Mensaje"] != null)
+            {
+                <div id="cmse-modal-overlay" class="cmse-modal-overlay">
+                    <section class="cmse-modal"
+                             role="dialog"
+                             aria-modal="true"
+                             aria-labelledby="cmse-modal-title"
+                             aria-describedby="cmse-modal-message">
+
+                        <div class="cmse-modal-icon" aria-hidden="true">
+                            <span>✓</span>
+                        </div>
+
+                        <h2 id="cmse-modal-title">¡Registro completado!</h2>
+
+                        <p id="cmse-modal-message">
+                            @TempData["Mensaje"]
+                        </p>
+
+                        <button type="button"
+                                id="cmse-modal-accept"
+                                class="cmse-modal-button">
+                            Aceptar
+                        </button>
+                    </section>
+                </div>
+
+                <script>
+                    (function () {
+                        const overlay = document.getElementById('cmse-modal-overlay');
+                        const boton = document.getElementById('cmse-modal-accept');
+
+                        if (!overlay || !boton) return;
+
+                        boton.focus();
+
+                        boton.addEventListener('click', function () {
+                            overlay.classList.add('cmse-modal-closing');
+
+                            setTimeout(function () {
+                                overlay.remove();
+                            }, 180);
+                        });
+                    })();
+                </script>
+            }
+
 
             <form asp-action="Login" method="post" class="cmse-auth-form">
 
