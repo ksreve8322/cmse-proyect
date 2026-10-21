@@ -5,9 +5,9 @@ namespace cmse.Repositories
 {
     public class UsuarioRepository
     {
-        private readonly CMSEContext _context;
+        private readonly CmseContext _context;
 
-        public UsuarioRepository(CMSEContext context)
+        public UsuarioRepository(CmseContext context)
         {
             _context = context;
         }
@@ -15,7 +15,7 @@ namespace cmse.Repositories
         public async Task<Usuario?> ObtenerPorCorreoAsync(string correo)
         {
             return await _context.Usuarios
-                .Include(u => u.Rol)
+                .Include(u => u.IdRolNavigation)
                 .FirstOrDefaultAsync(u => u.Correo == correo);
         }
 
@@ -37,9 +37,9 @@ namespace cmse.Repositories
             return await _context.Usuarios
                 .AnyAsync(u => u.NumeroDocumento == numeroDocumento);
         }
-        public async Task<List<TipoDocumento>> ObtenerTiposDocumentoAsync()
+        public async Task<List<TiposDocumento>> ObtenerTiposDocumentoAsync()
         {
-            return await _context.TiposDocumento
+            return await _context.TiposDocumentos
                 .ToListAsync();
         }
 
