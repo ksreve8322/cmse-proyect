@@ -1,13 +1,15 @@
-﻿
-@using cmse.Repositories
+﻿@using cmse.Repositories
 @inject NotificacionRepository NotificacionRepository
 
 @{
     int? idUsuarioSesion = Context.Session.GetInt32("UsuarioId");
+
     string nombreUsuario =
         Context.Session.GetString("UsuarioNombre") ?? "";
+
     string correoUsuario =
         Context.Session.GetString("UsuarioCorreo") ?? "";
+
     string rolUsuario =
         Context.Session.GetString("RolNombre") ?? "";
 
@@ -31,6 +33,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
     <title>@ViewData["Title"] - CMSE</title>
 
     <script type="importmap"></script>
@@ -66,12 +69,40 @@
                 </button>
 
                 <div class="collapse cmse-navbar-menu" id="cmseNavbar">
+
                     <ul class="cmse-navbar-links">
                         <li>
                             <a asp-controller="Home" asp-action="Index">
                                 Inicio
                             </a>
                         </li>
+
+                        @if (sesionActiva)
+                        {
+                            <li>
+                                <a asp-controller="Equipment" asp-action="Create">
+                                    Registrar equipo
+                                </a>
+                            </li>
+
+                            <li>
+                                <a asp-controller="Equipment" asp-action="Index">
+                                    Consultar equipos
+                                </a>
+                            </li>
+
+                            <li>
+                                <a asp-controller="Incidencia" asp-action="Create">
+                                    Registrar incidencia
+                                </a>
+                            </li>
+
+                            <li>
+                                <a asp-controller="Incidencia" asp-action="Index">
+                                    Consultar incidencias
+                                </a>
+                            </li>
+                        }
                     </ul>
 
                     <div class="cmse-navbar-account">
@@ -82,6 +113,7 @@
                                asp-action="Index"
                                title="Mis notificaciones"
                                aria-label="Mis notificaciones">
+
                                 <span class="cmse-notification-icon">&#128276;</span>
 
                                 @if (notificacionesNoLeidas > 0)
@@ -98,6 +130,7 @@
                                         data-bs-toggle="dropdown"
                                         aria-expanded="false"
                                         aria-label="Menú de usuario">
+
                                     <span class="cmse-profile-avatar">
                                         @inicialUsuario
                                     </span>
@@ -125,7 +158,9 @@
                                         </li>
                                     }
 
-                                    <li><hr class="dropdown-divider" /></li>
+                                    <li>
+                                        <hr class="dropdown-divider" />
+                                    </li>
 
                                     <li>
                                         <a class="dropdown-item cmse-dropdown-item"
@@ -140,6 +175,7 @@
                                         <form asp-controller="Account"
                                               asp-action="Logout"
                                               method="post">
+
                                             @Html.AntiForgeryToken()
 
                                             <button type="submit"
@@ -167,6 +203,7 @@
                             </a>
                         }
                     </div>
+
                 </div>
             </div>
         </nav>

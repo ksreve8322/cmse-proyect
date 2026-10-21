@@ -1,0 +1,128 @@
+﻿@{
+    ViewData["Title"] = "Registrar incidencia";
+}
+
+<div class="container mt-4 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-4 p-md-5">
+
+                    <div class="mb-4">
+                        <h2 class="mb-2">Registrar incidencia</h2>
+                        <p class="text-muted">
+                            Describe el problema y selecciona el equipo afectado.
+                        </p>
+                    </div>
+
+                    <form asp-controller="Incidencia"
+                          asp-action="Create"
+                          method="post">
+
+                        @Html.AntiForgeryToken()
+
+                        <div asp-validation-summary="All"
+                             class="text-danger mb-3"></div>
+
+                        <div class="mb-3">
+                            <label for="titulo" class="form-label">
+                                Título de la incidencia
+                            </label>
+
+                            <input type="text"
+                                   id="titulo"
+                                   name="titulo"
+                                   class="form-control"
+                                   maxlength="100"
+                                   required
+                                   placeholder="Ej. El computador no enciende"
+                                   value="@(ViewData.ModelState["titulo"]?.AttemptedValue ?? "")" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="descripcion" class="form-label">
+                                Descripción del problema
+                            </label>
+
+                            <textarea id="descripcion"
+                                      name="descripcion"
+                                      class="form-control"
+                                      rows="5"
+                                      required
+                                      placeholder="Explica qué sucede con el equipo...">@(ViewData.ModelState["descripcion"]?.AttemptedValue ?? "")</textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="idEquipo" class="form-label">
+                                Equipo afectado
+                            </label>
+
+                            <select id="idEquipo"
+                                    name="idEquipo"
+                                    class="form-select"
+                                    required>
+
+                                <option value="">Selecciona un equipo</option>
+
+                                @if (ViewBag.Equipos != null)
+                                {
+                                    foreach (var equipo in ViewBag.Equipos)
+                                    {
+                                        <option value="@equipo.IdEquipo"
+                                                selected="@(ViewData.ModelState["idEquipo"]?.AttemptedValue == equipo.IdEquipo.ToString())">
+                                            @equipo.Nombre — @equipo.CodigoInventario
+                                        </option>
+                                    }
+                                }
+                            </select>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="idEstado" class="form-label">
+                                Estado inicial
+                            </label>
+
+                            <select id="idEstado"
+                                    name="idEstado"
+                                    class="form-select"
+                                    required>
+
+                                <option value="">Selecciona un estado</option>
+
+                                @if (ViewBag.Estados != null)
+                                {
+                                    foreach (var estado in ViewBag.Estados)
+                                    {
+                                        <option value="@estado.IdEstado"
+                                                selected="@(ViewData.ModelState["idEstado"]?.AttemptedValue == estado.IdEstado.ToString())">
+                                            @estado.Nombre
+                                        </option>
+                                    }
+                                }
+                            </select>
+                        </div>
+
+                        <div class="d-flex flex-wrap gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                Registrar incidencia
+                            </button>
+
+                            <a asp-controller="Incidencia"
+                               asp-action="Index"
+                               class="btn btn-outline-secondary">
+                                Consultar mis incidencias
+                            </a>
+
+                            <a asp-controller="Home"
+                               asp-action="Index"
+                               class="btn btn-outline-secondary">
+                                Volver al inicio
+                            </a>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

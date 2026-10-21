@@ -96,6 +96,7 @@
 
         <div class="cmse-module-grid">
 
+            
             <div class="cmse-module-card">
                 <div class="cmse-module-icon">💻</div>
 
@@ -105,7 +106,33 @@
                     Consulta y administra los equipos registrados
                     en el sistema.
                 </p>
+
+                @if (Context.Session.GetInt32("UsuarioId").HasValue)
+                {
+                    <div class="cmse-home-actions">
+                        <a asp-controller="Equipment"
+                           asp-action="Index"
+                           class="cmse-home-primary">
+                            Consultar equipos
+                        </a>
+
+                        <a asp-controller="Equipment"
+                           asp-action="Create"
+                           class="cmse-home-secondary">
+                            Registrar equipo
+                        </a>
+                    </div>
+                }
+                else
+                {
+                    <a asp-controller="Account"
+                       asp-action="Login"
+                       class="cmse-home-primary">
+                        Iniciar sesión
+                    </a>
+                }
             </div>
+
 
             <div class="cmse-module-card">
                 <div class="cmse-module-icon">⚠</div>

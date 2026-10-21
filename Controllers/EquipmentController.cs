@@ -1,83 +1,144 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿
+using cmse.Repositories.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace cmse.Controllers
 {
     public class EquipmentController : Controller
     {
-        // GET: EquiposController
-        public ActionResult Index()
+        private readonly CmseContext _context;
+
+        public EquipmentController(CmseContext context)
         {
+            _context = context;
+        }
+
+        private bool TieneSesion()
+        {
+            return HttpContext.Session.GetInt32("UsuarioId").HasValue;
+        }
+
+        private async Task CargarListasAsync()
+        {
+            ViewBag.TiposEquipo = await _context.TiposEquipos
+                .OrderBy(t => t.Nombre)
+                .ToListAsync();
+
+            ViewBag.Estados = await _context.Estados
+                .Where(e => e.Modulo != null &&
+                    (e.Modulo.ToLower() == "equipo" ||
+                     e.Modulo.ToLower() == "equipos"))
+                .OrderBy(e => e.Nombre)
+                .ToListAsync();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Index()
+        {
+            if (!TieneSesion())
+                return RedirectToAction("Login", "Account");
+
+            var equipos = await _context.Equipos
+                .Include(e => e.IdTipoEquipoNavigation)
+                .Include(e => e.IdEstadoNavigation)
+                .OrderBy(e => e.Nombre)
+                .ToListAsync();
+
+            return View(equipos);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Create()
+        {
+            if (!TieneSesion())
+                return RedirectToAction("Login", "Account");
+
+            await CargarListasAsync();
             return View();
         }
 
-        // GET: EquiposController/Details/5
-        public ActionResult Details(int id)
-        {
-            return View();
-        }
-
-        // GET: EquiposController/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: EquiposController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public async Task<IActionResult> Create(Equipo equipo)
         {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
+            if (!TieneSesion())
+                return RedirectToAction("Login", "Account");
 
-        // GET: EquiposController/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
+            // Estos campos se asignan desde el servidor.
+            ModelState.Remove(nameof(Equipo.IdEquipo));
+            ModelState.Remove(nameof(Equipo.FechaRegistro));
+            ModelState.Remove(nameof(Equipo.IdEstadoNavigation));
+            ModelState.Remove(nameof(Equipo.IdTipoEquipoNavigation));
+            ModelState.Remove(nameof(Equipo.Incidencia));
+            ModelState.Remove(nameof(Equipo.Mantenimientos));
 
-        // POST: EquiposController/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
+            equipo.NumeroSerie = string.IsNullOrWhiteSpace(equipo.NumeroSerie)
+                ? null
+                : equipo.NumeroSerie.Trim();
 
-        // GET: EquiposController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
+            equipo.Nombre = equipo.Nombre?.Trim() ?? "";
+            equipo.CodigoInventario =
+                equipo.CodigoInventario?.Trim() ?? "";
 
-        // POST: EquiposController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
+            if (!await _context.TiposEquipos.AnyAsync(
+                t => t.IdTipoEquipo == equipo.IdTipoEquipo))
             {
-                return RedirectToAction(nameof(Index));
+                ModelState.AddModelError(
+                    nameof(equipo.IdTipoEquipo),
+                    "Selecciona un tipo de equipo válido.");
             }
-            catch
+
+            if (!await _context.Estados.AnyAsync(e =>
+                e.IdEstado == equipo.IdEstado &&
+                e.Modulo != null &&
+                (e.Modulo.ToLower() == "equipo" ||
+                 e.Modulo.ToLower() == "equipos")))
             {
-                return View();
+                ModelState.AddModelError(
+                    nameof(equipo.IdEstado),
+                    "Selecciona un estado válido para equipos.");
             }
+
+            if (!ModelState.IsValid)
+            {
+                await CargarListasAsync();
+                return View(equipo);
+            }
+
+            bool codigoExiste = await _context.Equipos.AnyAsync(
+                e => e.CodigoInventario == equipo.CodigoInventario);
+
+            if (codigoExiste)
+            {
+                ModelState.AddModelError(
+                    nameof(equipo.CodigoInventario),
+                    "Ese código de inventario ya existe.");
+
+                await CargarListasAsync();
+                return View(equipo);
+            }
+
+            if (equipo.NumeroSerie != null &&
+                await _context.Equipos.AnyAsync(
+                    e => e.NumeroSerie == equipo.NumeroSerie))
+            {
+                ModelState.AddModelError(
+                    nameof(equipo.NumeroSerie),
+                    "Ese número de serie ya está registrado.");
+
+                await CargarListasAsync();
+                return View(equipo);
+            }
+
+            equipo.FechaRegistro = DateOnly.FromDateTime(DateTime.Today);
+
+            _context.Equipos.Add(equipo);
+            await _context.SaveChangesAsync();
+
+            TempData["Mensaje"] = "Equipo registrado correctamente.";
+
+            return RedirectToAction(nameof(Index));
         }
     }
 }
