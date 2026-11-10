@@ -25,6 +25,29 @@ namespace cmse.Repositories
                 .ToListAsync();
         }
 
+        // Obtiene las notificaciones de un usuario de forma paginada.
+        public async Task<(List<Notificacion> Notificaciones, int TotalRegistros)>
+            ObtenerPorUsuarioPaginadasAsync(
+                int idUsuario,
+                int pagina,
+                int registrosPorPagina)
+        {
+            var consulta = _context.Notificaciones
+                .Where(n =>
+                    n.IdUsuario == idUsuario &&
+                    n.Estado)
+                .OrderByDescending(n => n.FechaCreacion);
+
+            int totalRegistros = await consulta.CountAsync();
+
+            var notificaciones = await consulta
+                .Skip((pagina - 1) * registrosPorPagina)
+                .Take(registrosPorPagina)
+                .ToListAsync();
+
+            return (notificaciones, totalRegistros);
+        }
+
         // Cuenta las notificaciones que el usuario no ha leído.
         public async Task<int> ContarNoLeidasAsync(int idUsuario)
         {
@@ -72,6 +95,12 @@ namespace cmse.Repositories
 
             return notificacion.IdNotificacion;
         }
+        public async Task<bool> ExisteOtroAdministradorActivoAsync(int idUsuario)
+        {
+            return await _context.Usuarios
+                .AnyAsync(u => u.IdRol == 1 &&
+                               u.Estado &&
+                               u.IdUsuario != idUsuario);
+        }
     }
 }
-    

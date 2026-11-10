@@ -32,29 +32,42 @@ namespace cmse.Controllers
                 .ToListAsync();
         }
 
+
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int pagina = 1)
         {
             int? idUsuario = ObtenerUsuarioId();
 
             if (!idUsuario.HasValue)
                 return RedirectToAction("Login", "Account");
 
-            Console.WriteLine(
-                $"[CMSE] Usuario en sesión: {idUsuario.Value}");
+            int registrosPorPagina = 10;
 
-            var incidencias = await _context.Incidencias
+            var consulta = _context.Incidencias
                 .Where(i => i.IdUsuario == idUsuario.Value)
                 .Include(i => i.IdEquipoNavigation)
                 .Include(i => i.IdEstadoNavigation)
-                .OrderByDescending(i => i.FechaRegistro)
+                .OrderByDescending(i => i.FechaRegistro);
+
+            int totalRegistros = await consulta.CountAsync();
+
+            int totalPaginas = (int)Math.Ceiling(
+                totalRegistros / (double)registrosPorPagina);
+
+            pagina = Math.Max(1, Math.Min(pagina, Math.Max(1, totalPaginas)));
+
+            var incidencias = await consulta
+                .Skip((pagina - 1) * registrosPorPagina)
+                .Take(registrosPorPagina)
                 .ToListAsync();
 
-            Console.WriteLine(
-                $"[CMSE] Incidencias encontradas: {incidencias.Count}");
+            ViewBag.PaginaActual = pagina;
+            ViewBag.TotalPaginas = totalPaginas;
+            ViewBag.TotalRegistros = totalRegistros;
 
             return View(incidencias);
         }
+
 
         [HttpGet]
         public async Task<IActionResult> Create()
