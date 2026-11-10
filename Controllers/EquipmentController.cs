@@ -34,16 +34,33 @@ namespace cmse.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int pagina = 1)
         {
             if (!TieneSesion())
                 return RedirectToAction("Login", "Account");
 
-            var equipos = await _context.Equipos
+            int registrosPorPagina = 10;
+
+            var consulta = _context.Equipos
                 .Include(e => e.IdTipoEquipoNavigation)
                 .Include(e => e.IdEstadoNavigation)
-                .OrderBy(e => e.Nombre)
+                .OrderBy(e => e.Nombre);
+
+            int totalRegistros = await consulta.CountAsync();
+
+            int totalPaginas = (int)Math.Ceiling(
+                totalRegistros / (double)registrosPorPagina);
+
+            pagina = Math.Max(1, Math.Min(pagina, Math.Max(1, totalPaginas)));
+
+            var equipos = await consulta
+                .Skip((pagina - 1) * registrosPorPagina)
+                .Take(registrosPorPagina)
                 .ToListAsync();
+
+            ViewBag.PaginaActual = pagina;
+            ViewBag.TotalPaginas = totalPaginas;
+            ViewBag.TotalRegistros = totalRegistros;
 
             return View(equipos);
         }

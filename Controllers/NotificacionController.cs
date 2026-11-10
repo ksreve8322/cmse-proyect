@@ -19,7 +19,7 @@ namespace cmse.Controllers
             return HttpContext.Session.GetInt32("UsuarioId");
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int pagina = 1)
         {
             int? idUsuario = ObtenerIdUsuarioSesion();
 
@@ -28,11 +28,33 @@ namespace cmse.Controllers
                 return RedirectToAction("Login", "Account");
             }
 
-            var notificaciones =
-                await _notificacionRepository.ObtenerPorUsuarioAsync(
-                    idUsuario.Value);
+            int registrosPorPagina = 10;
 
-            return View(notificaciones);
+            var resultado =
+                await _notificacionRepository.ObtenerPorUsuarioPaginadasAsync(
+                    idUsuario.Value,
+                    pagina,
+                    registrosPorPagina);
+
+            int totalPaginas = (int)Math.Ceiling(
+                resultado.TotalRegistros / (double)registrosPorPagina);
+
+            pagina = Math.Max(1, Math.Min(pagina, Math.Max(1, totalPaginas)));
+
+            if (pagina != 1)
+            {
+                resultado =
+                    await _notificacionRepository.ObtenerPorUsuarioPaginadasAsync(
+                        idUsuario.Value,
+                        pagina,
+                        registrosPorPagina);
+            }
+
+            ViewBag.PaginaActual = pagina;
+            ViewBag.TotalPaginas = totalPaginas;
+            ViewBag.TotalRegistros = resultado.TotalRegistros;
+
+            return View(resultado.Notificaciones);
         }
 
         [HttpPost]
