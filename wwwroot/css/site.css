@@ -1,31 +1,998 @@
+/* =========================
+   Configuración general
+   ========================= */
+
 html {
-  font-size: 14px;
+    font-size: 14px;
+    position: relative;
+    min-height: 100%;
 }
 
 @media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
-}
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-  position: relative;
-  min-height: 100%;
+    html {
+        font-size: 16px;
+    }
 }
 
 body {
-  margin-bottom: 60px;
+    margin: 0;
+    margin-bottom: 60px;
+    background: #f4f8fc;
 }
 
-.form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
-  color: var(--bs-secondary-color);
-  text-align: end;
+
+/* =========================
+   Controles Bootstrap
+   ========================= */
+
+.btn:focus,
+.btn:active:focus,
+.btn-link.nav-link:focus,
+.form-control:focus,
+.form-check-input:focus {
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
 
-.form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
-  text-align: start;
+.form-floating > .form-control-plaintext::placeholder,
+.form-floating > .form-control::placeholder {
+    color: var(--bs-secondary-color);
+    text-align: end;
+}
+
+.form-floating > .form-control-plaintext:focus::placeholder,
+.form-floating > .form-control:focus::placeholder {
+    text-align: start;
+}
+
+
+/* =========================
+   CMSE - Barra de navegación
+   ========================= */
+
+.cmse-navbar {
+    width: 100%;
+    background: #ffffff;
+    border-bottom: 1px solid #d9e5f0;
+    box-shadow: 0 2px 10px rgba(30, 70, 100, 0.08);
+}
+
+.cmse-navbar-container {
+    width: 100%;
+    max-width: 1400px;
+    min-height: 70px;
+    margin: 0 auto;
+    padding: 0 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.cmse-navbar-brand {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+}
+
+.cmse-navbar-logo {
+    width: 150px;
+    height: 50px;
+    object-fit: cover;
+    object-position: center;
+    border-radius: 8px;
+}
+
+.cmse-navbar-toggle {
+    display: none !important;
+}
+
+.cmse-navbar-menu {
+    display: flex !important;
+    align-items: center;
+    justify-content: space-between;
+    flex: 1;
+    margin-left: 25px;
+}
+
+.cmse-navbar-links {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+    .cmse-navbar-links a,
+    .cmse-navbar-account a {
+        display: inline-flex;
+        align-items: center;
+        padding: 9px 14px;
+        color: #374151;
+        font-size: 15px;
+        font-weight: 500;
+        text-decoration: none;
+        border-radius: 8px;
+    }
+
+        .cmse-navbar-links a:hover,
+        .cmse-navbar-account a:hover {
+            color: #0d6efd;
+            background: #f0f6ff;
+        }
+
+.cmse-navbar-account {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+    .cmse-navbar-account form {
+        margin: 0;
+    }
+
+.cmse-navbar-login {
+    border: 1px solid #0d6efd;
+    color: #0d6efd !important;
+}
+
+    .cmse-navbar-login:hover {
+        background: #0d6efd !important;
+        color: #ffffff !important;
+    }
+
+.cmse-navbar-register {
+    background: #0d6efd;
+    color: #ffffff !important;
+}
+
+    .cmse-navbar-register:hover {
+        background: #0b5ed7 !important;
+    }
+
+.cmse-navbar-user {
+    font-weight: 600 !important;
+}
+
+.cmse-user-icon {
+    margin-right: 7px;
+    color: #0d6efd;
+    font-size: 10px;
+}
+
+.cmse-navbar-logout {
+    padding: 9px 14px;
+    border: 1px solid #dc3545;
+    border-radius: 8px;
+    background: transparent;
+    color: #dc3545;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+    .cmse-navbar-logout:hover {
+        background: #dc3545;
+        color: #ffffff;
+    }
+
+
+/* =========================
+   CMSE - Autenticación
+   ========================= */
+
+.cmse-auth-page {
+    min-height: calc(100vh - 120px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 20px;
+    background: #f4f8fc;
+}
+
+.cmse-auth-card {
+    width: 100%;
+    max-width: 460px;
+    background: #ffffff;
+    border: 1px solid #d9e5f0;
+    border-radius: 14px;
+    box-shadow: 0 8px 25px rgba(30, 70, 100, 0.10);
+    overflow: hidden;
+}
+
+.cmse-register-card {
+    max-width: 520px;
+}
+
+.cmse-auth-header {
+    padding: 28px 30px;
+    text-align: center;
+    background: #0d6efd;
+    color: #ffffff;
+}
+
+    .cmse-auth-header h1 {
+        margin: 0;
+        font-size: 32px;
+        font-weight: 700;
+    }
+
+    .cmse-auth-header p {
+        margin: 8px 0 0;
+        font-size: 14px;
+        opacity: 0.9;
+    }
+
+.cmse-auth-content {
+    padding: 30px;
+}
+
+    .cmse-auth-content h2 {
+        margin: 0;
+        text-align: center;
+        color: #1f2937;
+        font-size: 24px;
+    }
+
+.cmse-auth-subtitle {
+    margin: 8px 0 25px;
+    text-align: center;
+    color: #6b7280;
+    font-size: 14px;
+}
+
+.cmse-auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.cmse-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+    .cmse-form-group label {
+        color: #374151;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    .cmse-form-group input,
+    .cmse-form-group select {
+        width: 100%;
+        padding: 11px 13px;
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        background: #ffffff;
+        font-size: 15px;
+        box-sizing: border-box;
+        outline: none;
+    }
+
+        .cmse-form-group input:focus,
+        .cmse-form-group select:focus {
+            border-color: #0d6efd;
+            box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.12);
+        }
+
+    .cmse-form-group select {
+        cursor: pointer;
+    }
+
+    .cmse-form-group span {
+        color: #dc3545;
+        font-size: 13px;
+    }
+
+.cmse-remember label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #4b5563;
+    font-size: 14px;
+}
+
+.cmse-remember input {
+    width: 16px;
+    height: 16px;
+}
+
+.cmse-validation {
+    color: #dc3545;
+    font-size: 14px;
+}
+
+.cmse-auth-button {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    background: #0d6efd;
+    color: #ffffff;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+    .cmse-auth-button:hover {
+        background: #0b5ed7;
+    }
+
+.cmse-auth-links {
+    margin-top: 24px;
+    text-align: center;
+    color: #6b7280;
+    font-size: 14px;
+}
+
+    .cmse-auth-links a {
+        display: block;
+        margin-top: 6px;
+        color: #0d6efd;
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+        .cmse-auth-links a:hover {
+            text-decoration: underline;
+        }
+
+
+/* =========================
+   CMSE - Página de inicio
+   ========================= */
+
+.cmse-home {
+    width: 100%;
+}
+
+.cmse-home-hero {
+    min-height: 430px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 50px;
+    padding: 65px 70px;
+    margin: 25px 0 55px;
+    background: linear-gradient(135deg, #0d6efd, #084298);
+    border-radius: 20px;
+    color: #ffffff;
+    overflow: hidden;
+}
+
+.cmse-home-hero-content {
+    max-width: 650px;
+}
+
+.cmse-home-badge {
+    display: inline-block;
+    padding: 7px 14px;
+    margin-bottom: 18px;
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.cmse-home-hero h1 {
+    margin: 0;
+    font-size: 48px;
+    line-height: 1.1;
+    font-weight: 700;
+}
+
+.cmse-home-hero p {
+    max-width: 570px;
+    margin: 22px 0 30px;
+    color: rgba(255, 255, 255, 0.88);
+    font-size: 18px;
+    line-height: 1.6;
+}
+
+.cmse-home-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.cmse-home-primary,
+.cmse-home-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 22px;
+    border-radius: 9px;
+    font-size: 15px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.cmse-home-primary {
+    background: #ffffff;
+    color: #0d6efd;
+}
+
+    .cmse-home-primary:hover {
+        background: #eef5ff;
+        color: #084298;
+        transform: translateY(-2px);
+    }
+
+.cmse-home-secondary {
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    color: #ffffff;
+}
+
+    .cmse-home-secondary:hover {
+        background: rgba(255, 255, 255, 0.12);
+        color: #ffffff;
+        transform: translateY(-2px);
+    }
+
+.cmse-home-visual {
+    position: relative;
+    width: 280px;
+    height: 280px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.cmse-home-icon {
+    position: relative;
+    z-index: 2;
+    width: 150px;
+    height: 150px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.14);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 35px;
+    font-size: 75px;
+    transform: rotate(-8deg);
+}
+
+.cmse-home-circle {
+    position: absolute;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 50%;
+}
+
+.cmse-home-circle-1 {
+    width: 250px;
+    height: 250px;
+}
+
+.cmse-home-circle-2 {
+    width: 340px;
+    height: 340px;
+}
+
+.cmse-home-modules {
+    padding: 0 10px 50px;
+}
+
+.cmse-section-title {
+    margin-bottom: 25px;
+}
+
+    .cmse-section-title span {
+        color: #0d6efd;
+        font-size: 13px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .cmse-section-title h2 {
+        margin: 7px 0 0;
+        color: #1f2937;
+        font-size: 28px;
+        font-weight: 700;
+    }
+
+.cmse-module-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+.cmse-module-card {
+    padding: 25px;
+    background: #ffffff;
+    border: 1px solid #d9e5f0;
+    border-radius: 14px;
+    box-shadow: 0 5px 18px rgba(30, 70, 100, 0.06);
+    transition: all 0.2s ease;
+}
+
+    .cmse-module-card:hover {
+        transform: translateY(-5px);
+        border-color: #9ec5fe;
+        box-shadow: 0 10px 25px rgba(30, 70, 100, 0.12);
+    }
+
+.cmse-module-icon {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 17px;
+    background: #eaf3ff;
+    border-radius: 10px;
+    font-size: 22px;
+}
+
+.cmse-module-card h3 {
+    margin: 0 0 8px;
+    color: #1f2937;
+    font-size: 19px;
+}
+
+.cmse-module-card p {
+    margin: 0;
+    color: #6b7280;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+
+/* =========================
+   Responsive
+   ========================= */
+
+@media (max-width: 767px) {
+
+    .cmse-navbar-container {
+        min-height: 65px;
+        padding: 0 8px;
+    }
+
+    .cmse-navbar-logo {
+        width: 150px;
+        height: 50px;
+    }
+
+    .cmse-navbar-toggle {
+        display: none !important;
+    }
+
+    .cmse-navbar-menu {
+        display: flex !important;
+        margin-left: 15px;
+        padding: 0;
+    }
+
+    .cmse-navbar-links {
+        display: flex;
+    }
+
+        .cmse-navbar-links li {
+            margin-bottom: 4px;
+        }
+
+        .cmse-navbar-links a {
+            width: auto;
+        }
+
+    .cmse-navbar-account {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 5px;
+    }
+
+        .cmse-navbar-account a,
+        .cmse-navbar-logout {
+            width: auto;
+            justify-content: center;
+            box-sizing: border-box;
+        }
+
+    .cmse-auth-page {
+        padding: 25px 15px;
+    }
+
+    .cmse-auth-content {
+        padding: 25px 20px;
+    }
+
+    .cmse-home-hero {
+        min-height: auto;
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 40px 28px;
+        margin-top: 15px;
+    }
+
+        .cmse-home-hero h1 {
+            font-size: 34px;
+        }
+
+        .cmse-home-hero p {
+            font-size: 16px;
+        }
+
+    .cmse-home-visual {
+        width: 100%;
+        height: 190px;
+    }
+
+    .cmse-home-icon {
+        width: 110px;
+        height: 110px;
+        font-size: 55px;
+    }
+
+    .cmse-home-circle-1 {
+        width: 180px;
+        height: 180px;
+    }
+
+    .cmse-home-circle-2 {
+        width: 240px;
+        height: 240px;
+    }
+
+    .cmse-module-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* =========================
+   CMSE - Notificaciones y perfil
+   ========================= */
+
+.cmse-navbar-account {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.cmse-notification-button {
+    position: relative;
+    width: 42px;
+    height: 42px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid transparent;
+    border-radius: 50%;
+    color: #374151;
+    text-decoration: none;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+    .cmse-notification-button:hover {
+        background: #eaf3ff;
+        color: #0d6efd;
+    }
+
+.cmse-notification-icon {
+    font-size: 22px;
+    line-height: 1;
+}
+
+.cmse-notification-count {
+    position: absolute;
+    top: 0;
+    right: -2px;
+    min-width: 19px;
+    height: 19px;
+    padding: 0 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #ffffff;
+    border-radius: 20px;
+    background: #dc3545;
+    color: #ffffff;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.cmse-profile-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: none;
+    border-radius: 50%;
+    background: transparent;
+    cursor: pointer;
+}
+
+    .cmse-profile-button::after {
+        display: none;
+    }
+
+.cmse-profile-avatar {
+    width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #dbeafe;
+    border-radius: 50%;
+    background: #0d6efd;
+    color: #ffffff;
+    font-size: 17px;
+    font-weight: 700;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.cmse-profile-button:hover .cmse-profile-avatar,
+.cmse-profile-button:focus-visible .cmse-profile-avatar {
+    transform: scale(1.06);
+    box-shadow: 0 0 0 4px #eaf3ff;
+}
+
+.cmse-profile-dropdown {
+    min-width: 220px;
+    margin-top: 12px !important;
+    padding: 8px;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    background: #ffffff;
+    box-shadow: 0 10px 30px rgba(30, 70, 100, 0.14);
+}
+
+.cmse-profile-name {
+    padding: 10px 12px;
+    color: #1f2937;
+    font-size: 14px;
+    font-weight: 700;
+    overflow-wrap: anywhere;
+}
+
+.cmse-dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    color: #374151;
+    font-size: 14px;
+    text-decoration: none;
+}
+
+    .cmse-dropdown-item:hover,
+    .cmse-dropdown-item:focus {
+        background: #eaf3ff;
+        color: #0d6efd;
+    }
+
+.cmse-dropdown-icon {
+    width: 20px;
+    text-align: center;
+}
+
+.cmse-profile-dropdown form {
+    margin: 0;
+}
+
+.cmse-logout-item {
+    width: 100%;
+    border: none;
+    background: transparent;
+    text-align: left;
+    cursor: pointer;
+}
+
+    .cmse-logout-item:hover {
+        background: #fff1f2;
+        color: #dc3545;
+    }
+
+
+/* Notificaciones emergentes de CMSE */
+.cmse-toast {
+    position: fixed;
+    top: 24px;
+    right: 24px;
+    z-index: 9999;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    width: min(400px, calc(100vw - 32px));
+    padding: 18px;
+    background: #ffffff;
+    color: #263445;
+    border: 1px solid #d7e3f0;
+    border-left: 5px solid #24476b;
+    border-radius: 10px;
+    box-shadow: 0 8px 28px rgba(16, 36, 62, 0.20);
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 300ms ease, transform 300ms ease;
+}
+
+.cmse-toast-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: #eaf2fb;
+    color: #17365d;
+    font-weight: bold;
+}
+
+.cmse-toast-content {
+    flex: 1;
+}
+
+    .cmse-toast-content strong {
+        display: block;
+        margin-bottom: 5px;
+        color: #123b67;
+        font-size: 14px;
+    }
+
+    .cmse-toast-content p {
+        margin: 0;
+        font-size: 14px;
+        line-height: 1.5;
+    }
+
+.cmse-toast-close {
+    border: none;
+    background: transparent;
+    color: #64748b;
+    font-size: 23px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.cmse-toast-hide {
+    opacity: 0;
+    transform: translateY(-10px);
+    pointer-events: none;
+}
+
+@media (max-width: 480px) {
+    .cmse-toast {
+        top: 12px;
+        right: 12px;
+        width: calc(100vw - 24px);
+    }
+}
+
+/* Ventana modal de notificaciones CMSE */
+.cmse-modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(9, 24, 43, 0.72);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    animation: cmse-overlay-in 180ms ease-out;
+}
+
+.cmse-modal {
+    width: 100%;
+    max-width: 430px;
+    padding: 36px 30px 30px;
+    text-align: center;
+    background: #ffffff;
+    border: 1px solid #d7e3f0;
+    border-radius: 18px;
+    box-shadow: 0 24px 70px rgba(0, 0, 0, 0.30);
+    animation: cmse-modal-in 220ms ease-out;
+}
+
+.cmse-modal-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 76px;
+    height: 76px;
+    margin: 0 auto 22px;
+    border-radius: 50%;
+    background: #e4f5ec;
+    color: #16804a;
+    border: 1px solid #c3ead3;
+}
+
+    .cmse-modal-icon span {
+        font-size: 42px;
+        font-weight: 600;
+        line-height: 1;
+    }
+
+.cmse-modal h2 {
+    margin: 0 0 12px;
+    color: #123b67;
+    font-size: 25px;
+    font-weight: 700;
+}
+
+.cmse-modal p {
+    margin: 0 0 26px;
+    color: #526174;
+    font-size: 15px;
+    line-height: 1.7;
+}
+
+.cmse-modal-button {
+    width: 100%;
+    padding: 13px 22px;
+    border: none;
+    border-radius: 9px;
+    background: linear-gradient(135deg, #17365d, #315b86);
+    color: #ffffff;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 160ms ease, box-shadow 160ms ease;
+}
+
+    .cmse-modal-button:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 7px 18px rgba(23, 54, 93, 0.25);
+    }
+
+    .cmse-modal-button:focus-visible {
+        outline: 3px solid #78a9e0;
+        outline-offset: 3px;
+    }
+
+.cmse-modal-closing {
+    opacity: 0;
+    transition: opacity 180ms ease;
+}
+
+@keyframes cmse-overlay-in {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes cmse-modal-in {
+    from {
+        opacity: 0;
+        transform: translateY(12px) scale(0.97);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@media (max-width: 480px) {
+    .cmse-modal {
+        padding: 30px 22px 24px;
+    }
+
+        .cmse-modal h2 {
+            font-size: 22px;
+        }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .cmse-modal-overlay,
+    .cmse-modal {
+        animation: none;
+    }
+
+    .cmse-modal-button {
+        transition: none;
+    }
 }

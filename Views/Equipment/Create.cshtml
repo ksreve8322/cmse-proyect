@@ -1,0 +1,169 @@
+﻿@using cmse.Repositories.Models
+@model Equipo
+
+@{
+    ViewData["Title"] = "Registrar equipo";
+    var tipos = ViewBag.TiposEquipo as IEnumerable<TiposEquipo>
+        ?? Enumerable.Empty<TiposEquipo>();
+    var estados = ViewBag.Estados as IEnumerable<Estado>
+        ?? Enumerable.Empty<Estado>();
+}
+
+<div class="container py-4">
+    <div class="mb-4">
+        <h1>Registrar equipo</h1>
+        <p class="text-muted">
+            Completa los datos para agregar un dispositivo al inventario de CMSE.
+        </p>
+    </div>
+
+    @if (TempData["Mensaje"] != null)
+    {
+        <div class="alert alert-success" role="alert">
+            @TempData["Mensaje"]
+        </div>
+    }
+
+    <div class="card shadow-sm">
+        <div class="card-body p-4">
+            <form asp-controller="Equipment"
+                  asp-action="Create"
+                  method="post">
+
+                @Html.AntiForgeryToken()
+
+                <div asp-validation-summary="ModelOnly"
+                     class="text-danger mb-3"></div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Nombre" class="form-label">
+                            Nombre del equipo *
+                        </label>
+                        <input asp-for="Nombre"
+                               class="form-control"
+                               maxlength="80"
+                               required
+                               placeholder="Ej. Computador oficina 01" />
+                        <span asp-validation-for="Nombre"
+                              class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="CodigoInventario"
+                               class="form-label">
+                            Código de inventario *
+                        </label>
+                        <input asp-for="CodigoInventario"
+                               class="form-control"
+                               maxlength="30"
+                               required
+                               placeholder="Ej. CMSE-0001" />
+                        <span asp-validation-for="CodigoInventario"
+                              class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="IdTipoEquipo" class="form-label">
+                            Tipo de equipo *
+                        </label>
+                        <select asp-for="IdTipoEquipo"
+                                class="form-select"
+                                required>
+                            <option value="">Selecciona un tipo</option>
+                            @foreach (var tipo in tipos)
+                            {
+                                <option value="@tipo.IdTipoEquipo">
+                                    @tipo.Nombre
+                                </option>
+                            }
+                        </select>
+                        <span asp-validation-for="IdTipoEquipo"
+                              class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="IdEstado" class="form-label">
+                            Estado *
+                        </label>
+                        <select asp-for="IdEstado"
+                                class="form-select"
+                                required>
+                            <option value="">Selecciona un estado</option>
+                            @foreach (var estado in estados)
+                            {
+                                <option value="@estado.IdEstado">
+                                    @estado.Nombre
+                                </option>
+                            }
+                        </select>
+                        <span asp-validation-for="IdEstado"
+                              class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Marca" class="form-label">
+                            Marca
+                        </label>
+                        <input asp-for="Marca"
+                               class="form-control"
+                               maxlength="40"
+                               placeholder="Ej. HP, Dell, Lenovo" />
+                        <span asp-validation-for="Marca"
+                              class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Modelo" class="form-label">
+                            Modelo
+                        </label>
+                        <input asp-for="Modelo"
+                               class="form-control"
+                               maxlength="50" />
+                        <span asp-validation-for="Modelo"
+                              class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="NumeroSerie" class="form-label">
+                            Número de serie
+                        </label>
+                        <input asp-for="NumeroSerie"
+                               class="form-control"
+                               maxlength="50" />
+                        <span asp-validation-for="NumeroSerie"
+                              class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Ubicacion" class="form-label">
+                            Ubicación
+                        </label>
+                        <input asp-for="Ubicacion"
+                               class="form-control"
+                               maxlength="100"
+                               placeholder="Ej. Sala de sistemas" />
+                        <span asp-validation-for="Ubicacion"
+                              class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="d-flex gap-2 mt-3">
+                    <button type="submit" class="btn btn-primary">
+                        Guardar equipo
+                    </button>
+
+                    <a asp-controller="Equipment"
+                       asp-action="Index"
+                       class="btn btn-outline-secondary">
+                        Cancelar
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

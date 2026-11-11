@@ -1,0 +1,56 @@
+﻿@model cmse.Repositories.Models.Incidencia
+
+@{
+    ViewData["Title"] = "Detalle de incidencia";
+}
+
+<div class="container mt-4">
+    <h2>Detalle de incidencia</h2>
+    <hr />
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+
+            <h4>@Model.Titulo</h4>
+            <p class="text-muted">Incidencia #@Model.IdIncidencia</p>
+
+            <hr />
+
+            <p>
+                <strong>Descripción:</strong><br />
+                @Model.Descripcion
+            </p>
+
+            <p>
+                <strong>Equipo:</strong>
+                @Model.IdEquipoNavigation?.Nombre
+            </p>
+
+            <p>
+                <strong>Estado:</strong>
+                @Model.IdEstadoNavigation?.Nombre
+            </p>
+
+            <p>
+                <strong>Fecha de registro:</strong>
+                @Model.FechaRegistro.ToString("dd/MM/yyyy HH:mm")
+            </p>
+
+            <p>
+                <strong>Fecha de cierre:</strong>
+                @(Model.FechaCierre.HasValue
+                    ? Model.FechaCierre.Value.ToString("dd/MM/yyyy HH:mm")
+                    : "Pendiente")
+            </p>
+
+            <hr />
+
+            <a asp-controller="Incidencia"
+               asp-action="Index"
+               class="btn btn-secondary">
+                Volver a incidencias
+            </a>
+
+        </div>
+    </div>
+</div>

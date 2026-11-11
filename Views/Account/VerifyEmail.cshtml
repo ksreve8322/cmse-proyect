@@ -1,0 +1,52 @@
+﻿@{
+    ViewData["Title"] = "Verificar correo";
+}
+
+<div class="cmse-auth-page">
+    <div class="cmse-auth-card">
+        <h2>Verificar correo electrónico</h2>
+
+        <p>
+            Enviamos un código de 6 dígitos a tu correo.
+            Introdúcelo para completar el registro.
+        </p>
+
+        @if (TempData["Mensaje"] != null)
+        {
+            <p role="status">@TempData["Mensaje"]</p>
+        }
+
+        @if (ViewBag.Error != null)
+        {
+            <p class="cmse-validation" role="alert">
+                @ViewBag.Error
+            </p>
+        }
+
+        <form asp-controller="Account"
+              asp-action="VerifyEmail"
+              method="post"
+              class="cmse-auth-form">
+
+            @Html.AntiForgeryToken()
+
+            <div class="cmse-form-group">
+                <label for="codigo">Código de verificación</label>
+                <input type="text"
+                       id="codigo"
+                       name="codigo"
+                       inputmode="numeric"
+                       autocomplete="one-time-code"
+                       pattern="[0-9]{6}"
+                       minlength="6"
+                       maxlength="6"
+                       required
+                       placeholder="Ej. 123456" />
+            </div>
+
+            <button type="submit" class="cmse-auth-button">
+                Verificar correo
+            </button>
+        </form>
+    </div>
+</div>

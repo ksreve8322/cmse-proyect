@@ -1,0 +1,109 @@
+﻿@model cmse.Dtos.LoginDto
+
+@{
+    ViewData["Title"] = "Iniciar sesión";
+}
+
+<div class="cmse-auth-page">
+
+   
+    <div class="cmse-auth-card">
+
+        <div class="cmse-auth-header">
+            <h1>CMSE</h1>
+            <p>Control y Mantenimiento de Sistemas y Equipos</p>
+        </div>
+
+        <div class="cmse-auth-content">
+
+            
+            @if (TempData["Mensaje"] != null)
+            {
+                <div id="cmse-modal-overlay" class="cmse-modal-overlay">
+                    <section class="cmse-modal"
+                             role="dialog"
+                             aria-modal="true"
+                             aria-labelledby="cmse-modal-title"
+                             aria-describedby="cmse-modal-message">
+
+                        <div class="cmse-modal-icon" aria-hidden="true">
+                            <span>✓</span>
+                        </div>
+
+                        <h2 id="cmse-modal-title">¡Registro completado!</h2>
+
+                        <p id="cmse-modal-message">
+                            @TempData["Mensaje"]
+                        </p>
+
+                        <button type="button"
+                                id="cmse-modal-accept"
+                                class="cmse-modal-button">
+                            Aceptar
+                        </button>
+                    </section>
+                </div>
+
+                <script>
+                    (function () {
+                        const overlay = document.getElementById('cmse-modal-overlay');
+                        const boton = document.getElementById('cmse-modal-accept');
+
+                        if (!overlay || !boton) return;
+
+                        boton.focus();
+
+                        boton.addEventListener('click', function () {
+                            overlay.classList.add('cmse-modal-closing');
+
+                            setTimeout(function () {
+                                overlay.remove();
+                            }, 180);
+                        });
+                    })();
+                </script>
+            }
+
+
+            <form asp-action="Login" method="post" class="cmse-auth-form">
+
+                <div class="cmse-form-group">
+                    <label asp-for="Correo">Correo</label>
+                    <input asp-for="Correo" type="email" placeholder="Ingresa tu correo" />
+                    <span asp-validation-for="Correo"></span>
+                </div>
+
+                <div class="cmse-form-group">
+                    <label asp-for="Contrasena">Contraseña</label>
+                    <input asp-for="Contrasena" type="password" placeholder="Ingresa tu contraseña" />
+                    <span asp-validation-for="Contrasena"></span>
+                </div>
+
+                <div class="cmse-remember">
+                    <label>
+                        <input asp-for="Recordarme" />
+                        <span>Recordarme</span>
+                    </label>
+                </div>
+
+                <div asp-validation-summary="ModelOnly" class="cmse-validation"></div>
+
+                <button type="submit" class="cmse-auth-button">
+                    Iniciar sesión
+                </button>
+
+            </form>
+
+            <div class="cmse-auth-links">
+                <span>¿No tienes una cuenta?</span>
+                <a asp-controller="Account" asp-action="Register">
+                    Crear una cuenta
+                </a>
+            </div>
+
+        </div>
+
+    </div>
+    
+
+</div>
