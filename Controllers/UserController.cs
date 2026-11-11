@@ -93,6 +93,7 @@ namespace cmse.Controllers
         }
 
         // POST: User/Edit
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(EditarUsuarioViewModel modelo)
@@ -117,34 +118,63 @@ namespace cmse.Controllers
             if (usuario == null)
                 return NotFound();
 
+            // Validar que el rol seleccionado exista.
+            var roles = await _usuarioRepository.ObtenerRolesAsync();
+
+            if (!roles.Any(r => r.IdRol == modelo.IdRol))
+            {
+                ModelState.AddModelError(
+                    nameof(modelo.IdRol),
+                    "El rol seleccionado no es válido.");
+            }
+
+            // Validar que el tipo de documento exista.
+            var tiposDocumento =
+                await _usuarioRepository.ObtenerTiposDocumentoAsync();
+
+            if (!tiposDocumento.Any(t =>
+                t.IdTipoDocumento == modelo.IdTipoDocumento))
+            {
+                ModelState.AddModelError(
+                    nameof(modelo.IdTipoDocumento),
+                    "El tipo de documento seleccionado no es válido.");
+            }
+
+            // Evitar correos duplicados.
             if (await _usuarioRepository.ExisteCorreoEnOtroUsuarioAsync(
                 modelo.Correo, modelo.IdUsuario))
             {
                 ModelState.AddModelError(
                     nameof(modelo.Correo),
                     "Este correo ya está registrado.");
-
-                ViewBag.TiposDocumento =
-                    await _usuarioRepository.ObtenerTiposDocumentoAsync();
-
-                ViewBag.Roles =
-                    await _usuarioRepository.ObtenerRolesAsync();
-
-                return View(modelo);
             }
 
+            // Evitar documentos duplicados.
             if (await _usuarioRepository.ExisteDocumentoEnOtroUsuarioAsync(
                 modelo.NumeroDocumento, modelo.IdUsuario))
             {
                 ModelState.AddModelError(
                     nameof(modelo.NumeroDocumento),
                     "Este documento ya está registrado.");
+            }
 
-                ViewBag.TiposDocumento =
-                    await _usuarioRepository.ObtenerTiposDocumentoAsync();
+            // Evitar que se pierda el último administrador activo.
+            if (usuario.IdRol == 1 && usuario.Estado &&
+                (modelo.IdRol != 1 || !modelo.Estado))
+            {
+                if (!await _usuarioRepository.ExisteOtroAdministradorActivoAsync(
+                    modelo.IdUsuario))
+                {
+                    ModelState.AddModelError(
+                        string.Empty,
+                        "No puedes quitar el rol o desactivar al último administrador activo.");
+                }
+            }
 
-                ViewBag.Roles =
-                    await _usuarioRepository.ObtenerRolesAsync();
+            if (!ModelState.IsValid)
+            {
+                ViewBag.TiposDocumento = tiposDocumento;
+                ViewBag.Roles = roles;
 
                 return View(modelo);
             }
@@ -162,8 +192,10 @@ namespace cmse.Controllers
 
             TempData["Mensaje"] = "Usuario actualizado correctamente.";
 
-            return RedirectToAction(nameof(Details), new { id = usuario.IdUsuario });
+            return RedirectToAction(nameof(Details),
+                new { id = usuario.IdUsuario });
         }
+
 
     }
 }
