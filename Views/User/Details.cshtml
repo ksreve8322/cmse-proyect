@@ -5,85 +5,86 @@
 }
 
 <div class="container mt-4">
-    <h2>Detalles del usuario</h2>
-    <p class="text-muted">Información de la cuenta registrada en CMSE.</p>
-
-    <div class="card shadow-sm mt-3">
-        <div class="card-header">
-            <h5 class="mb-0">
-                @Model.Nombres @Model.Apellidos
-            </h5>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+            <h2>Detalles del usuario</h2>
+            <p class="text-muted">
+                Información de la cuenta seleccionada.
+            </p>
         </div>
+    </div>
 
+    @if (TempData["Mensaje"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["Mensaje"]
+        </div>
+    }
+
+    <div class="card shadow-sm">
         <div class="card-body">
-            <div class="row mb-3">
-                <div class="col-md-6">
-                    <strong>ID de usuario:</strong>
-                    <p>@Model.IdUsuario</p>
-                </div>
 
-                <div class="col-md-6">
-                    <strong>Rol:</strong>
-                    <p>@Model.IdRolNavigation.Nombre</p>
-                </div>
-            </div>
+            <dl class="row">
+                <dt class="col-sm-4">ID de usuario</dt>
+                <dd class="col-sm-8">@Model.IdUsuario</dd>
 
-            <hr />
+                <dt class="col-sm-4">Rol</dt>
+                <dd class="col-sm-8">
+                    @Model.IdRolNavigation?.Nombre
+                </dd>
 
-            <div class="row mb-3">
-                <div class="col-md-6">
-                    <strong>Nombres:</strong>
-                    <p>@Model.Nombres</p>
-                </div>
+                <dt class="col-sm-4">Nombres</dt>
+                <dd class="col-sm-8">@Model.Nombres</dd>
 
-                <div class="col-md-6">
-                    <strong>Apellidos:</strong>
-                    <p>@Model.Apellidos</p>
-                </div>
-            </div>
+                <dt class="col-sm-4">Apellidos</dt>
+                <dd class="col-sm-8">@Model.Apellidos</dd>
 
-            <div class="row mb-3">
-                <div class="col-md-6">
-                    <strong>Tipo de documento:</strong>
-                    <p>@Model.IdTipoDocumentoNavigation.Nombre</p>
-                </div>
+                <dt class="col-sm-4">Tipo de documento</dt>
+                <dd class="col-sm-8">
+                    @Model.IdTipoDocumentoNavigation?.Nombre
+                </dd>
 
-                <div class="col-md-6">
-                    <strong>Número de documento:</strong>
-                    <p>@Model.NumeroDocumento</p>
-                </div>
-            </div>
+                <dt class="col-sm-4">Número de documento</dt>
+                <dd class="col-sm-8">@Model.NumeroDocumento</dd>
 
-            <div class="row mb-3">
-                <div class="col-md-6">
-                    <strong>Correo electrónico:</strong>
-                    <p>@Model.Correo</p>
-                </div>
+                <dt class="col-sm-4">Correo electrónico</dt>
+                <dd class="col-sm-8">@Model.Correo</dd>
 
-                <div class="col-md-6">
-                    <strong>Teléfono:</strong>
-                    <p>@(Model.Telefono ?? "No registrado")</p>
-                </div>
-            </div>
+                <dt class="col-sm-4">Teléfono</dt>
+                <dd class="col-sm-8">
+                    @(string.IsNullOrWhiteSpace(Model.Telefono)
+                        ? "No registrado"
+                        : Model.Telefono)
+                </dd>
+
+                <dt class="col-sm-4">Estado de la cuenta</dt>
+                <dd class="col-sm-8">
+                    @if (Model.Estado)
+                    {
+                        <span class="badge bg-success">Activo</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-danger">Inactivo</span>
+                    }
+                </dd>
+            </dl>
 
             <hr />
 
-            <div class="mb-3">
-                <strong>Estado de la cuenta:</strong>
+            <div class="d-flex gap-2">
+                <a asp-action="Edit"
+                   asp-route-id="@Model.IdUsuario"
+                   class="btn btn-warning">
+                    Editar usuario
+                </a>
 
-                @if (Model.Estado)
-                {
-                    <span class="badge bg-success">Activo</span>
-                }
-                else
-                {
-                    <span class="badge bg-danger">Inactivo</span>
-                }
+                <a asp-action="Index"
+                   class="btn btn-secondary">
+                    Volver al listado
+                </a>
             </div>
 
-            <a asp-action="Index" class="btn btn-secondary">
-                Volver al listado
-            </a>
         </div>
     </div>
 </div>

@@ -1,4 +1,5 @@
-﻿using cmse.Repositories.Models;
+﻿
+using cmse.Repositories.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace cmse.Repositories
@@ -34,11 +35,11 @@ namespace cmse.Repositories
         }
 
         public async Task<bool> ExisteNumeroDocumentoAsync(string numeroDocumento)
-
         {
             return await _context.Usuarios
                 .AnyAsync(u => u.NumeroDocumento == numeroDocumento);
         }
+
         public async Task<List<TiposDocumento>> ObtenerTiposDocumentoAsync()
         {
             return await _context.TiposDocumentos
@@ -50,8 +51,9 @@ namespace cmse.Repositories
             _context.Usuarios.Add(usuario);
             await _context.SaveChangesAsync();
         }
+
         public async Task<List<Usuario>> ObtenerTodosPaginadosAsync(
-    int pagina, int registrosPorPagina)
+            int pagina, int registrosPorPagina)
         {
             return await _context.Usuarios
                 .Include(u => u.IdRolNavigation)
@@ -96,6 +98,13 @@ namespace cmse.Repositories
             await _context.SaveChangesAsync();
         }
 
+        // Comprobar si existe otro administrador activo.
+        public async Task<bool> ExisteOtroAdministradorActivoAsync(int idUsuario)
+        {
+            return await _context.Usuarios
+                .AnyAsync(u => u.IdRol == 1 &&
+                               u.Estado &&
+                               u.IdUsuario != idUsuario);
+        }
     }
-
 }
