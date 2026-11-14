@@ -25,71 +25,71 @@
             <div class="row g-3">
 
                 <div class="col-md-6">
-                    <label class="form-label fw-bold">Tipo de equipo</label>
-                    <input class="form-control"
+                    <label for="detalleTipoEquipo" class="form-label fw-bold">Tipo de equipo</label>
+                    <input id="detalleTipoEquipo" class="form-control"
                            value="@Model.IdTipoEquipoNavigation?.Nombre"
                            readonly />
                 </div>
 
                 <div class="col-md-6">
-                    <label class="form-label fw-bold">Nombre</label>
-                    <input class="form-control"
+                    <label for="detalleNombre" class="form-label fw-bold">Nombre</label>
+                    <input id="detalleNombre" class="form-control"
                            value="@Model.Nombre"
                            readonly />
                 </div>
 
                 <div class="col-md-6">
-                    <label class="form-label fw-bold">Código de inventario</label>
-                    <input class="form-control"
+                    <label for="detalleCodigoInventario" class="form-label fw-bold">Código de inventario</label>
+                    <input id="detalleCodigoInventario" class="form-control"
                            value="@Model.CodigoInventario"
                            readonly />
                 </div>
 
                 <div class="col-md-6">
-                    <label class="form-label fw-bold">Marca</label>
-                    <input class="form-control"
+                    <label for="detalleMarca" class="form-label fw-bold">Marca</label>
+                    <input id="detalleMarca" class="form-control"
                            value="@Model.Marca"
                            readonly />
                 </div>
 
                 <div class="col-md-6">
-                    <label class="form-label fw-bold">Modelo</label>
-                    <input class="form-control"
+                    <label for="detalleModelo" class="form-label fw-bold">Modelo</label>
+                    <input id="detalleModelo" class="form-control"
                            value="@Model.Modelo"
                            readonly />
                 </div>
 
                 <div class="col-md-6">
-                    <label class="form-label fw-bold">Número de serie</label>
-                    <input class="form-control"
+                    <label for="detalleNumeroSerie" class="form-label fw-bold">Número de serie</label>
+                    <input id="detalleNumeroSerie" class="form-control"
                            value="@Model.NumeroSerie"
                            readonly />
                 </div>
 
                 <div class="col-md-6">
-                    <label class="form-label fw-bold">Ubicación</label>
-                    <input class="form-control"
+                    <label for="detalleUbicacion" class="form-label fw-bold">Ubicación</label>
+                    <input id="detalleUbicacion" class="form-control"
                            value="@Model.Ubicacion"
                            readonly />
                 </div>
 
                 <div class="col-md-6">
-                    <label class="form-label fw-bold">Estado</label>
-                    <input class="form-control"
+                    <label for="detalleEstado" class="form-label fw-bold">Estado</label>
+                    <input id="detalleEstado" class="form-control"
                            value="@Model.IdEstadoNavigation?.Nombre"
                            readonly />
                 </div>
 
                 <div class="col-12">
-                    <label class="form-label fw-bold">Observaciones</label>
-                    <textarea class="form-control"
+                    <label for="detalleObservaciones" class="form-label fw-bold">Observaciones</label>
+                    <textarea id="detalleObservaciones" class="form-control"
                               rows="3"
                               readonly>@Model.Observaciones</textarea>
                 </div>
 
                 <div class="col-md-6">
-                    <label class="form-label fw-bold">Fecha de registro</label>
-                    <input class="form-control"
+                    <label for="detalleFechaRegistro" class="form-label fw-bold">Fecha de registro</label>
+                    <input id="detalleFechaRegistro" class="form-control"
                            value="@Model.FechaRegistro.ToString("dd/MM/yyyy")"
                            readonly />
                 </div>
@@ -114,62 +114,62 @@
                 <div class="row g-3">
 
                     <div class="col-md-6">
-                        <label class="form-label fw-bold">Procesador</label>
-                        <input class="form-control"
+                        <label for="detalleProcesador" class="form-label fw-bold">Procesador</label>
+                        <input id="detalleProcesador" class="form-control"
                                value="@computador.Procesador" readonly />
                     </div>
 
                     <div class="col-md-6">
-                        <label class="form-label fw-bold">Memoria RAM</label>
-                        <input class="form-control"
+                        <label for="detalleMemoriaRam" class="form-label fw-bold">Memoria RAM</label>
+                        <input id="detalleMemoriaRam" class="form-control"
                                value="@($"{computador.CapacidadRamGb} GB")" readonly />
                     </div>
 
                     <div class="col-md-6">
-                        <label class="form-label fw-bold">Tipo de RAM</label>
-                        <input class="form-control"
+                        <label for="detalleTipoRam" class="form-label fw-bold">Tipo de RAM</label>
+                        <input id="detalleTipoRam" class="form-control"
                                value="@computador.TipoRam" readonly />
                     </div>
 
                     <div class="col-md-6">
-                        <label class="form-label fw-bold">GPU</label>
-                        <input class="form-control"
+                        <label for="detalleGpu" class="form-label fw-bold">GPU</label>
+                        <input id="detalleGpu" class="form-control"
                                value="@computador.Gpu" readonly />
                     </div>
 
                     <div class="col-md-6">
-                        <label class="form-label fw-bold">Sistema operativo</label>
-                        <input class="form-control"
+                        <label for="detalleSistemaOperativoPc" class="form-label fw-bold">Sistema operativo</label>
+                        <input id="detalleSistemaOperativoPc" class="form-control"
                                value="@computador.SistemaOperativo" readonly />
                     </div>
 
                     <div class="col-md-6">
-                        <label class="form-label fw-bold">Refrigeración</label>
-                        <input class="form-control"
+                        <label for="detalleRefrigeracion" class="form-label fw-bold">Refrigeración</label>
+                        <input id="detalleRefrigeracion" class="form-control"
                                value="@computador.Refrigeracion" readonly />
                     </div>
 
                     <div class="col-md-6">
-                        <label class="form-label fw-bold">Puertos</label>
-                        <input class="form-control"
+                        <label for="detallePuertosPc" class="form-label fw-bold">Puertos</label>
+                        <input id="detallePuertosPc" class="form-control"
                                value="@computador.Puertos" readonly />
                     </div>
 
                     <div class="col-md-6">
-                        <label class="form-label fw-bold">Fuente de poder</label>
-                        <input class="form-control"
+                        <label for="detalleFuentePoder" class="form-label fw-bold">Fuente de poder</label>
+                        <input id="detalleFuentePoder" class="form-control"
                                value="@computador.FuentePoder" readonly />
                     </div>
 
                     <div class="col-md-6">
-                        <label class="form-label fw-bold">Batería</label>
-                        <input class="form-control"
+                        <label for="detalleBateria" class="form-label fw-bold">Batería</label>
+                        <input id="detalleBateria" class="form-control"
                                value="@computador.Bateria" readonly />
                     </div>
 
                     <div class="col-md-6">
-                        <label class="form-label fw-bold">Pantalla</label>
-                        <input class="form-control"
+                        <label for="detallePantallaPortatil" class="form-label fw-bold">Pantalla</label>
+                        <input id="detallePantallaPortatil" class="form-control"
                                value="@computador.Pantalla" readonly />
                     </div>
 
@@ -219,33 +219,33 @@
                 <div class="row g-3">
 
                     <div class="col-md-6">
-                        <label class="form-label fw-bold">Tipo de impresora</label>
-                        <input class="form-control"
+                        <label for="detalleTipoImpresora" class="form-label fw-bold">Tipo de impresora</label>
+                        <input id="detalleTipoImpresora" class="form-control"
                                value="@impresora.TipoImpresora" readonly />
                     </div>
 
                     <div class="col-md-6">
-                        <label class="form-label fw-bold">Resolución de impresión</label>
-                        <input class="form-control"
+                        <label for="detalleResolucionImpresion" class="form-label fw-bold">Resolución de impresión</label>
+                        <input id="detalleResolucionImpresion" class="form-control"
                                value="@impresora.ResolucionImpresion" readonly />
                     </div>
 
                     <div class="col-md-6">
-                        <label class="form-label fw-bold">Formatos soportados</label>
-                        <input class="form-control"
+                        <label for="detalleFormatosSoportados" class="form-label fw-bold">Formatos soportados</label>
+                        <input id="detalleFormatosSoportados" class="form-control"
                                value="@impresora.FormatosSoportados" readonly />
                     </div>
 
                     <div class="col-md-6">
-                        <label class="form-label fw-bold">Impresión a color</label>
-                        <input class="form-control"
+                        <label for="detalleImpresionColor" class="form-label fw-bold">Impresión a color</label>
+                        <input id="detalleImpresionColor" class="form-control"
                                value="@(impresora.ImpresionColor ? "Sí" : "No")"
                                readonly />
                     </div>
 
                     <div class="col-md-6">
-                        <label class="form-label fw-bold">Puertos</label>
-                        <input class="form-control"
+                        <label for="detallePuertosImpresora" class="form-label fw-bold">Puertos</label>
+                        <input id="detallePuertosImpresora" class="form-control"
                                value="@impresora.Puertos" readonly />
                     </div>
 
@@ -258,45 +258,45 @@
                 <div class="row g-3">
 
                     <div class="col-md-6">
-                        <label class="form-label fw-bold">Tamaño</label>
-                        <input class="form-control"
+                        <label for="detalleTamanoPantalla" class="form-label fw-bold">Tamaño</label>
+                        <input id="detalleTamanoPantalla" class="form-control"
                                value="@($"{pantalla.TamanoPulgadas} pulgadas")" readonly />
                     </div>
 
                     <div class="col-md-6">
-                        <label class="form-label fw-bold">Resolución</label>
-                        <input class="form-control"
+                        <label for="detalleResolucionPantalla" class="form-label fw-bold">Resolución</label>
+                        <input id="detalleResolucionPantalla" class="form-control"
                                value="@pantalla.Resolucion" readonly />
                     </div>
 
                     <div class="col-md-6">
-                        <label class="form-label fw-bold">Frecuencia de actualización</label>
-                        <input class="form-control"
+                        <label for="detalleFrecuenciaActualizacion" class="form-label fw-bold">Frecuencia de actualización</label>
+                        <input id="detalleFrecuenciaActualizacion" class="form-control"
                                value="@($"{pantalla.FrecuenciaActualizacion} Hz")" readonly />
                     </div>
 
                     <div class="col-md-6">
-                        <label class="form-label fw-bold">Tecnología del panel</label>
-                        <input class="form-control"
+                        <label for="detalleTecnologiaPanel" class="form-label fw-bold">Tecnología del panel</label>
+                        <input id="detalleTecnologiaPanel" class="form-control"
                                value="@pantalla.TecnologiaPanel" readonly />
                     </div>
 
                     <div class="col-md-6">
-                        <label class="form-label fw-bold">HDR</label>
-                        <input class="form-control"
+                        <label for="detalleHdr" class="form-label fw-bold">HDR</label>
+                        <input id="detalleHdr" class="form-control"
                                value="@(pantalla.Hdr.HasValue ? (pantalla.Hdr.Value ? "Sí" : "No") : "No especificado")"
                                readonly />
                     </div>
 
                     <div class="col-md-6">
-                        <label class="form-label fw-bold">Sistema operativo</label>
-                        <input class="form-control"
+                        <label for="detalleSistemaOperativoPantalla" class="form-label fw-bold">Sistema operativo</label>
+                        <input id="detalleSistemaOperativoPantalla" class="form-control"
                                value="@pantalla.SistemaOperativo" readonly />
                     </div>
 
                     <div class="col-md-6">
-                        <label class="form-label fw-bold">Puertos</label>
-                        <input class="form-control"
+                        <label for="detallePuertosPantalla" class="form-label fw-bold">Puertos</label>
+                        <input id="detallePuertosPantalla" class="form-control"
                                value="@pantalla.Puertos" readonly />
                     </div>
 
@@ -309,86 +309,86 @@
                 <div class="row g-3">
 
                     <div class="col-md-6">
-                        <label class="form-label fw-bold">Tecnología de proyección</label>
-                        <input class="form-control"
+                        <label for="detalleTecnologiaProyeccion" class="form-label fw-bold">Tecnología de proyección</label>
+                        <input id="detalleTecnologiaProyeccion" class="form-control"
                                value="@proyector.TecnologiaProyeccion" readonly />
                     </div>
 
                     <div class="col-md-6">
-                        <label class="form-label fw-bold">Fuente de iluminación</label>
-                        <input class="form-control"
+                        <label for="detalleFuenteIluminacion" class="form-label fw-bold">Fuente de iluminación</label>
+                        <input id="detalleFuenteIluminacion" class="form-control"
                                value="@proyector.FuenteIluminacion" readonly />
                     </div>
 
                     <div class="col-md-6">
-                        <label class="form-label fw-bold">Resolución nativa</label>
-                        <input class="form-control"
+                        <label for="detalleResolucionNativa" class="form-label fw-bold">Resolución nativa</label>
+                        <input id="detalleResolucionNativa" class="form-control"
                                value="@proyector.ResolucionNativa" readonly />
                     </div>
 
                     <div class="col-md-6">
-                        <label class="form-label fw-bold">Resolución máxima</label>
-                        <input class="form-control"
+                        <label for="detalleResolucionMaxima" class="form-label fw-bold">Resolución máxima</label>
+                        <input id="detalleResolucionMaxima" class="form-control"
                                value="@proyector.ResolucionMaxima" readonly />
                     </div>
 
                     <div class="col-md-6">
-                        <label class="form-label fw-bold">Brillo</label>
-                        <input class="form-control"
+                        <label for="detalleBrillo" class="form-label fw-bold">Brillo</label>
+                        <input id="detalleBrillo" class="form-control"
                                value="@($"{proyector.BrilloLumenes} lúmenes")" readonly />
                     </div>
 
                     <div class="col-md-6">
-                        <label class="form-label fw-bold">Relación de contraste</label>
-                        <input class="form-control"
+                        <label for="detalleRelacionContraste" class="form-label fw-bold">Relación de contraste</label>
+                        <input id="detalleRelacionContraste" class="form-control"
                                value="@proyector.RelacionContraste" readonly />
                     </div>
 
                     <div class="col-md-6">
-                        <label class="form-label fw-bold">Relación de aspecto</label>
-                        <input class="form-control"
+                        <label for="detalleRelacionAspecto" class="form-label fw-bold">Relación de aspecto</label>
+                        <input id="detalleRelacionAspecto" class="form-control"
                                value="@proyector.RelacionAspecto" readonly />
                     </div>
 
                     <div class="col-md-6">
-                        <label class="form-label fw-bold">Tamaño de proyección</label>
-                        <input class="form-control"
+                        <label for="detalleTamanoProyeccion" class="form-label fw-bold">Tamaño de proyección</label>
+                        <input id="detalleTamanoProyeccion" class="form-control"
                                value="@proyector.TamanoProyeccion" readonly />
                     </div>
 
                     <div class="col-md-6">
-                        <label class="form-label fw-bold">Distancia de proyección</label>
-                        <input class="form-control"
+                        <label for="detalleDistanciaProyeccion" class="form-label fw-bold">Distancia de proyección</label>
+                        <input id="detalleDistanciaProyeccion" class="form-control"
                                value="@proyector.DistanciaProyeccion" readonly />
                     </div>
 
                     <div class="col-md-6">
-                        <label class="form-label fw-bold">Tipo de lente</label>
-                        <input class="form-control"
+                        <label for="detalleTipoLente" class="form-label fw-bold">Tipo de lente</label>
+                        <input id="detalleTipoLente" class="form-control"
                                value="@proyector.TipoLente" readonly />
                     </div>
 
                     <div class="col-md-6">
-                        <label class="form-label fw-bold">Corrección trapezoidal</label>
-                        <input class="form-control"
+                        <label for="detalleCorreccionTrapezoidal" class="form-label fw-bold">Corrección trapezoidal</label>
+                        <input id="detalleCorreccionTrapezoidal" class="form-control"
                                value="@proyector.CorreccionTrapezoidal" readonly />
                     </div>
 
                     <div class="col-md-6">
-                        <label class="form-label fw-bold">Puertos</label>
-                        <input class="form-control"
+                        <label for="detallePuertosProyector" class="form-label fw-bold">Puertos</label>
+                        <input id="detallePuertosProyector" class="form-control"
                                value="@proyector.Puertos" readonly />
                     </div>
 
                     <div class="col-md-6">
-                        <label class="form-label fw-bold">Horas de uso</label>
-                        <input class="form-control"
+                        <label for="detalleHorasUso" class="form-label fw-bold">Horas de uso</label>
+                        <input id="detalleHorasUso" class="form-control"
                                value="@proyector.HorasUso" readonly />
                     </div>
 
                     <div class="col-md-6">
-                        <label class="form-label fw-bold">Altavoces integrados</label>
-                        <input class="form-control"
+                        <label for="detalleAltavocesIntegrados" class="form-label fw-bold">Altavoces integrados</label>
+                        <input id="detalleAltavocesIntegrados" class="form-control"
                                value="@(proyector.AltavocesIntegrados.HasValue ? (proyector.AltavocesIntegrados.Value ? "Sí" : "No") : "No especificado")"
                                readonly />
                     </div>

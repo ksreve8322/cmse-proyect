@@ -2,6 +2,7 @@
 
 @{
     ViewData["Title"] = "Registrar mantenimiento";
+
     var repuestos = ViewBag.RepuestosTemporales as IEnumerable<cmse.Controllers.MantenimientoController.RepuestoTemporal>
         ?? Enumerable.Empty<cmse.Controllers.MantenimientoController.RepuestoTemporal>();
 }
@@ -11,23 +12,28 @@
 
     @if (TempData["Error"] != null)
     {
-        <div class="alert alert-danger">
+        <div class="alert alert-danger" role="alert">
             @TempData["Error"]
         </div>
     }
 
     @if (TempData["Exito"] != null)
     {
-        <div class="alert alert-success">
+        <div class="alert alert-success" role="status">
             @TempData["Exito"]
         </div>
     }
 
     <div class="cmse-form-section">
         <h3>Información de la incidencia</h3>
+
         <div class="cmse-form-group">
-            <label>ID de incidencia</label>
-            <input type="text" value="@Model.IdIncidencia" readonly />
+            <label for="idIncidencia">ID de incidencia</label>
+            <input type="text"
+                   id="idIncidencia"
+                   value="@Model.IdIncidencia"
+                   aria-label="ID de incidencia"
+                   readonly />
         </div>
     </div>
 
@@ -35,23 +41,39 @@
         <h3>Información del equipo</h3>
 
         <div class="cmse-form-group">
-            <label>Equipo</label>
-            <input type="text" value="@Model.IdEquipoNavigation.Nombre" readonly />
+            <label for="nombreEquipo">Equipo</label>
+            <input type="text"
+                   id="nombreEquipo"
+                   value="@Model.IdEquipoNavigation.Nombre"
+                   aria-label="Nombre del equipo"
+                   readonly />
         </div>
 
         <div class="cmse-form-group">
-            <label>Tipo</label>
-            <input type="text" value="@Model.IdEquipoNavigation.IdTipoEquipoNavigation.Nombre" readonly />
+            <label for="tipoEquipo">Tipo</label>
+            <input type="text"
+                   id="tipoEquipo"
+                   value="@Model.IdEquipoNavigation.IdTipoEquipoNavigation.Nombre"
+                   aria-label="Tipo de equipo"
+                   readonly />
         </div>
 
         <div class="cmse-form-group">
-            <label>Modelo</label>
-            <input type="text" value="@Model.IdEquipoNavigation.Modelo" readonly />
+            <label for="modeloEquipo">Modelo</label>
+            <input type="text"
+                   id="modeloEquipo"
+                   value="@Model.IdEquipoNavigation.Modelo"
+                   aria-label="Modelo del equipo"
+                   readonly />
         </div>
 
         <div class="cmse-form-group">
-            <label>Número de serie</label>
-            <input type="text" value="@Model.IdEquipoNavigation.NumeroSerie" readonly />
+            <label for="numeroSerie">Número de serie</label>
+            <input type="text"
+                   id="numeroSerie"
+                   value="@Model.IdEquipoNavigation.NumeroSerie"
+                   aria-label="Número de serie del equipo"
+                   readonly />
         </div>
     </div>
 
@@ -59,8 +81,12 @@
         <h3>Mantenimiento</h3>
 
         <div class="cmse-form-group">
-            <label>Fecha programada</label>
-            <input type="text" value="@Model.FechaProgramada.ToString("dd/MM/yyyy HH:mm")" readonly />
+            <label for="fechaProgramada">Fecha programada</label>
+            <input type="text"
+                   id="fechaProgramada"
+                   value="@Model.FechaProgramada.ToString("dd/MM/yyyy HH:mm")"
+                   aria-label="Fecha programada del mantenimiento"
+                   readonly />
         </div>
     </div>
 
@@ -71,14 +97,15 @@
         {
             <div style="overflow-x: auto;">
                 <table class="table table-bordered table-striped">
+                    <caption class="visually-hidden">Listado de repuestos utilizados en el mantenimiento</caption>
                     <thead>
                         <tr>
-                            <th>Nombre</th>
-                            <th>Código</th>
-                            <th>Cantidad</th>
-                            <th>Valor unitario</th>
-                            <th>Valor total</th>
-                            <th>Fecha de instalación</th>
+                            <th scope="col">Nombre</th>
+                            <th scope="col">Código</th>
+                            <th scope="col">Cantidad</th>
+                            <th scope="col">Valor unitario</th>
+                            <th scope="col">Valor total</th>
+                            <th scope="col">Fecha de instalación</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -121,17 +148,18 @@
             <h3>Resultado del mantenimiento</h3>
 
             <div class="cmse-form-group">
-                <label for="actividades">Actividades realizadas y observaciones</label>
+                <label for="actividades">Actividades realizadas y observaciones *</label>
                 <textarea id="actividades"
                           name="actividades"
                           rows="6"
                           required
+                          aria-required="true"
                           placeholder="Describe las actividades realizadas y las observaciones..."></textarea>
             </div>
 
             <div class="cmse-form-group">
-                <label for="resultado">Resultado del mantenimiento</label>
-                <select id="resultado" name="resultado" required>
+                <label for="resultado">Resultado del mantenimiento *</label>
+                <select id="resultado" name="resultado" required aria-required="true">
                     <option value="">Seleccione el resultado</option>
                     <option value="Satisfactorio">Satisfactorio</option>
                     <option value="Con observaciones">Con observaciones</option>

@@ -1917,3 +1917,87 @@ body {
         transition: none;
     }
 }
+/* =========================================
+   CMSE - Barra de navegación compacta
+========================================= */
+
+.cmse-navbar-container {
+    width: 100%;
+    max-width: 1600px;
+    min-height: 60px;
+    margin: 0 auto;
+    padding: 0 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+}
+
+.cmse-navbar-logo {
+    width: 120px;
+    height: 42px;
+    object-fit: cover;
+    object-position: center;
+    border-radius: 7px;
+}
+
+.cmse-navbar-menu {
+    display: flex !important;
+    align-items: center;
+    justify-content: space-between;
+    flex: 1;
+    min-width: 0;
+    margin-left: 8px;
+}
+
+.cmse-navbar-links {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 2px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+    .cmse-navbar-links a,
+    .cmse-navbar-account a {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 7px 9px;
+        color: #374151;
+        font-size: 13px;
+        font-weight: 500;
+        text-decoration: none;
+        border-radius: 7px;
+        white-space: nowrap;
+    }
+
+        .cmse-navbar-links a:hover,
+        .cmse-navbar-account a:hover {
+            color: #0d6efd;
+            background: #f0f6ff;
+        }
+
+.cmse-navbar-account {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+    .cmse-navbar-account form {
+        margin: 0;
+    }
+
+.cmse-navbar-logout {
+    padding: 7px 10px;
+    border: 1px solid #dc3545;
+    border-radius: 7px;
+    background: transparent;
+    color: #dc3545;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+}
