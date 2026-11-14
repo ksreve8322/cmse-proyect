@@ -39,8 +39,9 @@
                 <div class="row g-3">
 
                     <div class="col-md-6">
-                        <label class="form-label fw-bold">Tipo de equipo</label>
-                        <input class="form-control"
+                        <label for="TipoEquipo" class="form-label fw-bold">Tipo de equipo</label>
+                        <input id="TipoEquipo"
+                               class="form-control"
                                value="@Model.IdTipoEquipoNavigation?.Nombre"
                                readonly />
                     </div>
@@ -54,8 +55,9 @@
                     </div>
 
                     <div class="col-md-6">
-                        <label class="form-label fw-bold">Código de inventario</label>
-                        <input class="form-control"
+                        <label for="CodigoInventario" class="form-label fw-bold">Código de inventario</label>
+                        <input id="CodigoInventario"
+                               class="form-control"
                                value="@Model.CodigoInventario"
                                readonly />
                     </div>
@@ -129,75 +131,55 @@
                     <div class="row g-3">
 
                         <div class="col-md-6">
-                            <label asp-for="EquiposComputadore.Procesador"
-                                   class="form-label fw-bold">Procesador</label>
-                            <input asp-for="EquiposComputadore.Procesador"
-                                   class="form-control" />
+                            <label asp-for="EquiposComputadore.Procesador" class="form-label fw-bold">Procesador</label>
+                            <input asp-for="EquiposComputadore.Procesador" class="form-control" />
                         </div>
 
                         <div class="col-md-6">
-                            <label asp-for="EquiposComputadore.CapacidadRamGb"
-                                   class="form-label fw-bold">Capacidad RAM (GB)</label>
-                            <input asp-for="EquiposComputadore.CapacidadRamGb"
-                                   type="number" min="1" class="form-control" />
+                            <label asp-for="EquiposComputadore.CapacidadRamGb" class="form-label fw-bold">Capacidad RAM (GB)</label>
+                            <input asp-for="EquiposComputadore.CapacidadRamGb" type="number" min="1" class="form-control" />
                         </div>
 
                         <div class="col-md-6">
-                            <label asp-for="EquiposComputadore.TipoRam"
-                                   class="form-label fw-bold">Tipo de RAM</label>
-                            <input asp-for="EquiposComputadore.TipoRam"
-                                   class="form-control" />
+                            <label asp-for="EquiposComputadore.TipoRam" class="form-label fw-bold">Tipo de RAM</label>
+                            <input asp-for="EquiposComputadore.TipoRam" class="form-control" />
                         </div>
 
                         <div class="col-md-6">
-                            <label asp-for="EquiposComputadore.Gpu"
-                                   class="form-label fw-bold">GPU</label>
-                            <input asp-for="EquiposComputadore.Gpu"
-                                   class="form-control" />
+                            <label asp-for="EquiposComputadore.Gpu" class="form-label fw-bold">GPU</label>
+                            <input asp-for="EquiposComputadore.Gpu" class="form-control" />
                         </div>
 
                         <div class="col-md-6">
-                            <label asp-for="EquiposComputadore.SistemaOperativo"
-                                   class="form-label fw-bold">Sistema operativo</label>
-                            <input asp-for="EquiposComputadore.SistemaOperativo"
-                                   class="form-control" />
+                            <label asp-for="EquiposComputadore.SistemaOperativo" class="form-label fw-bold">Sistema operativo</label>
+                            <input asp-for="EquiposComputadore.SistemaOperativo" class="form-control" />
                         </div>
 
                         <div class="col-md-6">
-                            <label asp-for="EquiposComputadore.Refrigeracion"
-                                   class="form-label fw-bold">Refrigeración</label>
-                            <input asp-for="EquiposComputadore.Refrigeracion"
-                                   class="form-control" />
+                            <label asp-for="EquiposComputadore.Refrigeracion" class="form-label fw-bold">Refrigeración</label>
+                            <input asp-for="EquiposComputadore.Refrigeracion" class="form-control" />
                         </div>
 
                         <div class="col-md-6">
-                            <label asp-for="EquiposComputadore.Puertos"
-                                   class="form-label fw-bold">Puertos</label>
-                            <input asp-for="EquiposComputadore.Puertos"
-                                   class="form-control" />
+                            <label asp-for="EquiposComputadore.Puertos" class="form-label fw-bold">Puertos</label>
+                            <input asp-for="EquiposComputadore.Puertos" class="form-control" />
                         </div>
 
                         <div class="col-md-6">
-                            <label asp-for="EquiposComputadore.FuentePoder"
-                                   class="form-label fw-bold">Fuente de poder</label>
-                            <input asp-for="EquiposComputadore.FuentePoder"
-                                   class="form-control" />
+                            <label asp-for="EquiposComputadore.FuentePoder" class="form-label fw-bold">Fuente de poder</label>
+                            <input asp-for="EquiposComputadore.FuentePoder" class="form-control" />
                         </div>
 
                         @if (Model.IdTipoEquipo == 2)
                         {
                             <div class="col-md-6">
-                                <label asp-for="EquiposComputadore.Bateria"
-                                       class="form-label fw-bold">Batería</label>
-                                <input asp-for="EquiposComputadore.Bateria"
-                                       class="form-control" />
+                                <label asp-for="EquiposComputadore.Bateria" class="form-label fw-bold">Batería</label>
+                                <input asp-for="EquiposComputadore.Bateria" class="form-control" />
                             </div>
 
                             <div class="col-md-6">
-                                <label asp-for="EquiposComputadore.Pantalla"
-                                       class="form-label fw-bold">Pantalla</label>
-                                <input asp-for="EquiposComputadore.Pantalla"
-                                       class="form-control" />
+                                <label asp-for="EquiposComputadore.Pantalla" class="form-label fw-bold">Pantalla</label>
+                                <input asp-for="EquiposComputadore.Pantalla" class="form-control" />
                             </div>
                         }
                     </div>
@@ -227,8 +209,9 @@
                                        value="@almacenamientos[i].IdAlmacenamiento" />
 
                                 <div class="col-md-4">
-                                    <label class="form-label fw-bold">Capacidad</label>
-                                    <input type="number"
+                                    <label for="Capacidad_@i" class="form-label fw-bold">Capacidad</label>
+                                    <input id="Capacidad_@i"
+                                           type="number"
                                            step="0.01"
                                            min="0.01"
                                            class="form-control"
@@ -237,8 +220,9 @@
                                 </div>
 
                                 <div class="col-md-3">
-                                    <label class="form-label fw-bold">Unidad</label>
-                                    <select class="form-select"
+                                    <label for="Unidad_@i" class="form-label fw-bold">Unidad</label>
+                                    <select id="Unidad_@i"
+                                            class="form-select"
                                             name="EquiposComputadore.AlmacenamientosEquipos[@i].Unidad">
                                         <option value="">Selecciona</option>
                                         <option value="GB" selected="@(almacenamientos[i].Unidad == "GB")">GB</option>
@@ -247,8 +231,9 @@
                                 </div>
 
                                 <div class="col-md-3">
-                                    <label class="form-label fw-bold">Tipo</label>
-                                    <select class="form-select"
+                                    <label for="TipoAlmacenamiento_@i" class="form-label fw-bold">Tipo</label>
+                                    <select id="TipoAlmacenamiento_@i"
+                                            class="form-select"
                                             name="EquiposComputadore.AlmacenamientosEquipos[@i].TipoAlmacenamiento">
                                         <option value="">Selecciona</option>
                                         <option value="HDD" selected="@(almacenamientos[i].TipoAlmacenamiento == "HDD")">HDD</option>
@@ -282,39 +267,29 @@
 
                     <div class="row g-3">
                         <div class="col-md-6">
-                            <label asp-for="EquiposImpresora.TipoImpresora"
-                                   class="form-label fw-bold">Tipo de impresora</label>
-                            <input asp-for="EquiposImpresora.TipoImpresora"
-                                   class="form-control" />
+                            <label asp-for="EquiposImpresora.TipoImpresora" class="form-label fw-bold">Tipo de impresora</label>
+                            <input asp-for="EquiposImpresora.TipoImpresora" class="form-control" />
                         </div>
 
                         <div class="col-md-6">
-                            <label asp-for="EquiposImpresora.ResolucionImpresion"
-                                   class="form-label fw-bold">Resolución de impresión</label>
-                            <input asp-for="EquiposImpresora.ResolucionImpresion"
-                                   class="form-control" />
+                            <label asp-for="EquiposImpresora.ResolucionImpresion" class="form-label fw-bold">Resolución de impresión</label>
+                            <input asp-for="EquiposImpresora.ResolucionImpresion" class="form-control" />
                         </div>
 
                         <div class="col-md-6">
-                            <label asp-for="EquiposImpresora.FormatosSoportados"
-                                   class="form-label fw-bold">Formatos soportados</label>
-                            <input asp-for="EquiposImpresora.FormatosSoportados"
-                                   class="form-control" />
+                            <label asp-for="EquiposImpresora.FormatosSoportados" class="form-label fw-bold">Formatos soportados</label>
+                            <input asp-for="EquiposImpresora.FormatosSoportados" class="form-control" />
                         </div>
 
                         <div class="col-md-6">
-                            <label asp-for="EquiposImpresora.Puertos"
-                                   class="form-label fw-bold">Puertos</label>
-                            <input asp-for="EquiposImpresora.Puertos"
-                                   class="form-control" />
+                            <label asp-for="EquiposImpresora.Puertos" class="form-label fw-bold">Puertos</label>
+                            <input asp-for="EquiposImpresora.Puertos" class="form-control" />
                         </div>
 
                         <div class="col-md-6">
                             <div class="form-check mt-4">
-                                <input asp-for="EquiposImpresora.ImpresionColor"
-                                       class="form-check-input" />
-                                <label asp-for="EquiposImpresora.ImpresionColor"
-                                       class="form-check-label fw-bold">
+                                <input asp-for="EquiposImpresora.ImpresionColor" class="form-check-input" />
+                                <label asp-for="EquiposImpresora.ImpresionColor" class="form-check-label fw-bold">
                                     Impresión a color
                                 </label>
                             </div>
@@ -327,53 +302,39 @@
 
                     <div class="row g-3">
                         <div class="col-md-6">
-                            <label asp-for="EquiposPantalla.TamanoPulgadas"
-                                   class="form-label fw-bold">Tamaño (pulgadas)</label>
-                            <input asp-for="EquiposPantalla.TamanoPulgadas"
-                                   type="number" step="0.1" class="form-control" />
+                            <label asp-for="EquiposPantalla.TamanoPulgadas" class="form-label fw-bold">Tamaño (pulgadas)</label>
+                            <input asp-for="EquiposPantalla.TamanoPulgadas" type="number" step="0.1" class="form-control" />
                         </div>
 
                         <div class="col-md-6">
-                            <label asp-for="EquiposPantalla.Resolucion"
-                                   class="form-label fw-bold">Resolución</label>
-                            <input asp-for="EquiposPantalla.Resolucion"
-                                   class="form-control" />
+                            <label asp-for="EquiposPantalla.Resolucion" class="form-label fw-bold">Resolución</label>
+                            <input asp-for="EquiposPantalla.Resolucion" class="form-control" />
                         </div>
 
                         <div class="col-md-6">
-                            <label asp-for="EquiposPantalla.FrecuenciaActualizacion"
-                                   class="form-label fw-bold">Frecuencia (Hz)</label>
-                            <input asp-for="EquiposPantalla.FrecuenciaActualizacion"
-                                   type="number" min="1" class="form-control" />
+                            <label asp-for="EquiposPantalla.FrecuenciaActualizacion" class="form-label fw-bold">Frecuencia (Hz)</label>
+                            <input asp-for="EquiposPantalla.FrecuenciaActualizacion" type="number" min="1" class="form-control" />
                         </div>
 
                         <div class="col-md-6">
-                            <label asp-for="EquiposPantalla.TecnologiaPanel"
-                                   class="form-label fw-bold">Tecnología del panel</label>
-                            <input asp-for="EquiposPantalla.TecnologiaPanel"
-                                   class="form-control" />
+                            <label asp-for="EquiposPantalla.TecnologiaPanel" class="form-label fw-bold">Tecnología del panel</label>
+                            <input asp-for="EquiposPantalla.TecnologiaPanel" class="form-control" />
                         </div>
 
                         <div class="col-md-6">
-                            <label asp-for="EquiposPantalla.SistemaOperativo"
-                                   class="form-label fw-bold">Sistema operativo</label>
-                            <input asp-for="EquiposPantalla.SistemaOperativo"
-                                   class="form-control" />
+                            <label asp-for="EquiposPantalla.SistemaOperativo" class="form-label fw-bold">Sistema operativo</label>
+                            <input asp-for="EquiposPantalla.SistemaOperativo" class="form-control" />
                         </div>
 
                         <div class="col-md-6">
-                            <label asp-for="EquiposPantalla.Puertos"
-                                   class="form-label fw-bold">Puertos</label>
-                            <input asp-for="EquiposPantalla.Puertos"
-                                   class="form-control" />
+                            <label asp-for="EquiposPantalla.Puertos" class="form-label fw-bold">Puertos</label>
+                            <input asp-for="EquiposPantalla.Puertos" class="form-control" />
                         </div>
 
                         <div class="col-md-6">
                             <div class="form-check mt-4">
-                                <input asp-for="EquiposPantalla.Hdr"
-                                       class="form-check-input" />
-                                <label asp-for="EquiposPantalla.Hdr"
-                                       class="form-check-label fw-bold">HDR</label>
+                                <input asp-for="EquiposPantalla.Hdr" class="form-check-input" />
+                                <label asp-for="EquiposPantalla.Hdr" class="form-check-label fw-bold">HDR</label>
                             </div>
                         </div>
                     </div>
@@ -384,102 +345,74 @@
 
                     <div class="row g-3">
                         <div class="col-md-6">
-                            <label asp-for="EquiposProyectore.TecnologiaProyeccion"
-                                   class="form-label fw-bold">Tecnología de proyección</label>
-                            <input asp-for="EquiposProyectore.TecnologiaProyeccion"
-                                   class="form-control" />
+                            <label asp-for="EquiposProyectore.TecnologiaProyeccion" class="form-label fw-bold">Tecnología de proyección</label>
+                            <input asp-for="EquiposProyectore.TecnologiaProyeccion" class="form-control" />
                         </div>
 
                         <div class="col-md-6">
-                            <label asp-for="EquiposProyectore.FuenteIluminacion"
-                                   class="form-label fw-bold">Fuente de iluminación</label>
-                            <input asp-for="EquiposProyectore.FuenteIluminacion"
-                                   class="form-control" />
+                            <label asp-for="EquiposProyectore.FuenteIluminacion" class="form-label fw-bold">Fuente de iluminación</label>
+                            <input asp-for="EquiposProyectore.FuenteIluminacion" class="form-control" />
                         </div>
 
                         <div class="col-md-6">
-                            <label asp-for="EquiposProyectore.ResolucionNativa"
-                                   class="form-label fw-bold">Resolución nativa</label>
-                            <input asp-for="EquiposProyectore.ResolucionNativa"
-                                   class="form-control" />
+                            <label asp-for="EquiposProyectore.ResolucionNativa" class="form-label fw-bold">Resolución nativa</label>
+                            <input asp-for="EquiposProyectore.ResolucionNativa" class="form-control" />
                         </div>
 
                         <div class="col-md-6">
-                            <label asp-for="EquiposProyectore.ResolucionMaxima"
-                                   class="form-label fw-bold">Resolución máxima</label>
-                            <input asp-for="EquiposProyectore.ResolucionMaxima"
-                                   class="form-control" />
+                            <label asp-for="EquiposProyectore.ResolucionMaxima" class="form-label fw-bold">Resolución máxima</label>
+                            <input asp-for="EquiposProyectore.ResolucionMaxima" class="form-control" />
                         </div>
 
                         <div class="col-md-6">
-                            <label asp-for="EquiposProyectore.BrilloLumenes"
-                                   class="form-label fw-bold">Brillo (lúmenes)</label>
-                            <input asp-for="EquiposProyectore.BrilloLumenes"
-                                   type="number" min="1" class="form-control" />
+                            <label asp-for="EquiposProyectore.BrilloLumenes" class="form-label fw-bold">Brillo (lúmenes)</label>
+                            <input asp-for="EquiposProyectore.BrilloLumenes" type="number" min="1" class="form-control" />
                         </div>
 
                         <div class="col-md-6">
-                            <label asp-for="EquiposProyectore.RelacionContraste"
-                                   class="form-label fw-bold">Relación de contraste</label>
-                            <input asp-for="EquiposProyectore.RelacionContraste"
-                                   class="form-control" />
+                            <label asp-for="EquiposProyectore.RelacionContraste" class="form-label fw-bold">Relación de contraste</label>
+                            <input asp-for="EquiposProyectore.RelacionContraste" class="form-control" />
                         </div>
 
                         <div class="col-md-6">
-                            <label asp-for="EquiposProyectore.RelacionAspecto"
-                                   class="form-label fw-bold">Relación de aspecto</label>
-                            <input asp-for="EquiposProyectore.RelacionAspecto"
-                                   class="form-control" />
+                            <label asp-for="EquiposProyectore.RelacionAspecto" class="form-label fw-bold">Relación de aspecto</label>
+                            <input asp-for="EquiposProyectore.RelacionAspecto" class="form-control" />
                         </div>
 
                         <div class="col-md-6">
-                            <label asp-for="EquiposProyectore.TamanoProyeccion"
-                                   class="form-label fw-bold">Tamaño de proyección</label>
-                            <input asp-for="EquiposProyectore.TamanoProyeccion"
-                                   class="form-control" />
+                            <label asp-for="EquiposProyectore.TamanoProyeccion" class="form-label fw-bold">Tamaño de proyección</label>
+                            <input asp-for="EquiposProyectore.TamanoProyeccion" class="form-control" />
                         </div>
 
                         <div class="col-md-6">
-                            <label asp-for="EquiposProyectore.DistanciaProyeccion"
-                                   class="form-label fw-bold">Distancia de proyección</label>
-                            <input asp-for="EquiposProyectore.DistanciaProyeccion"
-                                   class="form-control" />
+                            <label asp-for="EquiposProyectore.DistanciaProyeccion" class="form-label fw-bold">Distancia de proyección</label>
+                            <input asp-for="EquiposProyectore.DistanciaProyeccion" class="form-control" />
                         </div>
 
                         <div class="col-md-6">
-                            <label asp-for="EquiposProyectore.TipoLente"
-                                   class="form-label fw-bold">Tipo de lente</label>
-                            <input asp-for="EquiposProyectore.TipoLente"
-                                   class="form-control" />
+                            <label asp-for="EquiposProyectore.TipoLente" class="form-label fw-bold">Tipo de lente</label>
+                            <input asp-for="EquiposProyectore.TipoLente" class="form-control" />
                         </div>
 
                         <div class="col-md-6">
-                            <label asp-for="EquiposProyectore.CorreccionTrapezoidal"
-                                   class="form-label fw-bold">Corrección trapezoidal</label>
-                            <input asp-for="EquiposProyectore.CorreccionTrapezoidal"
-                                   class="form-control" />
+                            <label asp-for="EquiposProyectore.CorreccionTrapezoidal" class="form-label fw-bold">Corrección trapezoidal</label>
+                            <input asp-for="EquiposProyectore.CorreccionTrapezoidal" class="form-control" />
                         </div>
 
                         <div class="col-md-6">
-                            <label asp-for="EquiposProyectore.Puertos"
-                                   class="form-label fw-bold">Puertos</label>
-                            <input asp-for="EquiposProyectore.Puertos"
-                                   class="form-control" />
+                            <label asp-for="EquiposProyectore.Puertos" class="form-label fw-bold">Puertos</label>
+                            <input asp-for="EquiposProyectore.Puertos" class="form-control" />
                         </div>
 
                         <div class="col-md-6">
-                            <label asp-for="EquiposProyectore.HorasUso"
-                                   class="form-label fw-bold">Horas de uso</label>
-                            <input asp-for="EquiposProyectore.HorasUso"
-                                   type="number" min="0" class="form-control" />
+                            <label asp-for="EquiposProyectore.HorasUso" class="form-label fw-bold">Horas de uso</label>
+                            <input asp-for="EquiposProyectore.HorasUso" type="number" min="0" class="form-control" />
                         </div>
 
                         <div class="col-md-6">
                             <div class="form-check mt-4">
-                                <input asp-for="EquiposProyectore.AltavocesIntegrados"
-                                       class="form-check-input" />
-                                <label asp-for="EquiposProyectore.AltavocesIntegrados"
-                                       class="form-check-label fw-bold">
+                                <input asp-for="EquiposProyectore.AltavocesIntegrados" class="form-check-input" />
+                                <label asp-for="EquiposProyectore.AltavocesIntegrados" class="form-check-label fw-bold">
                                     Altavoces integrados
                                 </label>
                             </div>
@@ -533,6 +466,16 @@
                             /AlmacenamientosEquipos\[\d+\]/,
                             "AlmacenamientosEquipos[" + indice + "]"
                         );
+
+                        if (control.id) {
+                            const propiedad = control.id.substring(0, control.id.lastIndexOf("_"));
+                            control.id = propiedad + "_" + indice;
+                        }
+                    });
+
+                    fila.querySelectorAll("label[for]").forEach(etiqueta => {
+                        const propiedad = etiqueta.htmlFor.substring(0, etiqueta.htmlFor.lastIndexOf("_"));
+                        etiqueta.htmlFor = propiedad + "_" + indice;
                     });
                 });
 
@@ -551,8 +494,9 @@
                                    value="0" />
 
                             <div class="col-md-4">
-                                <label class="form-label fw-bold">Capacidad</label>
-                                <input type="number"
+                                <label for="Capacidad_${indice}" class="form-label fw-bold">Capacidad</label>
+                                <input id="Capacidad_${indice}"
+                                       type="number"
                                        step="0.01"
                                        min="0.01"
                                        class="form-control"
@@ -561,8 +505,9 @@
                             </div>
 
                             <div class="col-md-3">
-                                <label class="form-label fw-bold">Unidad</label>
-                                <select class="form-select"
+                                <label for="Unidad_${indice}" class="form-label fw-bold">Unidad</label>
+                                <select id="Unidad_${indice}"
+                                        class="form-select"
                                         name="EquiposComputadore.AlmacenamientosEquipos[${indice}].Unidad"
                                         required>
                                     <option value="">Selecciona</option>
@@ -572,8 +517,9 @@
                             </div>
 
                             <div class="col-md-3">
-                                <label class="form-label fw-bold">Tipo</label>
-                                <select class="form-select"
+                                <label for="TipoAlmacenamiento_${indice}" class="form-label fw-bold">Tipo</label>
+                                <select id="TipoAlmacenamiento_${indice}"
+                                        class="form-select"
                                         name="EquiposComputadore.AlmacenamientosEquipos[${indice}].TipoAlmacenamiento"
                                         required>
                                     <option value="">Selecciona</option>

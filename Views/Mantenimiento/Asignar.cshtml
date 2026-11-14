@@ -21,35 +21,37 @@
         <div class="cmse-mantenimiento-grid">
 
             <div class="cmse-mantenimiento-campo">
-                <label>Número de incidencia</label>
-                <input type="text" value="@Model.IdIncidencia" readonly />
+                <label for="numeroIncidencia">Número de incidencia</label>
+                <input type="text" id="numeroIncidencia" value="@Model.IdIncidencia" readonly />
             </div>
 
             <div class="cmse-mantenimiento-campo">
-                <label>Título</label>
-                <input type="text" value="@Model.Titulo" readonly />
+                <label for="tituloIncidencia">Título</label>
+                <input type="text" id="tituloIncidencia" value="@Model.Titulo" readonly />
             </div>
 
             <div class="cmse-mantenimiento-campo">
-                <label>Equipo</label>
-                <input type="text" value="@Model.IdEquipoNavigation.Nombre" readonly />
+                <label for="nombreEquipo">Equipo</label>
+                <input type="text" id="nombreEquipo" value="@Model.IdEquipoNavigation.Nombre" readonly />
             </div>
 
             <div class="cmse-mantenimiento-campo">
-                <label>Código de inventario</label>
-                <input type="text" value="@Model.IdEquipoNavigation.CodigoInventario" readonly />
+                <label for="codigoInventario">Código de inventario</label>
+                <input type="text" id="codigoInventario" value="@Model.IdEquipoNavigation.CodigoInventario" readonly />
             </div>
 
             <div class="cmse-mantenimiento-campo">
-                <label>Usuario que reportó</label>
+                <label for="usuarioReporta">Usuario que reportó</label>
                 <input type="text"
+                       id="usuarioReporta"
                        value="@($"{Model.IdUsuarioNavigation.Nombres} {Model.IdUsuarioNavigation.Apellidos}")"
                        readonly />
             </div>
 
             <div class="cmse-mantenimiento-campo">
-                <label>Fecha de registro</label>
+                <label for="fechaRegistro">Fecha de registro</label>
                 <input type="text"
+                       id="fechaRegistro"
                        value="@Model.FechaRegistro.ToString("dd/MM/yyyy HH:mm")"
                        readonly />
             </div>
@@ -57,8 +59,8 @@
         </div>
 
         <div class="cmse-mantenimiento-campo cmse-mantenimiento-descripcion">
-            <label>Descripción de la incidencia</label>
-            <textarea readonly>@Model.Descripcion</textarea>
+            <label for="descripcionIncidencia">Descripción de la incidencia</label>
+            <textarea id="descripcionIncidencia" readonly>@Model.Descripcion</textarea>
         </div>
 
         <form asp-controller="Mantenimiento"

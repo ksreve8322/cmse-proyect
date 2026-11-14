@@ -26,25 +26,31 @@
             <div class="cmse-form-grid">
 
                 <div class="cmse-form-group">
-                    <label>Número de incidencia</label>
+                    <label for="numeroIncidencia">Número de incidencia</label>
                     <input type="text"
+                           id="numeroIncidencia"
                            class="form-control"
                            value="@Model.IdIncidencia"
+                           aria-label="Número de incidencia"
                            readonly />
                 </div>
 
                 <div class="cmse-form-group">
-                    <label>Título</label>
+                    <label for="tituloIncidencia">Título</label>
                     <input type="text"
+                           id="tituloIncidencia"
                            class="form-control"
                            value="@Model.Titulo"
+                           aria-label="Título de la incidencia"
                            readonly />
                 </div>
 
                 <div class="cmse-form-group" style="grid-column: 1 / -1;">
-                    <label>Descripción de la incidencia</label>
-                    <textarea class="form-control"
+                    <label for="descripcionIncidencia">Descripción de la incidencia</label>
+                    <textarea id="descripcionIncidencia"
+                              class="form-control"
                               rows="3"
+                              aria-label="Descripción de la incidencia"
                               readonly>@Model.Descripcion</textarea>
                 </div>
 
@@ -57,50 +63,62 @@
             <div class="cmse-form-grid">
 
                 <div class="cmse-form-group">
-                    <label>Equipo</label>
+                    <label for="nombreEquipo">Equipo</label>
                     <input type="text"
+                           id="nombreEquipo"
                            class="form-control"
                            value="@Model.IdEquipoNavigation?.Nombre"
+                           aria-label="Nombre del equipo"
                            readonly />
                 </div>
 
                 <div class="cmse-form-group">
-                    <label>Tipo de equipo</label>
+                    <label for="tipoEquipo">Tipo de equipo</label>
                     <input type="text"
+                           id="tipoEquipo"
                            class="form-control"
                            value="@Model.IdEquipoNavigation?.IdTipoEquipoNavigation?.Nombre"
+                           aria-label="Tipo de equipo"
                            readonly />
                 </div>
 
                 <div class="cmse-form-group">
-                    <label>Marca</label>
+                    <label for="marcaEquipo">Marca</label>
                     <input type="text"
+                           id="marcaEquipo"
                            class="form-control"
                            value="@Model.IdEquipoNavigation?.Marca"
+                           aria-label="Marca del equipo"
                            readonly />
                 </div>
 
                 <div class="cmse-form-group">
-                    <label>Modelo</label>
+                    <label for="modeloEquipo">Modelo</label>
                     <input type="text"
+                           id="modeloEquipo"
                            class="form-control"
                            value="@Model.IdEquipoNavigation?.Modelo"
+                           aria-label="Modelo del equipo"
                            readonly />
                 </div>
 
                 <div class="cmse-form-group">
-                    <label>Número de serie</label>
+                    <label for="numeroSerie">Número de serie</label>
                     <input type="text"
+                           id="numeroSerie"
                            class="form-control"
                            value="@Model.IdEquipoNavigation?.NumeroSerie"
+                           aria-label="Número de serie del equipo"
                            readonly />
                 </div>
 
                 <div class="cmse-form-group">
-                    <label>Código de inventario</label>
+                    <label for="codigoInventario">Código de inventario</label>
                     <input type="text"
+                           id="codigoInventario"
                            class="form-control"
                            value="@Model.IdEquipoNavigation?.CodigoInventario"
+                           aria-label="Código de inventario del equipo"
                            readonly />
                 </div>
 
@@ -120,6 +138,7 @@
                               rows="4"
                               maxlength="2000"
                               placeholder="Describe los problemas o anomalías encontrados..."
+                              aria-required="true"
                               required>@(ViewData.ModelState["hallazgos"]?.AttemptedValue)</textarea>
 
                     @Html.ValidationMessage("hallazgos", "", new { @class = "text-danger" })
@@ -133,6 +152,7 @@
                               rows="4"
                               maxlength="2000"
                               placeholder="Indica la causa identificada del problema..."
+                              aria-required="true"
                               required>@(ViewData.ModelState["causaFalla"]?.AttemptedValue)</textarea>
 
                     @Html.ValidationMessage("causaFalla", "", new { @class = "text-danger" })
@@ -169,5 +189,4 @@
         </form>
 
     </div>
-
 </div>

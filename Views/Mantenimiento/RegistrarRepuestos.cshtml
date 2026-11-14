@@ -16,30 +16,42 @@
 
         <div class="row">
             <div class="col-md-6 mb-3">
-                <label class="form-label">Equipo</label>
-                <input class="form-control"
+                <label for="nombreEquipo" class="form-label">Equipo</label>
+                <input type="text"
+                       id="nombreEquipo"
+                       class="form-control"
                        value="@Model.IdEquipoNavigation.Nombre"
+                       aria-label="Nombre del equipo"
                        readonly />
             </div>
 
             <div class="col-md-6 mb-3">
-                <label class="form-label">Tipo</label>
-                <input class="form-control"
+                <label for="tipoEquipo" class="form-label">Tipo</label>
+                <input type="text"
+                       id="tipoEquipo"
+                       class="form-control"
                        value="@Model.IdEquipoNavigation.IdTipoEquipoNavigation.Nombre"
+                       aria-label="Tipo de equipo"
                        readonly />
             </div>
 
             <div class="col-md-6 mb-3">
-                <label class="form-label">Modelo</label>
-                <input class="form-control"
+                <label for="modeloEquipo" class="form-label">Modelo</label>
+                <input type="text"
+                       id="modeloEquipo"
+                       class="form-control"
                        value="@Model.IdEquipoNavigation.Modelo"
+                       aria-label="Modelo del equipo"
                        readonly />
             </div>
 
             <div class="col-md-6 mb-3">
-                <label class="form-label">Número de serie</label>
-                <input class="form-control"
+                <label for="numeroSerieEquipo" class="form-label">Número de serie</label>
+                <input type="text"
+                       id="numeroSerieEquipo"
+                       class="form-control"
                        value="@Model.IdEquipoNavigation.NumeroSerie"
+                       aria-label="Número de serie del equipo"
                        readonly />
             </div>
         </div>
@@ -50,63 +62,104 @@
 
         <div class="row">
             <div class="col-md-6 mb-3">
-                <label class="form-label">Nombre</label>
-                <input type="text" name="nombre" class="form-control"
-                       required maxlength="100" />
-            </div>
-
-            <div class="col-md-6 mb-3">
-                <label class="form-label">Código</label>
-                <input type="text" name="codigo" class="form-control"
-                       required maxlength="50" />
-            </div>
-
-            <div class="col-md-6 mb-3">
-                <label class="form-label">Marca</label>
-                <input type="text" name="marca" class="form-control"
+                <label for="nombre" class="form-label">Nombre *</label>
+                <input type="text"
+                       id="nombre"
+                       name="nombre"
+                       class="form-control"
+                       required
+                       aria-required="true"
                        maxlength="100" />
             </div>
 
             <div class="col-md-6 mb-3">
-                <label class="form-label">Modelo</label>
-                <input type="text" name="modelo" class="form-control"
+                <label for="codigo" class="form-label">Código *</label>
+                <input type="text"
+                       id="codigo"
+                       name="codigo"
+                       class="form-control"
+                       required
+                       aria-required="true"
+                       maxlength="50" />
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label for="marca" class="form-label">Marca</label>
+                <input type="text"
+                       id="marca"
+                       name="marca"
+                       class="form-control"
                        maxlength="100" />
             </div>
 
             <div class="col-md-6 mb-3">
-                <label class="form-label">Número de serie</label>
-                <input type="text" name="numeroSerie" class="form-control"
+                <label for="modelo" class="form-label">Modelo</label>
+                <input type="text"
+                       id="modelo"
+                       name="modelo"
+                       class="form-control"
                        maxlength="100" />
             </div>
 
             <div class="col-md-6 mb-3">
-                <label class="form-label">Cantidad</label>
-                <input type="number" name="cantidad" id="cantidad"
-                       class="form-control" min="1" value="1" required />
+                <label for="numeroSerie" class="form-label">Número de serie</label>
+                <input type="text"
+                       id="numeroSerie"
+                       name="numeroSerie"
+                       class="form-control"
+                       maxlength="100" />
             </div>
 
             <div class="col-md-6 mb-3">
-                <label class="form-label">Valor unitario</label>
-                <input type="number" name="valorUnitario" id="valorUnitario"
-                       class="form-control" min="0.01" step="0.01" required />
+                <label for="cantidad" class="form-label">Cantidad *</label>
+                <input type="number"
+                       name="cantidad"
+                       id="cantidad"
+                       class="form-control"
+                       min="1"
+                       value="1"
+                       required
+                       aria-required="true" />
             </div>
 
             <div class="col-md-6 mb-3">
-                <label class="form-label">Valor total</label>
-                <input type="number" id="valorTotal"
-                       class="form-control" readonly />
+                <label for="valorUnitario" class="form-label">Valor unitario *</label>
+                <input type="number"
+                       name="valorUnitario"
+                       id="valorUnitario"
+                       class="form-control"
+                       min="0.01"
+                       step="0.01"
+                       required
+                       aria-required="true" />
             </div>
 
             <div class="col-md-6 mb-3">
-                <label class="form-label">Fecha de instalación</label>
-                <input type="date" name="fechaInstalacion"
-                       class="form-control" required />
+                <label for="valorTotal" class="form-label">Valor total</label>
+                <input type="number"
+                       id="valorTotal"
+                       class="form-control"
+                       aria-label="Valor total calculado del repuesto"
+                       readonly />
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label for="fechaInstalacion" class="form-label">Fecha de instalación *</label>
+                <input type="date"
+                       id="fechaInstalacion"
+                       name="fechaInstalacion"
+                       class="form-control"
+                       required
+                       aria-required="true" />
             </div>
 
             <div class="col-12 mb-3">
-                <label class="form-label">Observaciones</label>
-                <textarea name="observaciones" class="form-control"
-                          rows="3" maxlength="500"></textarea>
+                <label for="observaciones" class="form-label">Observaciones</label>
+                <textarea id="observaciones"
+                          name="observaciones"
+                          class="form-control"
+                          rows="3"
+                          maxlength="500"></textarea>
             </div>
         </div>
 

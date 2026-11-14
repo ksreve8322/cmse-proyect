@@ -12,59 +12,22 @@
     bool esAdministrador = rolId == 1;
 }
 
-<div class="container py-4">
+<div class="cmse-mantenimiento-container">
 
-    <div class="text-center mb-4">
-        <h1 class="fw-bold">
+    <!-- ENCABEZADO -->
+    <div class="cmse-mantenimiento-header">
+        <h2>
             @(esAdministrador ? "Gestionar equipos" : "Consultar equipos")
-        </h1>
+        </h2>
 
-        <p class="text-muted">
+        <p>
             @(esAdministrador
                 ? "Administración de equipos registrados en CMSE."
                 : "Consulta los equipos registrados y su información en CMSE.")
         </p>
     </div>
 
-    <!-- BOTONES DE ACCIONES -->
-    <div class="d-flex justify-content-center flex-wrap gap-2 mb-4">
-
-        <button type="button" class="btn btn-primary"
-                onclick="consultarEquipo()" title="Atajo: C">
-            Consultar
-        </button>
-
-        @if (esAdministrador)
-        {
-            <button type="button" class="btn btn-primary"
-                    onclick="actualizarEquipo()" title="Atajo: A">
-                Actualizar
-            </button>
-
-            <a asp-action="Create" class="btn btn-primary"
-               title="Atajo: R">
-                Registrar
-            </a>
-
-            <button type="button" class="btn btn-primary"
-                    onclick="eliminarEquipo()" title="Atajo: E">
-                Eliminar
-            </button>
-        }
-
-    </div>
-
-    <!-- AYUDA DE INTERACCIÓN -->
-    <p class="text-muted text-center small mb-3">
-        Selecciona un equipo para realizar una acción. También puedes hacer doble clic para consultar.
-    </p>
-
-    <!-- AVISO DE SELECCIÓN -->
-    <div id="avisoSeleccion" class="alert alert-warning text-center d-none">
-        Selecciona un equipo de la tabla para continuar.
-    </div>
-
-    <!-- MENSAJE DE OPERACIÓN EXITOSA -->
+    <!-- MENSAJES -->
     @if (TempData["Mensaje"] != null)
     {
         <div class="alert alert-success text-center">
@@ -72,7 +35,6 @@
         </div>
     }
 
-    <!-- MENSAJE DE ERROR -->
     @if (TempData["Error"] != null)
     {
         <div class="alert alert-danger text-center">
@@ -80,126 +42,179 @@
         </div>
     }
 
-    <!-- TABLA DE EQUIPOS -->
-    <div class="card shadow-sm">
+    <div id="avisoSeleccion" class="alert alert-warning text-center d-none">
+        Selecciona un equipo de la tabla para continuar.
+    </div>
 
-        <div class="card-header bg-primary text-white text-center">
-            <h5 class="mb-0">Equipos registrados</h5>
+    <!-- PANEL PRINCIPAL -->
+    <div class="cmse-mantenimiento-panel">
+
+        <!-- BÚSQUEDA -->
+        <div class="cmse-mantenimiento-barra-superior">
+
+            <div class="cmse-mantenimiento-busqueda">
+                <span class="cmse-mantenimiento-lupa" aria-hidden="true">⌕</span>
+
+                <input type="search"
+                       id="buscarEquipo"
+                       placeholder="Buscar equipo..."
+                       autocomplete="off"
+                       aria-label="Buscar equipo por tipo, modelo, marca o número de serie" />
+            </div>
+
         </div>
 
-        <div class="card-body">
+        <!-- BOTONES DE ACCIONES -->
+        <div class="cmse-mantenimiento-acciones justify-content-center">
 
-            @if (Model == null || !Model.Any())
+            <button type="button"
+                    class="cmse-mantenimiento-boton"
+                    onclick="consultarEquipo()"
+                    title="Atajo: C">
+                Consultar
+            </button>
+
+            @if (esAdministrador)
             {
-                <div class="alert alert-info text-center mb-0">
-                    No hay equipos registrados.
-                </div>
+                <button type="button"
+                        class="cmse-mantenimiento-boton"
+                        onclick="actualizarEquipo()"
+                        title="Atajo: A">
+                    Actualizar
+                </button>
+
+                <a asp-action="Create"
+                   class="cmse-mantenimiento-boton text-decoration-none"
+                   title="Atajo: R">
+                    Registrar
+                </a>
+
+                <button type="button"
+                        class="cmse-mantenimiento-boton"
+                        onclick="eliminarEquipo()"
+                        title="Atajo: E">
+                    Eliminar
+                </button>
             }
-            else
-            {
-                <div class="table-responsive">
 
-                    <table class="table table-hover align-middle text-center"
-                           id="tablaEquipos">
+        </div>
 
-                        <thead class="table-light">
-                            <tr>
-                                <th>Tipo</th>
-                                <th>Modelo</th>
-                                <th>Marca</th>
-                                <th>Número de serie</th>
+        <!-- TABLA -->
+        @if (Model == null || !Model.Any())
+        {
+            <div class="cmse-mantenimiento-vacio">
+                <h3>No hay equipos registrados</h3>
+                <p>No se encontraron equipos para mostrar.</p>
+            </div>
+        }
+        else
+        {
+            <div class="cmse-mantenimiento-tabla-contenedor">
+
+                <table class="cmse-mantenimiento-tabla"
+                       id="tablaEquipos">
+
+                    <thead>
+                        <tr>
+                            <th>Tipo</th>
+                            <th>Modelo</th>
+                            <th>Marca</th>
+                            <th>Número de serie</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach (var equipo in Model)
+                        {
+                            <tr class="fila-equipo"
+                                data-id="@equipo.IdEquipo"
+                                onclick="seleccionarEquipo(this)"
+                                ondblclick="consultarEquipo()">
+
+                                <td>
+                                    @equipo.IdTipoEquipoNavigation?.Nombre
+                                </td>
+
+                                <td>
+                                    @(equipo.Modelo ?? "No especificado")
+                                </td>
+
+                                <td>
+                                    @(equipo.Marca ?? "No especificada")
+                                </td>
+
+                                <td>
+                                    @(equipo.NumeroSerie ?? "No especificado")
+                                </td>
+
                             </tr>
-                        </thead>
+                        }
+                    </tbody>
 
-                        <tbody>
+                </table>
 
-                            @foreach (var equipo in Model)
+                <div id="sinResultadosBusqueda"
+                     class="cmse-mantenimiento-vacio d-none">
+                    <p>No se encontraron equipos que coincidan con la búsqueda.</p>
+                </div>
+
+            </div>
+
+            <!-- PAGINACIÓN -->
+            <div class="cmse-equipos-paginacion">
+
+                <span class="text-muted">
+                    Total: @totalRegistros |
+                    Página @paginaActual de @totalPaginas
+                </span>
+
+                @if (totalPaginas > 1)
+                {
+                    <nav aria-label="Paginación de equipos">
+                        <ul class="pagination mb-0">
+
+                            <li class="page-item @(paginaActual <= 1 ? "disabled" : "")">
+                                <a class="page-link"
+                                   asp-action="Index"
+                                   asp-route-pagina="@(paginaActual - 1)">
+                                    Anterior
+                                </a>
+                            </li>
+
+                            @for (int i = 1; i <= totalPaginas; i++)
                             {
-                                <tr class="fila-equipo"
-                                    data-id="@equipo.IdEquipo"
-                                    onclick="seleccionarEquipo(this)"
-                                    ondblclick="consultarEquipo()">
-
-                                    <td>
-                                        @equipo.IdTipoEquipoNavigation?.Nombre
-                                    </td>
-
-                                    <td>
-                                        @(equipo.Modelo ?? "No especificado")
-                                    </td>
-
-                                    <td>
-                                        @(equipo.Marca ?? "No especificada")
-                                    </td>
-
-                                    <td>
-                                        @(equipo.NumeroSerie ?? "No especificado")
-                                    </td>
-
-                                </tr>
+                                <li class="page-item @(i == paginaActual ? "active" : "")">
+                                    <a class="page-link"
+                                       asp-action="Index"
+                                       asp-route-pagina="@i"
+                                       aria-current="@(i == paginaActual ? "page" : null)">
+                                        @i
+                                    </a>
+                                </li>
                             }
 
-                        </tbody>
+                            <li class="page-item @(paginaActual >= totalPaginas ? "disabled" : "")">
+                                <a class="page-link"
+                                   asp-action="Index"
+                                   asp-route-pagina="@(paginaActual + 1)">
+                                    Siguiente
+                                </a>
+                            </li>
 
-                    </table>
+                        </ul>
+                    </nav>
+                }
 
-                </div>
+            </div>
+        }
 
-                <!-- INFORMACIÓN Y PAGINACIÓN -->
-                <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mt-3">
-
-                    <span class="text-muted">
-                        Total: @totalRegistros |
-                        Página @paginaActual de @totalPaginas
-                    </span>
-
-                    @if (totalPaginas > 1)
-                    {
-                        <nav>
-                            <ul class="pagination mb-0">
-
-                                <li class="page-item @(paginaActual <= 1 ? "disabled" : "")">
-                                    <a class="page-link"
-                                       asp-action="Index"
-                                       asp-route-pagina="@(paginaActual - 1)">
-                                        Anterior
-                                    </a>
-                                </li>
-
-                                @for (int i = 1; i <= totalPaginas; i++)
-                                {
-                                    <li class="page-item @(i == paginaActual ? "active" : "")">
-                                        <a class="page-link"
-                                           asp-action="Index"
-                                           asp-route-pagina="@i">
-                                            @i
-                                        </a>
-                                    </li>
-                                }
-
-                                <li class="page-item @(paginaActual >= totalPaginas ? "disabled" : "")">
-                                    <a class="page-link"
-                                       asp-action="Index"
-                                       asp-route-pagina="@(paginaActual + 1)">
-                                        Siguiente
-                                    </a>
-                                </li>
-
-                            </ul>
-                        </nav>
-                    }
-
-                </div>
-            }
-
-        </div>
     </div>
 
     <!-- REGRESAR -->
     <div class="text-center mt-4">
         <a asp-controller="Home"
            asp-action="Index"
-           class="btn btn-secondary">
+           class="cmse-mantenimiento-cancelar text-decoration-none">
             Regresar
         </a>
     </div>
@@ -221,12 +236,33 @@
             outline: 2px solid #0d6efd;
             outline-offset: -2px;
         }
+
+    .cmse-equipos-paginacion {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 15px;
+        margin-top: 20px;
+    }
+
+        .cmse-equipos-paginacion .pagination {
+            flex-wrap: wrap;
+        }
+
+    @@media (max-width: 576px) {
+        .cmse-equipos-paginacion {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+    }
 </style>
 
 <script>
     let equipoSeleccionado = null;
     const esAdministrador = @(esAdministrador ? "true" : "false");
 
+    // SELECCIONAR EQUIPO
     function seleccionarEquipo(fila) {
         document.querySelectorAll(".fila-equipo").forEach(function(elemento) {
             elemento.classList.remove("seleccionado");
@@ -238,6 +274,7 @@
         document.getElementById("avisoSeleccion").classList.add("d-none");
     }
 
+    // VALIDAR SELECCIÓN
     function validarSeleccion() {
         if (!equipoSeleccionado) {
             document.getElementById("avisoSeleccion").classList.remove("d-none");
@@ -247,23 +284,56 @@
         return true;
     }
 
+    // CONSULTAR
     function consultarEquipo() {
         if (!validarSeleccion()) return;
 
         window.location.href = "/Equipment/Details/" + equipoSeleccionado;
     }
 
+    // ACTUALIZAR
     function actualizarEquipo() {
         if (!esAdministrador || !validarSeleccion()) return;
 
         window.location.href = "/Equipment/Editar/" + equipoSeleccionado;
     }
 
+    // ELIMINAR
     function eliminarEquipo() {
         if (!esAdministrador || !validarSeleccion()) return;
 
         window.location.href = "/Equipment/Eliminar/" + equipoSeleccionado;
     }
+
+    // BÚSQUEDA
+    document.getElementById("buscarEquipo").addEventListener("input", function() {
+        const busqueda = this.value.trim().toLowerCase();
+        const filas = document.querySelectorAll(".fila-equipo");
+        let resultados = 0;
+
+        filas.forEach(function(fila) {
+            const coincide = fila.textContent.toLowerCase().includes(busqueda);
+
+            fila.style.display = coincide ? "" : "none";
+
+            if (coincide) {
+                resultados++;
+            } else {
+                fila.classList.remove("seleccionado");
+
+                if (equipoSeleccionado === fila.dataset.id) {
+                    equipoSeleccionado = null;
+                }
+            }
+        });
+
+        document.getElementById("sinResultadosBusqueda")
+            .classList.toggle("d-none", resultados !== 0);
+
+        if (equipoSeleccionado === null) {
+            document.getElementById("avisoSeleccion").classList.add("d-none");
+        }
+    });
 
     // ATAJOS DE TECLADO
     document.addEventListener("keydown", function(event) {
