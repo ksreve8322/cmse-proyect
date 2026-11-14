@@ -1,6 +1,7 @@
 
 using cmse.Models;
 using cmse.Utilities;
+using cmse.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Hosting;
 using System.Diagnostics;
@@ -11,20 +12,42 @@ namespace cmse.Controllers
     {
         private readonly EmailManager _emailManager;
         private readonly IWebHostEnvironment _environment;
+        private readonly UsuarioRepository _usuarioRepository;
 
         public HomeController(
             EmailManager emailManager,
-            IWebHostEnvironment environment)
+            IWebHostEnvironment environment,
+            UsuarioRepository usuarioRepository)
         {
             _emailManager = emailManager;
             _environment = environment;
+            _usuarioRepository = usuarioRepository;
         }
 
         public IActionResult Index()
         {
             return View();
         }
+        [HttpGet]
+        public async Task<IActionResult> Perfil()
+        {
+            int? idUsuario = HttpContext.Session.GetInt32("UsuarioId");
 
+            if (idUsuario == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            var usuario = await _usuarioRepository.ObtenerPorIdAsync(idUsuario.Value);
+
+            if (usuario == null)
+            {
+                HttpContext.Session.Clear();
+                return RedirectToAction("Login", "Account");
+            }
+
+            return View(usuario);
+        }
         [HttpGet]
         public async Task<IActionResult> ProbarCorreo()
         {

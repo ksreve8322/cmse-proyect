@@ -1,0 +1,721 @@
+﻿@model IEnumerable<cmse.Repositories.Models.AsignacionesIncidencium>
+
+@{
+    ViewData["Title"] = "Consultar incidencias asignadas";
+
+    int? rolId = Context.Session.GetInt32("RolId");
+    bool esAdministrador = rolId == 1;
+    bool esTecnico = rolId == 2;
+
+    bool mostrarConfirmacionEstado =
+        TempData["ConfirmacionActualizarEstado"] != null;
+
+    bool mostrarConfirmacionMantenimiento =
+        TempData["ConfirmacionRegistroMantenimiento"] != null;
+
+    bool mostrarConfirmacionRepuesto =
+        TempData["ConfirmacionRegistroRepuesto"] != null;
+}
+
+<div class="cmse-mantenimiento-container">
+
+    <div class="cmse-mantenimiento-header">
+        <h2>Consultar incidencias asignadas</h2>
+        <p>
+            @(esTecnico
+                ? "Consulta las incidencias que tienes asignadas."
+                : "Consulta las incidencias que cuentan con un técnico responsable.")
+        </p>
+    </div>
+
+    @if (TempData["Error"] != null || TempData["Exito"] != null)
+    {
+        bool esExito = TempData["Exito"] != null;
+        string mensaje = esExito
+            ? TempData["Exito"]!.ToString()!
+            : TempData["Error"]!.ToString()!;
+
+        <div class="cmse-mantenimiento-mensaje @(esExito ? "cmse-mensaje-exito" : "cmse-mensaje-error")"
+             role="alert">
+            @mensaje
+        </div>
+    }
+
+    @if (esAdministrador)
+    {
+        <div class="cmse-mantenimiento-barra-superior">
+
+            <div class="cmse-mantenimiento-busqueda">
+                <span class="cmse-mantenimiento-lupa">⌕</span>
+                <input type="text"
+                       id="buscarAsignacion"
+                       placeholder="Buscar incidencia asignada..."
+                       autocomplete="off" />
+            </div>
+
+            <div class="cmse-mantenimiento-acciones">
+
+                <a asp-controller="Mantenimiento"
+                   asp-action="Index"
+                   class="cmse-mantenimiento-boton">
+                    Asignar técnico
+                </a>
+
+                <a asp-controller="Mantenimiento"
+                   asp-action="ConsultarAsignaciones"
+                   class="cmse-mantenimiento-boton">
+                    Consultar incidencias asignadas
+                </a>
+
+                <a asp-controller="Mantenimiento"
+                   asp-action="Consultar"
+                   class="cmse-mantenimiento-boton">
+                    Consultar mantenimientos
+                </a>
+
+                <a asp-controller="Mantenimiento"
+                   asp-action="Programar"
+                   class="cmse-mantenimiento-boton">
+                    Programar mantenimiento
+                </a>
+
+                <a asp-controller="Mantenimiento"
+                   asp-action="Cancelar"
+                   class="cmse-mantenimiento-boton">
+                    Cancelar mantenimiento programado
+                </a>
+
+            </div>
+        </div>
+    }
+    else if (esTecnico)
+    {
+        <div class="cmse-mantenimiento-barra-superior">
+
+            <div class="cmse-mantenimiento-busqueda">
+                <span class="cmse-mantenimiento-lupa">⌕</span>
+                <input type="text"
+                       id="buscarAsignacion"
+                       placeholder="Buscar entre tus incidencias..."
+                       autocomplete="off" />
+            </div>
+
+        </div>
+    }
+
+    <div class="cmse-mantenimiento-listado-header">
+        <h3>Incidencias asignadas</h3>
+        <p>
+            Selecciona una incidencia de la tabla para consultar sus detalles.
+        </p>
+    </div>
+
+    <div class="cmse-mantenimiento-tabla-contenedor">
+
+        @if (Model != null && Model.Any())
+        {
+            <table class="cmse-mantenimiento-tabla" id="tablaAsignaciones">
+
+                <thead>
+                    <tr class="cmse-fila-encabezados">
+                        <th data-columna="0" data-tipo="numero">
+                            N.º incidencia
+                        </th>
+
+                        <th data-columna="1" data-tipo="texto">
+                            Título
+                        </th>
+
+                        <th data-columna="2" data-tipo="texto">
+                            Equipo
+                        </th>
+
+                        <th data-columna="3" data-tipo="texto">
+                            Código de inventario
+                        </th>
+
+                        @if (esAdministrador)
+                        {
+                            <th data-columna="4" data-tipo="texto">
+                                Usuario que reportó
+                            </th>
+
+                            <th data-columna="5" data-tipo="texto">
+                                Técnico asignado
+                            </th>
+                        }
+
+                        <th data-columna="@(esAdministrador ? 6 : 4)"
+                            data-tipo="fecha">
+                            Fecha de asignación
+                        </th>
+
+                        <th data-columna="@(esAdministrador ? 7 : 5)"
+                            data-tipo="texto">
+                            Estado
+                        </th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach (var asignacion in Model)
+                    {
+                        var incidencia = asignacion.IdIncidenciaNavigation;
+                        var equipo = incidencia.IdEquipoNavigation;
+                        var usuario = incidencia.IdUsuarioNavigation;
+                        var tecnico = asignacion.IdTecnicoNavigation;
+
+                        <tr class="cmse-fila-incidencia"
+                            data-id="@incidencia.IdIncidencia"
+                            data-tecnico="@asignacion.IdTecnico"
+                            data-equipo="@incidencia.IdEquipo"
+                            data-estado="@incidencia.IdEstado">
+
+                            <td data-sort="@incidencia.IdIncidencia">
+                                @incidencia.IdIncidencia
+                            </td>
+
+                            <td data-sort="@incidencia.Titulo">
+                                @incidencia.Titulo
+                            </td>
+
+                            <td data-sort="@equipo.Nombre">
+                                @equipo.Nombre
+                            </td>
+
+                            <td data-sort="@equipo.CodigoInventario">
+                                @equipo.CodigoInventario
+                            </td>
+
+                            @if (esAdministrador)
+                            {
+                                <td data-sort="@(usuario.Nombres + " " + usuario.Apellidos)">
+                                    @usuario.Nombres @usuario.Apellidos
+                                </td>
+
+                                <td data-sort="@(tecnico.Nombres + " " + tecnico.Apellidos)">
+                                    @tecnico.Nombres @tecnico.Apellidos
+                                </td>
+                            }
+
+                            <td data-sort="@asignacion.FechaAsignacion.ToString("yyyy-MM-dd HH:mm:ss")">
+                                @asignacion.FechaAsignacion.ToString("dd/MM/yyyy HH:mm")
+                            </td>
+
+                            <td data-sort="@incidencia.IdEstadoNavigation.Nombre">
+                                @incidencia.IdEstadoNavigation.Nombre
+                            </td>
+
+                        </tr>
+                    }
+                </tbody>
+
+            </table>
+
+            <div id="mensajeSinResultados"
+                 class="cmse-mantenimiento-vacio"
+                 style="display:none;">
+                <p>No se encontraron incidencias que coincidan con la búsqueda.</p>
+            </div>
+        }
+        else
+        {
+            <div class="cmse-mantenimiento-vacio">
+                <h3>No tienes incidencias asignadas</h3>
+                <p>
+                    @(esTecnico
+                        ? "Actualmente no tienes incidencias asignadas."
+                        : "Actualmente no existen incidencias con un técnico asignado activo.")
+                </p>
+            </div>
+        }
+
+    </div>
+
+    @if (Model != null && Model.Any())
+    {
+        <div class="text-center mt-4">
+
+            <button type="button"
+                    id="btnConsultarIncidencia"
+                    class="cmse-mantenimiento-boton"
+                    disabled>
+                Consultar incidencia
+            </button>
+
+            @if (esTecnico)
+            {
+                <button type="button"
+                        id="btnActualizarEstado"
+                        class="cmse-mantenimiento-boton"
+                        disabled>
+                    Actualizar estado
+                </button>
+
+                <button type="button"
+                        id="btnRegistrarDiagnostico"
+                        class="cmse-mantenimiento-boton"
+                        disabled>
+                    Registrar diagnóstico
+                </button>
+
+                <button type="button"
+                        id="btnRegistrarMantenimiento"
+                        class="cmse-mantenimiento-boton"
+                        disabled>
+                    Registrar mantenimiento
+                </button>
+            }
+
+        </div>
+    }
+
+    <div class="cmse-mantenimiento-regresar">
+        <a asp-controller="Home"
+           asp-action="Index"
+           class="cmse-mantenimiento-cancelar">
+            Regresar
+        </a>
+    </div>
+
+</div>
+
+@if (mostrarConfirmacionEstado)
+{
+    <div class="cmse-modal-overlay" id="modalConfirmacionEstado">
+        <div class="cmse-modal" role="dialog" aria-modal="true"
+             aria-labelledby="tituloConfirmacionEstado">
+
+            <div class="cmse-modal-icon">
+                ✓
+            </div>
+
+            <h3 id="tituloConfirmacionEstado">
+                Estado actualizado exitosamente
+            </h3>
+
+            <button type="button"
+                    id="btnAceptarConfirmacionEstado"
+                    class="cmse-modal-button">
+                Aceptar
+            </button>
+
+        </div>
+    </div>
+}
+
+@if (mostrarConfirmacionMantenimiento)
+{
+    <div class="cmse-modal-overlay" id="modalConfirmacionMantenimiento">
+        <div class="cmse-modal" role="dialog" aria-modal="true"
+             aria-labelledby="tituloConfirmacionMantenimiento">
+
+            <div class="cmse-modal-icon">
+                ✓
+            </div>
+
+            <h3 id="tituloConfirmacionMantenimiento">
+                Registro Mantenimiento
+            </h3>
+
+            <p>
+                Mantenimiento registrado exitosamente.
+            </p>
+
+            <button type="button"
+                    id="btnAceptarConfirmacionMantenimiento"
+                    class="cmse-modal-button">
+                Aceptar
+            </button>
+
+        </div>
+    </div>
+}
+
+@if (mostrarConfirmacionRepuesto)
+{
+    <div class="cmse-modal-overlay" id="modalConfirmacionRepuesto">
+        <div class="cmse-modal" role="dialog" aria-modal="true"
+             aria-labelledby="tituloConfirmacionRepuesto">
+
+            <div class="cmse-modal-icon">
+                ✓
+            </div>
+
+            <h3 id="tituloConfirmacionRepuesto">
+                Registro de repuesto
+            </h3>
+
+            <p>
+                Repuesto registrado exitosamente.
+            </p>
+
+            <button type="button"
+                    id="btnAceptarConfirmacionRepuesto"
+                    class="cmse-modal-button">
+                Aceptar
+            </button>
+
+        </div>
+    </div>
+}
+
+<style>
+    #tablaAsignaciones .cmse-fila-encabezados th {
+        cursor: pointer;
+        user-select: none;
+        white-space: nowrap;
+    }
+
+        #tablaAsignaciones .cmse-fila-encabezados th:hover {
+            opacity: 0.8;
+        }
+
+        #tablaAsignaciones .cmse-fila-encabezados th.orden-asc::after {
+            content: " ▲";
+            font-size: 0.75em;
+        }
+
+        #tablaAsignaciones .cmse-fila-encabezados th.orden-desc::after {
+            content: " ▼";
+            font-size: 0.75em;
+        }
+
+    .cmse-fila-incidencia {
+        cursor: pointer;
+    }
+</style>
+
+@section Scripts {
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+
+            const tabla = document.getElementById("tablaAsignaciones");
+            const tbody = tabla?.querySelector("tbody");
+            const buscador = document.getElementById("buscarAsignacion");
+            const mensajeSinResultados = document.getElementById("mensajeSinResultados");
+
+            const botonConsultar = document.getElementById("btnConsultarIncidencia");
+            const botonActualizar = document.getElementById("btnActualizarEstado");
+            const botonDiagnostico = document.getElementById("btnRegistrarDiagnostico");
+            const botonMantenimiento = document.getElementById("btnRegistrarMantenimiento");
+
+            let incidenciaSeleccionada = null;
+            let columnaOrdenada = null;
+            let direccionAscendente = true;
+
+            const rutaConsultar = '@Url.Action("ConsultarIncidencia", "Mantenimiento")';
+            const rutaActualizar = '@Url.Action("ActualizarEstado", "Mantenimiento")';
+            const rutaDiagnostico = '@Url.Action("RegistrarDiagnostico", "Mantenimiento")';
+            const rutaMantenimiento = '@Url.Action("RegistrarMantenimiento", "Mantenimiento")';
+
+            // Modal de confirmación de actualización de estado.
+            const modalConfirmacion = document.getElementById("modalConfirmacionEstado");
+            const botonAceptarConfirmacionEstado = document.getElementById("btnAceptarConfirmacionEstado");
+
+            botonAceptarConfirmacionEstado?.addEventListener("click", function() {
+                modalConfirmacion?.classList.add("cmse-modal-closing");
+
+                setTimeout(function() {
+                    modalConfirmacion?.remove();
+                }, 200);
+            });
+
+            // Modal de confirmación de registro de mantenimiento.
+            const modalMantenimiento = document.getElementById("modalConfirmacionMantenimiento");
+            const botonAceptarMantenimiento = document.getElementById("btnAceptarConfirmacionMantenimiento");
+
+            botonAceptarMantenimiento?.addEventListener("click", function() {
+                modalMantenimiento?.classList.add("cmse-modal-closing");
+
+                setTimeout(function() {
+                    modalMantenimiento?.remove();
+                }, 200);
+            });
+
+            // Modal de confirmación de registro de repuesto.
+            const modalRepuesto = document.getElementById("modalConfirmacionRepuesto");
+            const botonAceptarRepuesto = document.getElementById("btnAceptarConfirmacionRepuesto");
+
+            botonAceptarRepuesto?.addEventListener("click", function() {
+                modalRepuesto?.classList.add("cmse-modal-closing");
+
+                setTimeout(function() {
+                    modalRepuesto?.remove();
+                }, 200);
+            });
+
+            function obtenerFilas() {
+                return tbody
+                    ? Array.from(tbody.querySelectorAll("tr"))
+                    : [];
+            }
+
+            function limpiarSeleccion() {
+                obtenerFilas().forEach(fila => {
+                    fila.classList.remove("cmse-fila-seleccionada");
+                });
+
+                incidenciaSeleccionada = null;
+
+                if (botonConsultar) {
+                    botonConsultar.disabled = true;
+                }
+
+                if (botonActualizar) {
+                    botonActualizar.disabled = true;
+                }
+
+                if (botonDiagnostico) {
+                    botonDiagnostico.disabled = true;
+                }
+
+                if (botonMantenimiento) {
+                    botonMantenimiento.disabled = true;
+                }
+            }
+
+            function aplicarBusqueda() {
+
+                const texto = buscador?.value.toLowerCase().trim() || "";
+
+                let visibles = 0;
+                let seleccionSigueVisible = false;
+
+                obtenerFilas().forEach(fila => {
+
+                    const coincideTexto =
+                        fila.textContent.toLowerCase().includes(texto);
+
+                    fila.style.display = coincideTexto ? "" : "none";
+
+                    if (coincideTexto) {
+                        visibles++;
+
+                        if (fila.dataset.id === incidenciaSeleccionada) {
+                            seleccionSigueVisible = true;
+                        }
+                    }
+                });
+
+                if (incidenciaSeleccionada && !seleccionSigueVisible) {
+                    limpiarSeleccion();
+                }
+
+                if (mensajeSinResultados) {
+                    mensajeSinResultados.style.display =
+                        visibles === 0 ? "block" : "none";
+                }
+            }
+
+            function seleccionarIncidencia(fila) {
+
+                obtenerFilas().forEach(otraFila => {
+                    otraFila.classList.remove("cmse-fila-seleccionada");
+                });
+
+                fila.classList.add("cmse-fila-seleccionada");
+
+                incidenciaSeleccionada = fila.dataset.id;
+
+                if (botonConsultar) {
+                    botonConsultar.disabled = false;
+                }
+
+                if (botonActualizar) {
+                    botonActualizar.disabled = false;
+                }
+
+                if (botonDiagnostico) {
+                    botonDiagnostico.disabled = false;
+                }
+
+                if (botonMantenimiento) {
+                    botonMantenimiento.disabled = false;
+                }
+            }
+
+            function ordenarTabla(encabezado) {
+
+                if (!tbody) return;
+
+                const columna = Number(encabezado.dataset.columna);
+                const tipo = encabezado.dataset.tipo;
+
+                if (columnaOrdenada === columna) {
+                    direccionAscendente = !direccionAscendente;
+                } else {
+                    columnaOrdenada = columna;
+                    direccionAscendente = true;
+                }
+
+                const filas = obtenerFilas();
+
+                filas.sort((filaA, filaB) => {
+
+                    const celdaA = filaA.cells[columna];
+                    const celdaB = filaB.cells[columna];
+
+                    const valorA = celdaA?.dataset.sort ??
+                        celdaA?.textContent.trim() ?? "";
+
+                    const valorB = celdaB?.dataset.sort ??
+                        celdaB?.textContent.trim() ?? "";
+
+                    let comparacion;
+
+                    if (tipo === "numero") {
+                        comparacion =
+                            Number(valorA) - Number(valorB);
+                    }
+                    else if (tipo === "fecha") {
+                        comparacion =
+                            valorA.localeCompare(valorB);
+                    }
+                    else {
+                        comparacion = valorA.localeCompare(
+                            valorB,
+                            "es",
+                            {
+                                numeric: true,
+                                sensitivity: "base"
+                            }
+                        );
+                    }
+
+                    return direccionAscendente
+                        ? comparacion
+                        : -comparacion;
+                });
+
+                filas.forEach(fila => tbody.appendChild(fila));
+
+                tabla.querySelectorAll(".cmse-fila-encabezados th")
+                    .forEach(th => {
+                        th.classList.remove("orden-asc", "orden-desc");
+                        th.removeAttribute("aria-sort");
+                    });
+
+                encabezado.classList.add(
+                    direccionAscendente ? "orden-asc" : "orden-desc"
+                );
+
+                encabezado.setAttribute(
+                    "aria-sort",
+                    direccionAscendente ? "ascending" : "descending"
+                );
+
+                aplicarBusqueda();
+            }
+
+            obtenerFilas().forEach(fila => {
+
+                fila.addEventListener("click", function() {
+                    seleccionarIncidencia(this);
+                });
+
+                fila.addEventListener("dblclick", function() {
+                    window.location.href =
+                        rutaConsultar + "?id=" + this.dataset.id;
+                });
+            });
+
+            tabla?.querySelectorAll(".cmse-fila-encabezados th")
+                .forEach(encabezado => {
+                    encabezado.addEventListener("click", function() {
+                        ordenarTabla(this);
+                    });
+                });
+
+            botonConsultar?.addEventListener("click", function() {
+
+                if (incidenciaSeleccionada) {
+                    window.location.href =
+                        rutaConsultar + "?id=" + incidenciaSeleccionada;
+                }
+            });
+
+            botonActualizar?.addEventListener("click", function() {
+
+                if (incidenciaSeleccionada) {
+                    window.location.href =
+                        rutaActualizar + "?id=" + incidenciaSeleccionada;
+                }
+            });
+
+            botonDiagnostico?.addEventListener("click", function() {
+
+                if (incidenciaSeleccionada) {
+                    window.location.href =
+                        rutaDiagnostico + "?id=" + incidenciaSeleccionada;
+                }
+            });
+
+            botonMantenimiento?.addEventListener("click", function() {
+
+                if (incidenciaSeleccionada) {
+                    window.location.href =
+                        rutaMantenimiento + "?id=" + incidenciaSeleccionada;
+                }
+            });
+
+            buscador?.addEventListener("input", aplicarBusqueda);
+
+            document.addEventListener("keydown", function(event) {
+
+                if (event.ctrlKey || event.altKey || event.metaKey || event.repeat) {
+                    return;
+                }
+
+                const elemento = event.target;
+
+                if (elemento.tagName === "INPUT" ||
+                    elemento.tagName === "TEXTAREA" ||
+                    elemento.tagName === "SELECT" ||
+                    elemento.isContentEditable) {
+                    return;
+                }
+
+                // Evitar atajos mientras algún modal está abierto.
+                if (modalConfirmacion || modalMantenimiento || modalRepuesto) {
+                    return;
+                }
+
+                switch (event.key.toLowerCase()) {
+
+                    case "c":
+                        if (incidenciaSeleccionada) {
+                            event.preventDefault();
+
+                            window.location.href =
+                                rutaConsultar + "?id=" + incidenciaSeleccionada;
+                        }
+                        break;
+
+                    case "a":
+                        if (incidenciaSeleccionada) {
+                            event.preventDefault();
+
+                            @if (esTecnico)
+                            {
+                                <text>
+                                    window.location.href =
+                                        rutaActualizar + "?id=" + incidenciaSeleccionada;
+                                </text>
+                            }
+                            else if (esAdministrador)
+                            {
+                                <text>
+                                    window.location.href =
+                                        '@Url.Action("Index", "Mantenimiento")';
+                                </text>
+                            }
+                        }
+                        break;
+                }
+            });
+
+        });
+    </script>
+}

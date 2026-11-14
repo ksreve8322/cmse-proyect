@@ -3,29 +3,62 @@
 
 @{
     int? idUsuarioSesion = Context.Session.GetInt32("UsuarioId");
+    int? rolIdSesion = Context.Session.GetInt32("RolId");
 
-    string nombreUsuario =
-        Context.Session.GetString("UsuarioNombre") ?? "";
-
-    string correoUsuario =
-        Context.Session.GetString("UsuarioCorreo") ?? "";
-
-    string rolUsuario =
-        Context.Session.GetString("RolNombre") ?? "";
+    string nombreUsuario = Context.Session.GetString("UsuarioNombre") ?? "";
+    string correoUsuario = Context.Session.GetString("UsuarioCorreo") ?? "";
+    string rolUsuario = Context.Session.GetString("RolNombre") ?? "";
 
     bool sesionActiva = idUsuarioSesion.HasValue;
+    bool esAdministrador = sesionActiva && rolIdSesion == 1;
+    bool esTecnico = sesionActiva && rolIdSesion == 2;
+    bool esUsuario = sesionActiva && rolIdSesion == 3;
+
     int notificacionesNoLeidas = 0;
 
     if (sesionActiva)
     {
         notificacionesNoLeidas =
-            await NotificacionRepository.ContarNoLeidasAsync(
-                idUsuarioSesion!.Value);
+            await NotificacionRepository.ContarNoLeidasAsync(idUsuarioSesion!.Value);
     }
 
     string inicialUsuario = !string.IsNullOrWhiteSpace(nombreUsuario)
         ? nombreUsuario.Substring(0, 1).ToUpper()
         : "U";
+
+    string? tipoMensaje = TempData["TipoMensaje"]?.ToString();
+    string? tituloMensaje = TempData["TituloModal"]?.ToString();
+
+    bool cuentaEliminada = TempData["MensajeExito"] != null;
+
+    string? mensaje = cuentaEliminada
+        ? TempData["MensajeExito"]?.ToString()
+        : TempData["Mensaje"]?.ToString();
+
+    if (!string.IsNullOrEmpty(mensaje))
+    {
+        if (string.IsNullOrEmpty(tipoMensaje))
+            tipoMensaje = cuentaEliminada ? "Exito" : "Advertencia";
+
+        if (string.IsNullOrEmpty(tituloMensaje))
+            tituloMensaje = cuentaEliminada ? "¡Cuenta eliminada!" : "Aviso";
+    }
+
+    string claseIcono = (tipoMensaje ?? "").ToLower() switch
+    {
+        "exito" => "cmse-modal-icon-exito",
+        "error" => "cmse-modal-icon-error",
+        "advertencia" => "cmse-modal-icon-advertencia",
+        _ => "cmse-modal-icon-advertencia"
+    };
+
+    string icono = (tipoMensaje ?? "").ToLower() switch
+    {
+        "exito" => "✓",
+        "error" => "✕",
+        "advertencia" => "!",
+        _ => "!"
+    };
 }
 
 <!DOCTYPE html>
@@ -71,20 +104,78 @@
                 <div class="collapse cmse-navbar-menu" id="cmseNavbar">
 
                     <ul class="cmse-navbar-links">
+
                         <li>
                             <a asp-controller="Home" asp-action="Index">
                                 Inicio
                             </a>
                         </li>
 
-                        @if (sesionActiva)
+                        @if (esAdministrador)
                         {
                             <li>
-                                <a asp-controller="Equipment" asp-action="Create">
-                                    Registrar equipo
+                                <a asp-controller="User" asp-action="Index">
+                                    Gestionar usuarios
                                 </a>
                             </li>
 
+                            <li>
+                                <a asp-controller="Equipment" asp-action="Index">
+                                    Gestionar equipos
+                                </a>
+                            </li>
+
+                            <li>
+                                <a asp-controller="Mantenimiento" asp-action="Index">
+                                    Asignar mantenimientos
+                                </a>
+                            </li>
+
+                            <li>
+                                <a asp-controller="Mantenimiento" asp-action="Consultar">
+                                    Consultar mantenimientos
+                                </a>
+                            </li>
+
+                            <li>
+                                <a asp-controller="Mantenimiento" asp-action="Historial">
+                                    Historial de mantenimiento
+                                </a>
+                            </li>
+
+                            <li>
+                                <a asp-controller="Reportes" asp-action="Index">
+                                    Reportes
+                                </a>
+                            </li>
+                        }
+                        else if (esTecnico)
+                        {
+                            <li>
+                                <a asp-controller="Mantenimiento" asp-action="ConsultarAsignaciones">
+                                    Mis asignaciones
+                                </a>
+                            </li>
+
+                            <li>
+                                <a asp-controller="Mantenimiento" asp-action="Historial">
+                                    Historial de mantenimiento
+                                </a>
+                            </li>
+
+                            <li>
+                                <a asp-controller="Equipment" asp-action="Index">
+                                    Consultar equipos
+                                </a>
+                            </li>
+                            <li>
+                                <a asp-controller="Mantenimiento" asp-action="MisMantenimientos">
+                                    Mis mantenimientos
+                                </a>
+                            </li>
+                        }
+                        else if (esUsuario)
+                        {
                             <li>
                                 <a asp-controller="Equipment" asp-action="Index">
                                     Consultar equipos
@@ -99,13 +190,15 @@
 
                             <li>
                                 <a asp-controller="Incidencia" asp-action="Index">
-                                    Consultar incidencias
+                                    Mis incidencias
                                 </a>
                             </li>
                         }
+
                     </ul>
 
                     <div class="cmse-navbar-account">
+
                         @if (sesionActiva)
                         {
                             <a class="cmse-notification-button"
@@ -137,6 +230,7 @@
                                 </button>
 
                                 <ul class="dropdown-menu dropdown-menu-end cmse-profile-dropdown">
+
                                     <li>
                                         <span class="dropdown-item-text cmse-profile-name">
                                             @nombreUsuario
@@ -164,7 +258,7 @@
 
                                     <li>
                                         <a class="dropdown-item cmse-dropdown-item"
-                                           asp-controller="Home"
+                                           asp-controller="Perfil"
                                            asp-action="Index">
                                             <span class="cmse-dropdown-icon">&#128100;</span>
                                             Mi perfil
@@ -185,6 +279,7 @@
                                             </button>
                                         </form>
                                     </li>
+
                                 </ul>
                             </div>
                         }
@@ -202,6 +297,7 @@
                                 Registrarse
                             </a>
                         }
+
                     </div>
 
                 </div>
@@ -221,10 +317,110 @@
         </div>
     </footer>
 
+    @if (!string.IsNullOrEmpty(mensaje))
+    {
+        <div id="cmse-modal-overlay" class="cmse-modal-overlay">
+            <section class="cmse-modal"
+                     role="dialog"
+                     aria-modal="true"
+                     aria-labelledby="cmse-modal-title"
+                     aria-describedby="cmse-modal-message">
+
+                <div class="cmse-modal-icon @claseIcono" aria-hidden="true">
+                    <span>@icono</span>
+                </div>
+
+                <h2 id="cmse-modal-title">
+                    @tituloMensaje
+                </h2>
+
+                <p id="cmse-modal-message">
+                    @mensaje
+                </p>
+
+                <button type="button"
+                        id="cmse-modal-accept"
+                        class="cmse-modal-button">
+                    Aceptar
+                </button>
+            </section>
+        </div>
+    }
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
 
+    @* Atajos de teclado del módulo de mantenimiento *@
+    <script>
+        document.addEventListener("keydown", function(event) {
+
+            const rutaActual = window.location.pathname.toLowerCase();
+
+            if (!rutaActual.includes("/mantenimiento")) {
+                return;
+            }
+
+            if (event.ctrlKey || event.altKey || event.metaKey || event.repeat) {
+                return;
+            }
+
+            const elemento = event.target;
+
+            if (elemento.tagName === "INPUT" ||
+                elemento.tagName === "TEXTAREA" ||
+                elemento.tagName === "SELECT" ||
+                elemento.isContentEditable) {
+                return;
+            }
+
+            let destino = null;
+
+            switch (event.key.toLowerCase()) {
+                case "i":
+                    destino = '@Url.Action("ConsultarAsignaciones", "Mantenimiento")';
+                    break;
+
+                case "m":
+                    destino = '@Url.Action("Consultar", "Mantenimiento")';
+                    break;
+
+                case "p":
+                    destino = '@Url.Action("Programar", "Mantenimiento")';
+                    break;
+            }
+
+            if (destino) {
+                event.preventDefault();
+                window.location.href = destino;
+            }
+
+        }, true);
+    </script>
+
+    @if (!string.IsNullOrEmpty(mensaje))
+    {
+        <script>
+            (function() {
+                const overlay = document.getElementById('cmse-modal-overlay');
+                const boton = document.getElementById('cmse-modal-accept');
+
+                if (!overlay || !boton) return;
+
+                boton.focus();
+
+                boton.addEventListener('click', function() {
+                    overlay.classList.add('cmse-modal-closing');
+
+                    setTimeout(function() {
+                        overlay.remove();
+                    }, 180);
+                });
+            })();
+        </script>
+    }
+
     @await RenderSectionAsync("Scripts", required: false)
+
 </body>
 </html>

@@ -1,163 +1,270 @@
 ﻿@{
     ViewData["Title"] = "Inicio";
+
+    int? usuarioId = Context.Session.GetInt32("UsuarioId");
+    int? rolId = Context.Session.GetInt32("RolId");
+
+    bool usuarioAutenticado = usuarioId.HasValue;
+    bool esAdministrador = usuarioAutenticado && rolId == 1;
+    bool esTecnico = usuarioAutenticado && rolId == 2;
+    bool esUsuario = usuarioAutenticado && rolId == 3;
 }
 
 <div class="cmse-home">
 
-    <section class="cmse-home-hero">
-
-        <div class="cmse-home-hero-content">
-
-            @if (User.Identity != null && User.Identity.IsAuthenticated)
-            {
-                <span class="cmse-home-badge">
-                    Sistema CMSE
-                </span>
-
-                <h1>
-                    Bienvenido, @User.Identity.Name
-                </h1>
-
+    @if (esAdministrador)
+    {
+        <section class="cmse-home-hero">
+            <div class="cmse-home-hero-content">
+                <span class="cmse-home-badge">Panel administrativo</span>
+                <h1>Bienvenido, @Context.Session.GetString("UsuarioNombre")</h1>
                 <p>
-                    Control y mantenimiento de sistemas y equipos
-                    desde un solo lugar.
+                    Administra los usuarios, equipos y mantenimientos
+                    del sistema CMSE desde un solo lugar.
+                </p>
+            </div>
+
+            <div class="cmse-home-visual">
+                <div class="cmse-home-icon">⚙</div>
+                <div class="cmse-home-circle cmse-home-circle-1"></div>
+                <div class="cmse-home-circle cmse-home-circle-2"></div>
+            </div>
+        </section>
+
+        <section class="cmse-home-modules">
+            <div class="cmse-section-title">
+                <span>Administración</span>
+                <h2>Gestiona el sistema</h2>
+            </div>
+
+            <div class="cmse-module-grid">
+
+                <div class="cmse-module-card">
+                    <div class="cmse-module-icon">👥</div>
+                    <h3>Gestionar usuarios</h3>
+                    <p>Consulta, registra, actualiza y administra los usuarios del sistema.</p>
+                    <a asp-controller="User" asp-action="Index" class="cmse-home-primary">
+                        Administrar usuarios
+                    </a>
+                </div>
+
+                <div class="cmse-module-card">
+                    <div class="cmse-module-icon">💻</div>
+                    <h3>Gestionar equipos</h3>
+                    <p>Consulta y administra los equipos registrados en el sistema CMSE.</p>
+                    <a asp-controller="Equipment" asp-action="Index" class="cmse-home-primary">
+                        Administrar equipos
+                    </a>
+                </div>
+
+                <div class="cmse-module-card">
+                    <div class="cmse-module-icon">🔧</div>
+                    <h3>Gestionar mantenimiento</h3>
+                    <p>Consulta y administra los mantenimientos realizados y programados.</p>
+                    <a asp-controller="Mantenimiento" asp-action="Index" class="cmse-home-primary">
+                        Administrar mantenimiento
+                    </a>
+                </div>
+
+                <div class="cmse-module-card">
+                    <div class="cmse-module-icon">📊</div>
+                    <h3>Reportes</h3>
+                    <p>Consulta información y reportes sobre incidencias y mantenimientos.</p>
+                    <a asp-controller="Reportes" asp-action="Index" class="cmse-home-primary">
+                        Consultar reportes
+                    </a>
+                </div>
+
+            </div>
+        </section>
+    }
+    else if (esUsuario)
+    {
+        <section class="cmse-home-hero">
+            <div class="cmse-home-hero-content">
+                <span class="cmse-home-badge">Panel de usuario</span>
+                <h1>Bienvenido, @Context.Session.GetString("UsuarioNombre")</h1>
+                <p>
+                    Consulta los equipos registrados y realiza seguimiento
+                    a tus solicitudes dentro del sistema CMSE.
                 </p>
 
                 <div class="cmse-home-actions">
-
-                    <a asp-controller="Home"
-                       asp-action="Index"
-                       class="cmse-home-primary">
-                        Ir al sistema
+                    <a asp-controller="Home" asp-action="Perfil" class="cmse-home-primary">
+                        Mi perfil
                     </a>
-
                 </div>
-            }
-            else
-            {
-                <span class="cmse-home-badge">
-                    Sistema CMSE
-                </span>
+            </div>
 
-                <h1>
-                    Control y Mantenimiento
-                    de Sistemas y Equipos
-                </h1>
+            <div class="cmse-home-visual">
+                <div class="cmse-home-icon">👤</div>
+                <div class="cmse-home-circle cmse-home-circle-1"></div>
+                <div class="cmse-home-circle cmse-home-circle-2"></div>
+            </div>
+        </section>
 
+        <section class="cmse-home-modules">
+            <div class="cmse-section-title">
+                <span>Módulos disponibles</span>
+                <h2>¿Qué deseas consultar?</h2>
+            </div>
+
+            <div class="cmse-module-grid">
+
+                <div class="cmse-module-card">
+                    <div class="cmse-module-icon">💻</div>
+                    <h3>Consultar equipos</h3>
+                    <p>
+                        Consulta los equipos registrados en el sistema,
+                        sus características y su información técnica.
+                    </p>
+                    <a asp-controller="Equipment" asp-action="Index" class="cmse-home-primary">
+                        Consultar equipos
+                    </a>
+                </div>
+
+                <div class="cmse-module-card">
+                    <div class="cmse-module-icon">⚠</div>
+                    <h3>Incidencias</h3>
+                    <p>
+                        Registra problemas relacionados con los equipos
+                        y consulta, actualiza y realiza seguimiento a tus incidencias.
+                    </p>
+
+                    <div class="cmse-home-actions">
+                        <a asp-controller="Incidencia"
+                           asp-action="Create"
+                           class="cmse-home-primary">
+                            Registrar incidencia
+                        </a>
+
+                        <a asp-controller="Incidencia"
+                           asp-action="Index"
+                           class="cmse-home-secondary">
+                            Consultar mis incidencias
+                        </a>
+
+                        <a asp-controller="Incidencia"
+                           asp-action="Index"
+                           class="cmse-home-secondary">
+                            Actualizar incidencia
+                        </a>
+                    </div>
+                </div>
+
+                <div class="cmse-module-card">
+                    <div class="cmse-module-icon">🔧</div>
+                    <h3>Mantenimientos</h3>
+                    <p>
+                        Consulta información relacionada con el
+                        mantenimiento de los equipos.
+                    </p>
+                </div>
+
+            </div>
+        </section>
+    }
+    else if (esTecnico)
+    {
+        <section class="cmse-home-hero">
+            <div class="cmse-home-hero-content">
+                <span class="cmse-home-badge">Panel técnico</span>
+                <h1>Bienvenido, @Context.Session.GetString("UsuarioNombre")</h1>
+                <p>
+                    Consulta los equipos y realiza seguimiento a las
+                    incidencias y actividades de mantenimiento asignadas.
+                </p>
+
+                <div class="cmse-home-actions">
+                    <a asp-controller="Home" asp-action="Perfil" class="cmse-home-primary">
+                        Mi perfil
+                    </a>
+                </div>
+            </div>
+
+            <div class="cmse-home-visual">
+                <div class="cmse-home-icon">🔧</div>
+                <div class="cmse-home-circle cmse-home-circle-1"></div>
+                <div class="cmse-home-circle cmse-home-circle-2"></div>
+            </div>
+        </section>
+
+        <section class="cmse-home-modules">
+            <div class="cmse-section-title">
+                <span>Módulos disponibles</span>
+                <h2>Herramientas de trabajo</h2>
+            </div>
+
+            <div class="cmse-module-grid">
+
+                <div class="cmse-module-card">
+                    <div class="cmse-module-icon">💻</div>
+                    <h3>Consultar equipos</h3>
+                    <p>Consulta los equipos registrados y sus características técnicas.</p>
+                    <a asp-controller="Equipment" asp-action="Index" class="cmse-home-primary">
+                        Consultar equipos
+                    </a>
+                </div>
+
+                <div class="cmse-module-card">
+                    <div class="cmse-module-icon">⚠</div>
+                    <h3>Incidencias asignadas</h3>
+                    <p>
+                        Consulta las incidencias que tienes asignadas,
+                        registra diagnósticos y actualiza su estado.
+                    </p>
+                    <a asp-controller="Mantenimiento"
+                       asp-action="ConsultarAsignaciones"
+                       class="cmse-home-primary">
+                        Gestionar incidencias
+                    </a>
+                </div>
+
+                <div class="cmse-module-card">
+                    <div class="cmse-module-icon">🔧</div>
+                    <h3>Mantenimientos</h3>
+                    <p>
+                        Consulta los mantenimientos programados y las
+                        actividades que debes realizar.
+                    </p>
+                    <a asp-controller="Mantenimiento"
+                       asp-action="Consultar"
+                       class="cmse-home-primary">
+                        Consultar mantenimientos
+                    </a>
+                </div>
+
+            </div>
+        </section>
+    }
+    else
+    {
+        <section class="cmse-home-hero">
+            <div class="cmse-home-hero-content">
+                <span class="cmse-home-badge">Sistema CMSE</span>
+                <h1>Control y Mantenimiento de Sistemas y Equipos</h1>
                 <p>
                     Administra equipos, incidencias y mantenimientos
                     de manera organizada y sencilla.
                 </p>
 
                 <div class="cmse-home-actions">
-
-                    <a asp-controller="Account"
-                       asp-action="Login"
-                       class="cmse-home-primary">
+                    <a asp-controller="Account" asp-action="Login" class="cmse-home-primary">
                         Iniciar sesión
                     </a>
 
-                    <a asp-controller="Account"
-                       asp-action="Register"
-                       class="cmse-home-secondary">
+                    <a asp-controller="Account" asp-action="Register" class="cmse-home-secondary">
                         Crear una cuenta
                     </a>
-
                 </div>
-            }
-
-        </div>
-
-        <div class="cmse-home-visual">
-
-            <div class="cmse-home-icon">
-                ⚙
             </div>
 
-            <div class="cmse-home-circle cmse-home-circle-1"></div>
-            <div class="cmse-home-circle cmse-home-circle-2"></div>
-
-        </div>
-
-    </section>
-
-
-    <section class="cmse-home-modules">
-
-        <div class="cmse-section-title">
-
-            <span>Módulos principales</span>
-
-            <h2>
-                Todo el sistema en un solo lugar
-            </h2>
-
-        </div>
-
-        <div class="cmse-module-grid">
-
-            
-            <div class="cmse-module-card">
-                <div class="cmse-module-icon">💻</div>
-
-                <h3>Equipos</h3>
-
-                <p>
-                    Consulta y administra los equipos registrados
-                    en el sistema.
-                </p>
-
-                @if (Context.Session.GetInt32("UsuarioId").HasValue)
-                {
-                    <div class="cmse-home-actions">
-                        <a asp-controller="Equipment"
-                           asp-action="Index"
-                           class="cmse-home-primary">
-                            Consultar equipos
-                        </a>
-
-                        <a asp-controller="Equipment"
-                           asp-action="Create"
-                           class="cmse-home-secondary">
-                            Registrar equipo
-                        </a>
-                    </div>
-                }
-                else
-                {
-                    <a asp-controller="Account"
-                       asp-action="Login"
-                       class="cmse-home-primary">
-                        Iniciar sesión
-                    </a>
-                }
+            <div class="cmse-home-visual">
+                <div class="cmse-home-icon">⚙</div>
+                <div class="cmse-home-circle cmse-home-circle-1"></div>
+                <div class="cmse-home-circle cmse-home-circle-2"></div>
             </div>
-
-
-            <div class="cmse-module-card">
-                <div class="cmse-module-icon">⚠</div>
-
-                <h3>Incidencias</h3>
-
-                <p>
-                    Registra y realiza seguimiento a problemas
-                    reportados en los equipos.
-                </p>
-            </div>
-
-            <div class="cmse-module-card">
-                <div class="cmse-module-icon">🔧</div>
-
-                <h3>Mantenimientos</h3>
-
-                <p>
-                    Gestiona los mantenimientos realizados
-                    y programados.
-                </p>
-            </div>
-
-        </div>
-
-    </section>
+        </section>
+    }
 
 </div>

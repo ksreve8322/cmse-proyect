@@ -1,0 +1,81 @@
+﻿@{
+    ViewData["Title"] = "Restablecer contraseña";
+
+    string token = ViewBag.Token as string ?? "";
+}
+
+<div class="cmse-auth-page">
+    <div class="cmse-auth-card">
+
+        <div class="cmse-auth-header">
+            <h1>CMSE</h1>
+            <p>Control y Mantenimiento de Sistemas y Equipos</p>
+        </div>
+
+        <div class="cmse-auth-content">
+
+            <div class="cmse-recuperacion-contenido">
+
+                <a asp-controller="Account"
+                   asp-action="Login">
+                    ‹ Volver
+                </a>
+
+                <h2>Restablecer Contraseña</h2>
+
+                <p>
+                    Ingresa tu nueva contraseña y confírmala
+                    para recuperar el acceso a tu cuenta.
+                </p>
+
+                <form asp-controller="Account"
+                      asp-action="RestablecerContrasena"
+                      method="post"
+                      class="cmse-auth-form">
+
+                    <input type="hidden"
+                           name="token"
+                           value="@token" />
+
+                    <div class="cmse-form-group">
+                        <label for="nuevaContrasena">
+                            Nueva Contraseña
+                        </label>
+
+                        <input type="password"
+                               id="nuevaContrasena"
+                               name="nuevaContrasena"
+                               placeholder="Ingresa tu nueva contraseña"
+                               required
+                               autocomplete="new-password" />
+                    </div>
+
+                    <div class="cmse-form-group">
+                        <label for="confirmarContrasena">
+                            Confirmación de contraseña
+                        </label>
+
+                        <input type="password"
+                               id="confirmarContrasena"
+                               name="confirmarContrasena"
+                               placeholder="Confirma tu nueva contraseña"
+                               required
+                               autocomplete="new-password" />
+                    </div>
+
+                    <div asp-validation-summary="All"
+                         class="cmse-validation">
+                    </div>
+
+                    <button type="submit"
+                            class="cmse-auth-button">
+                        Registrar nueva contraseña
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+    </div>
+</div>

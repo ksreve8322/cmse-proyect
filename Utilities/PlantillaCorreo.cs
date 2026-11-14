@@ -21,10 +21,11 @@ namespace cmse.Utilities
         }
 
         public string GenerarCorreo(
-            string titulo,
-            string nombre,
-            string mensaje,
-            string contactoSoporte)
+        string titulo,
+        string nombre,
+        string mensaje,
+        string contactoSoporte,
+        string? codigoVerificacion = null)
         {
             // imagen incrustada mediante CID.
             // EmailManager debe adjuntar el logo con ContentId = "logoCmse".
@@ -38,36 +39,6 @@ namespace cmse.Utilities
                            height:auto;border:0;">
                 """;
 
-            /*
-            VERSION ANTERIOR: imagen en Base64.
-
-            Se conserva como referencia para consultar con el profesor.
-            Este código NO se ejecuta.
-
-            string rutaLogo = ObtenerRutaLogo();
-            string logoBase64 = string.Empty;
-
-            if (File.Exists(rutaLogo))
-            {
-                byte[] imagen = File.ReadAllBytes(rutaLogo);
-                logoBase64 = Convert.ToBase64String(imagen);
-            }
-
-            string imagenHtml = string.Empty;
-
-            if (!string.IsNullOrEmpty(logoBase64))
-            {
-                imagenHtml = $"""
-                    <img
-                        src="data:image/jpeg;base64,{logoBase64}"
-                        alt="Logo CMSE"
-                        width="150"
-                        style="display:block;max-width:150px;
-                               height:auto;border:0;">
-                    """;
-            }
-            */
-
             string tituloSeguro = WebUtility.HtmlEncode(titulo);
             string nombreSeguro = WebUtility.HtmlEncode(nombre);
 
@@ -77,8 +48,47 @@ namespace cmse.Utilities
 
             string contactoSeguro =
                 WebUtility.HtmlEncode(contactoSoporte);
+            string codigoHtml = string.Empty;
 
-            return $"""
+            if (!string.IsNullOrWhiteSpace(codigoVerificacion))
+            {
+                string codigoSeguro =
+                    WebUtility.HtmlEncode(codigoVerificacion);
+
+                codigoHtml = $"""
+        <table role="presentation" width="100%"
+            cellpadding="0" cellspacing="0" border="0"
+            style="margin:25px 0;">
+            <tr>
+                <td align="center"
+                    style="background-color:#eff6ff;
+                    border:1px solid #bfdbfe;
+                    border-radius:10px;padding:24px;">
+
+                    <p style="margin:0 0 12px;
+                        font-size:13px;font-weight:bold;
+                        color:#475569;">
+                        TU CÓDIGO DE VERIFICACIÓN
+                    </p>
+
+                    <p style="margin:0;
+                        font-size:36px;font-weight:bold;
+                        letter-spacing:8px;
+                        color:#2563eb;">
+                        {codigoSeguro}
+                    </p>
+
+                    <p style="margin:12px 0 0;
+                        font-size:12px;color:#64748b;">
+                        Válido durante 10 minutos
+                    </p>
+
+                </td>
+            </tr>
+        </table>
+        """;
+            }
+            return $$"""
                 <!DOCTYPE html>
                 <html lang="es">
                 <head>
@@ -111,7 +121,7 @@ namespace cmse.Utilities
                                             style="background-color:#123b67;
                                             padding:28px 20px;color:#ffffff;">
 
-                                            {imagenHtml}
+                                            {{imagenHtml}}
 
                                             <h1 style="margin:16px 0 6px;
                                                 font-size:24px;color:#ffffff;">
@@ -133,18 +143,20 @@ namespace cmse.Utilities
                                                 font-size:22px;
                                                 line-height:1.4;
                                                 color:#123b67;">
-                                                {tituloSeguro}
+                                                {{tituloSeguro}}
                                             </h2>
 
                                             <p style="font-size:16px;
                                                 line-height:1.7;">
-                                                Hola, <strong>{nombreSeguro}</strong>.
+                                                Hola, <strong>{{nombreSeguro}}</strong>.
                                             </p>
 
                                             <p style="font-size:15px;
                                                 line-height:1.8;color:#405166;">
-                                                {mensajeSeguro}
-                                            </p>
+                                                {{mensajeSeguro}}
+                                               </p>
+
+                                            {{codigoHtml}}
 
                                             <p style="font-size:14px;
                                                 line-height:1.7;color:#64748b;">
@@ -169,7 +181,7 @@ namespace cmse.Utilities
                                             <p style="margin:0;font-size:13px;
                                                 line-height:1.7;color:#405166;">
                                                 Contacta al área de soporte:
-                                                {contactoSeguro}
+                                                {{contactoSeguro}}
                                             </p>
 
                                         </td>

@@ -1,4 +1,5 @@
-﻿using System;
+﻿
+using System;
 using System.Collections.Generic;
 
 namespace cmse.Repositories.Models;
@@ -17,9 +18,7 @@ public partial class Repuesto
 
     public string? Observaciones { get; set; }
 
-    public decimal? ValorUnitario { get; set; }
-
-    public DateOnly? FechaInstalacion { get; set; }
+    public string Codigo { get; set; } = null!;
 
     public virtual ICollection<MantenimientoRepuesto> MantenimientoRepuestos { get; set; } = new List<MantenimientoRepuesto>();
 }

@@ -2,63 +2,64 @@
 
 @{
     ViewData["Title"] = "Detalles del usuario";
+    var idUsuarioSesion = Context.Session.GetInt32("UsuarioId");
+    var esCuentaPropia = idUsuarioSesion == Model.IdUsuario;
+    var incidencias = Model.Incidencia
+        .OrderByDescending(i => i.FechaRegistro)
+        .ToList();
 }
 
 <div class="container mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <div>
-            <h2>Detalles del usuario</h2>
-            <p class="text-muted">
-                Información de la cuenta seleccionada.
-            </p>
-        </div>
+
+    <div class="mb-4">
+        <h2>Detalles del usuario</h2>
+        <p class="text-muted">
+            Información personal y actividad del usuario seleccionado.
+        </p>
     </div>
 
-    @if (TempData["Mensaje"] != null)
-    {
-        <div class="alert alert-success">
-            @TempData["Mensaje"]
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-white">
+            <h5 class="mb-0">Información personal</h5>
         </div>
-    }
 
-    <div class="card shadow-sm">
         <div class="card-body">
+            <dl class="row mb-0">
 
-            <dl class="row">
-                <dt class="col-sm-4">ID de usuario</dt>
-                <dd class="col-sm-8">@Model.IdUsuario</dd>
+                <dt class="col-md-3">ID de usuario</dt>
+                <dd class="col-md-3">@Model.IdUsuario</dd>
 
-                <dt class="col-sm-4">Rol</dt>
-                <dd class="col-sm-8">
+                <dt class="col-md-3">Rol</dt>
+                <dd class="col-md-3">
                     @Model.IdRolNavigation?.Nombre
                 </dd>
 
-                <dt class="col-sm-4">Nombres</dt>
-                <dd class="col-sm-8">@Model.Nombres</dd>
+                <dt class="col-md-3">Nombres</dt>
+                <dd class="col-md-3">@Model.Nombres</dd>
 
-                <dt class="col-sm-4">Apellidos</dt>
-                <dd class="col-sm-8">@Model.Apellidos</dd>
+                <dt class="col-md-3">Apellidos</dt>
+                <dd class="col-md-3">@Model.Apellidos</dd>
 
-                <dt class="col-sm-4">Tipo de documento</dt>
-                <dd class="col-sm-8">
+                <dt class="col-md-3">Tipo de documento</dt>
+                <dd class="col-md-3">
                     @Model.IdTipoDocumentoNavigation?.Nombre
                 </dd>
 
-                <dt class="col-sm-4">Número de documento</dt>
-                <dd class="col-sm-8">@Model.NumeroDocumento</dd>
+                <dt class="col-md-3">Número de documento</dt>
+                <dd class="col-md-3">@Model.NumeroDocumento</dd>
 
-                <dt class="col-sm-4">Correo electrónico</dt>
-                <dd class="col-sm-8">@Model.Correo</dd>
+                <dt class="col-md-3">Correo electrónico</dt>
+                <dd class="col-md-3">@Model.Correo</dd>
 
-                <dt class="col-sm-4">Teléfono</dt>
-                <dd class="col-sm-8">
+                <dt class="col-md-3">Teléfono</dt>
+                <dd class="col-md-3">
                     @(string.IsNullOrWhiteSpace(Model.Telefono)
                         ? "No registrado"
                         : Model.Telefono)
                 </dd>
 
-                <dt class="col-sm-4">Estado de la cuenta</dt>
-                <dd class="col-sm-8">
+                <dt class="col-md-3">Estado de la cuenta</dt>
+                <dd class="col-md-3">
                     @if (Model.Estado)
                     {
                         <span class="badge bg-success">Activo</span>
@@ -68,23 +69,169 @@
                         <span class="badge bg-danger">Inactivo</span>
                     }
                 </dd>
+
             </dl>
+        </div>
+    </div>
 
-            <hr />
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-white d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Historial de incidencias</h5>
+            <span class="badge bg-primary">
+                @incidencias.Count registros
+            </span>
+        </div>
 
-            <div class="d-flex gap-2">
-                <a asp-action="Edit"
-                   asp-route-id="@Model.IdUsuario"
-                   class="btn btn-warning">
-                    Editar usuario
-                </a>
+        <div class="card-body">
 
-                <a asp-action="Index"
-                   class="btn btn-secondary">
-                    Volver al listado
-                </a>
-            </div>
+            @if (incidencias.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Equipo</th>
+                                <th>Incidencia</th>
+                                <th>Descripción</th>
+                                <th>Fecha de registro</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @foreach (var incidencia in incidencias)
+                            {
+                                <tr>
+                                    <td>
+                                        <strong>
+                                            @incidencia.IdEquipoNavigation?.Nombre
+                                        </strong>
+                                    </td>
+
+                                    <td>
+                                        @incidencia.Titulo
+                                    </td>
+
+                                    <td>
+                                        @incidencia.Descripcion
+                                    </td>
+
+                                    <td>
+                                        @incidencia.FechaRegistro.ToString("dd/MM/yyyy HH:mm")
+                                    </td>
+
+                                    <td>
+                                        <span class="badge bg-secondary">
+                                            @incidencia.IdEstadoNavigation?.Nombre
+                                        </span>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="text-center py-4">
+                    <p class="text-muted mb-0">
+                        Este usuario todavía no tiene incidencias registradas.
+                    </p>
+                </div>
+            }
 
         </div>
     </div>
+
+    <div class="d-flex justify-content-center gap-2 flex-wrap mb-4">
+
+        <a asp-action="Edit"
+           asp-route-id="@Model.IdUsuario"
+           class="btn btn-primary">
+            Editar usuario
+        </a>
+
+        @if (!esCuentaPropia)
+        {
+            <button type="button"
+                    class="btn btn-primary"
+                    data-bs-toggle="modal"
+                    data-bs-target="#modalEliminarUsuario">
+                Eliminar usuario
+            </button>
+        }
+
+        <a asp-action="Index"
+           class="btn btn-primary">
+            Volver al listado
+        </a>
+
+    </div>
+
+    @if (esCuentaPropia)
+    {
+        <p class="text-muted text-center">
+            No puedes eliminar tu propia cuenta desde la gestión de usuarios.
+        </p>
+    }
+
+    @if (!esCuentaPropia)
+    {
+        <div class="modal fade"
+             id="modalEliminarUsuario"
+             tabindex="-1"
+             aria-labelledby="tituloModalEliminar"
+             aria-hidden="true">
+
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="tituloModalEliminar">
+                            Eliminar usuario
+                        </h5>
+
+                        <button type="button"
+                                class="btn-close"
+                                data-bs-dismiss="modal"
+                                aria-label="Cerrar">
+                        </button>
+                    </div>
+
+                    <div class="modal-body">
+                        <p>
+                            ¿Estás seguro de que deseas eliminar esta cuenta?
+                        </p>
+
+                        <p class="mb-0">
+                            <strong>@Model.Nombres @Model.Apellidos</strong>
+                        </p>
+
+                        <p class="text-danger mt-2 mb-0">
+                            Esta acción no se puede deshacer.
+                        </p>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button"
+                                class="btn btn-secondary"
+                                data-bs-dismiss="modal">
+                            Cancelar
+                        </button>
+
+                        <form asp-action="Eliminar"
+                              asp-route-id="@Model.IdUsuario"
+                              method="post">
+
+                            <button type="submit" class="btn btn-danger">
+                                Sí, eliminar
+                            </button>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    }
+
 </div>

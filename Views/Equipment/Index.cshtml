@@ -2,112 +2,313 @@
 @model IEnumerable<Equipo>
 
 @{
-    ViewData["Title"] = "Equipos registrados";
+    ViewData["Title"] = "Consultar equipos";
 
     int paginaActual = ViewBag.PaginaActual ?? 1;
     int totalPaginas = ViewBag.TotalPaginas ?? 1;
     int totalRegistros = ViewBag.TotalRegistros ?? 0;
+
+    int? rolId = Context.Session.GetInt32("RolId");
+    bool esAdministrador = rolId == 1;
 }
 
 <div class="container py-4">
-    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
-        <div>
-            <h1>Equipos registrados</h1>
-            <p class="text-muted mb-0">
-                Consulta los equipos del inventario de CMSE.
-            </p>
-        </div>
 
-        <a asp-controller="Equipment"
-           asp-action="Create"
-           class="btn btn-primary">
-            + Registrar equipo
-        </a>
+    <div class="text-center mb-4">
+        <h1 class="fw-bold">
+            @(esAdministrador ? "Gestionar equipos" : "Consultar equipos")
+        </h1>
+
+        <p class="text-muted">
+            @(esAdministrador
+                ? "Administración de equipos registrados en CMSE."
+                : "Consulta los equipos registrados y su información en CMSE.")
+        </p>
     </div>
 
+    <!-- BOTONES DE ACCIONES -->
+    <div class="d-flex justify-content-center flex-wrap gap-2 mb-4">
+
+        <button type="button" class="btn btn-primary"
+                onclick="consultarEquipo()" title="Atajo: C">
+            Consultar
+        </button>
+
+        @if (esAdministrador)
+        {
+            <button type="button" class="btn btn-primary"
+                    onclick="actualizarEquipo()" title="Atajo: A">
+                Actualizar
+            </button>
+
+            <a asp-action="Create" class="btn btn-primary"
+               title="Atajo: R">
+                Registrar
+            </a>
+
+            <button type="button" class="btn btn-primary"
+                    onclick="eliminarEquipo()" title="Atajo: E">
+                Eliminar
+            </button>
+        }
+
+    </div>
+
+    <!-- AYUDA DE INTERACCIÓN -->
+    <p class="text-muted text-center small mb-3">
+        Selecciona un equipo para realizar una acción. También puedes hacer doble clic para consultar.
+    </p>
+
+    <!-- AVISO DE SELECCIÓN -->
+    <div id="avisoSeleccion" class="alert alert-warning text-center d-none">
+        Selecciona un equipo de la tabla para continuar.
+    </div>
+
+    <!-- MENSAJE DE OPERACIÓN EXITOSA -->
     @if (TempData["Mensaje"] != null)
     {
-        <div class="alert alert-success" role="alert">
+        <div class="alert alert-success text-center">
             @TempData["Mensaje"]
         </div>
     }
 
-    @if (Model == null || !Model.Any())
+    <!-- MENSAJE DE ERROR -->
+    @if (TempData["Error"] != null)
     {
-        <div class="alert alert-info">
-            Todavía no hay equipos registrados.
-            Usa el botón «Registrar equipo» para agregar el primero.
+        <div class="alert alert-danger text-center">
+            @TempData["Error"]
         </div>
     }
-    else
-    {
-        <div class="table-responsive">
-            <table class="table table-striped table-hover align-middle">
-                <thead class="table-dark">
-                    <tr>
-                        <th>Nombre</th>
-                        <th>Código</th>
-                        <th>Tipo</th>
-                        <th>Estado</th>
-                        <th>Marca</th>
-                        <th>Ubicación</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var equipo in Model)
-                    {
-                        <tr>
-                            <td>@equipo.Nombre</td>
-                            <td>@equipo.CodigoInventario</td>
-                            <td>@equipo.IdTipoEquipoNavigation?.Nombre</td>
-                            <td>@equipo.IdEstadoNavigation?.Nombre</td>
-                            <td>@equipo.Marca</td>
-                            <td>@equipo.Ubicacion</td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
+
+    <!-- TABLA DE EQUIPOS -->
+    <div class="card shadow-sm">
+
+        <div class="card-header bg-primary text-white text-center">
+            <h5 class="mb-0">Equipos registrados</h5>
         </div>
 
-        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mt-3">
-            <p class="text-muted mb-0">
-                Total de equipos: @totalRegistros
-                | Página @paginaActual de @totalPaginas
-            </p>
+        <div class="card-body">
 
-            @if (totalPaginas > 1)
+            @if (Model == null || !Model.Any())
             {
-                <nav aria-label="Paginación de equipos">
-                    <ul class="pagination mb-0">
-                        <li class="page-item @(paginaActual <= 1 ? "disabled" : "")">
-                            <a class="page-link"
-                               asp-action="Index"
-                               asp-route-pagina="@(paginaActual - 1)">
-                                Anterior
-                            </a>
-                        </li>
-
-                        @for (int i = 1; i <= totalPaginas; i++)
-                        {
-                            <li class="page-item @(i == paginaActual ? "active" : "")">
-                                <a class="page-link"
-                                   asp-action="Index"
-                                   asp-route-pagina="@i">
-                                    @i
-                                </a>
-                            </li>
-                        }
-
-                        <li class="page-item @(paginaActual >= totalPaginas ? "disabled" : "")">
-                            <a class="page-link"
-                               asp-action="Index"
-                               asp-route-pagina="@(paginaActual + 1)">
-                                Siguiente
-                            </a>
-                        </li>
-                    </ul>
-                </nav>
+                <div class="alert alert-info text-center mb-0">
+                    No hay equipos registrados.
+                </div>
             }
+            else
+            {
+                <div class="table-responsive">
+
+                    <table class="table table-hover align-middle text-center"
+                           id="tablaEquipos">
+
+                        <thead class="table-light">
+                            <tr>
+                                <th>Tipo</th>
+                                <th>Modelo</th>
+                                <th>Marca</th>
+                                <th>Número de serie</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            @foreach (var equipo in Model)
+                            {
+                                <tr class="fila-equipo"
+                                    data-id="@equipo.IdEquipo"
+                                    onclick="seleccionarEquipo(this)"
+                                    ondblclick="consultarEquipo()">
+
+                                    <td>
+                                        @equipo.IdTipoEquipoNavigation?.Nombre
+                                    </td>
+
+                                    <td>
+                                        @(equipo.Modelo ?? "No especificado")
+                                    </td>
+
+                                    <td>
+                                        @(equipo.Marca ?? "No especificada")
+                                    </td>
+
+                                    <td>
+                                        @(equipo.NumeroSerie ?? "No especificado")
+                                    </td>
+
+                                </tr>
+                            }
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+                <!-- INFORMACIÓN Y PAGINACIÓN -->
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mt-3">
+
+                    <span class="text-muted">
+                        Total: @totalRegistros |
+                        Página @paginaActual de @totalPaginas
+                    </span>
+
+                    @if (totalPaginas > 1)
+                    {
+                        <nav>
+                            <ul class="pagination mb-0">
+
+                                <li class="page-item @(paginaActual <= 1 ? "disabled" : "")">
+                                    <a class="page-link"
+                                       asp-action="Index"
+                                       asp-route-pagina="@(paginaActual - 1)">
+                                        Anterior
+                                    </a>
+                                </li>
+
+                                @for (int i = 1; i <= totalPaginas; i++)
+                                {
+                                    <li class="page-item @(i == paginaActual ? "active" : "")">
+                                        <a class="page-link"
+                                           asp-action="Index"
+                                           asp-route-pagina="@i">
+                                            @i
+                                        </a>
+                                    </li>
+                                }
+
+                                <li class="page-item @(paginaActual >= totalPaginas ? "disabled" : "")">
+                                    <a class="page-link"
+                                       asp-action="Index"
+                                       asp-route-pagina="@(paginaActual + 1)">
+                                        Siguiente
+                                    </a>
+                                </li>
+
+                            </ul>
+                        </nav>
+                    }
+
+                </div>
+            }
+
         </div>
-    }
+    </div>
+
+    <!-- REGRESAR -->
+    <div class="text-center mt-4">
+        <a asp-controller="Home"
+           asp-action="Index"
+           class="btn btn-secondary">
+            Regresar
+        </a>
+    </div>
+
 </div>
+
+<style>
+    .fila-equipo {
+        cursor: pointer;
+        transition: background-color 0.15s ease;
+    }
+
+        .fila-equipo:hover {
+            background-color: #e9f2ff !important;
+        }
+
+        .fila-equipo.seleccionado {
+            background-color: #cfe2ff !important;
+            outline: 2px solid #0d6efd;
+            outline-offset: -2px;
+        }
+</style>
+
+<script>
+    let equipoSeleccionado = null;
+    const esAdministrador = @(esAdministrador ? "true" : "false");
+
+    function seleccionarEquipo(fila) {
+        document.querySelectorAll(".fila-equipo").forEach(function(elemento) {
+            elemento.classList.remove("seleccionado");
+        });
+
+        fila.classList.add("seleccionado");
+        equipoSeleccionado = fila.dataset.id;
+
+        document.getElementById("avisoSeleccion").classList.add("d-none");
+    }
+
+    function validarSeleccion() {
+        if (!equipoSeleccionado) {
+            document.getElementById("avisoSeleccion").classList.remove("d-none");
+            return false;
+        }
+
+        return true;
+    }
+
+    function consultarEquipo() {
+        if (!validarSeleccion()) return;
+
+        window.location.href = "/Equipment/Details/" + equipoSeleccionado;
+    }
+
+    function actualizarEquipo() {
+        if (!esAdministrador || !validarSeleccion()) return;
+
+        window.location.href = "/Equipment/Editar/" + equipoSeleccionado;
+    }
+
+    function eliminarEquipo() {
+        if (!esAdministrador || !validarSeleccion()) return;
+
+        window.location.href = "/Equipment/Eliminar/" + equipoSeleccionado;
+    }
+
+    // ATAJOS DE TECLADO
+    document.addEventListener("keydown", function(event) {
+
+        const elemento = event.target;
+        const etiqueta = elemento.tagName.toLowerCase();
+
+        if (
+            etiqueta === "input" ||
+            etiqueta === "textarea" ||
+            etiqueta === "select" ||
+            elemento.isContentEditable ||
+            event.ctrlKey ||
+            event.altKey ||
+            event.metaKey ||
+            event.shiftKey
+        ) {
+            return;
+        }
+
+        switch (event.key.toLowerCase()) {
+            case "c":
+                event.preventDefault();
+                consultarEquipo();
+                break;
+
+            @if (esAdministrador)
+            {
+                <text>
+                case "a":
+                    event.preventDefault();
+                    actualizarEquipo();
+                    break;
+
+                case "r":
+                    event.preventDefault();
+                    window.location.href = '@Url.Action("Create", "Equipment")';
+                    break;
+
+                case "e":
+                    event.preventDefault();
+                    eliminarEquipo();
+                    break;
+                </text>
+            }
+        }
+    });
+</script>

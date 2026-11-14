@@ -1,0 +1,148 @@
+﻿@model IEnumerable<cmse.Repositories.Models.Mantenimiento>
+
+@{
+    ViewData["Title"] = "Detalle del historial";
+    var equipo = ViewBag.Equipo as cmse.Repositories.Models.Equipo;
+}
+
+<div style="max-width: 1100px; margin: 30px auto; padding: 25px;">
+
+    <h2 style="text-align: center; margin-bottom: 25px;">
+        Historial de mantenimiento
+    </h2>
+
+    @if (equipo != null)
+    {
+        <div style="background: var(--bs-body-bg, #fff); border: 1px solid #ddd; border-radius: 10px; padding: 22px; margin-bottom: 25px;">
+            <h4 style="margin-bottom: 18px;">Información del equipo</h4>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 18px;">
+                <div>
+                    <strong>Equipo</strong>
+                    <div>@equipo.Nombre</div>
+                </div>
+
+                <div>
+                    <strong>Tipo</strong>
+                    <div>@(equipo.IdTipoEquipoNavigation?.Nombre ?? "No especificado")</div>
+                </div>
+
+                <div>
+                    <strong>Modelo</strong>
+                    <div>@(equipo.Modelo ?? "No especificado")</div>
+                </div>
+
+                <div>
+                    <strong>Número de serie</strong>
+                    <div>@(equipo.NumeroSerie ?? "No especificado")</div>
+                </div>
+            </div>
+        </div>
+    }
+
+    <h4 style="margin-bottom: 18px;">Registros de mantenimiento</h4>
+
+    @foreach (var mantenimiento in Model)
+    {
+        <div style="background: var(--bs-body-bg, #fff); border: 1px solid #ddd; border-radius: 10px; padding: 22px; margin-bottom: 20px;">
+
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 18px;">
+                <h5 style="margin: 0;">
+                    Mantenimiento del @mantenimiento.FechaRealizacion?.ToString("dd/MM/yyyy HH:mm")
+                </h5>
+
+                <span style="background: #e8f2ff; color: #1769aa; padding: 6px 12px; border-radius: 20px; font-size: 13px; font-weight: 600;">
+                    @(mantenimiento.IdEstadoNavigation?.Nombre ?? "Sin estado")
+                </span>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 18px; margin-bottom: 20px;">
+                <div>
+                    <strong>Tipo de mantenimiento</strong>
+                    <div>@(mantenimiento.IdTipoMantenimientoNavigation?.Nombre ?? "No especificado")</div>
+                </div>
+
+                <div>
+                    <strong>Incidencia</strong>
+                    <div>@(mantenimiento.IdIncidenciaNavigation?.Titulo ?? "No asociada")</div>
+                </div>
+
+                <div>
+                    <strong>Técnico responsable</strong>
+                    <div>
+                        @if (mantenimiento.IdTecnicoNavigation != null)
+                        {
+                            @($"{mantenimiento.IdTecnicoNavigation.Nombres} {mantenimiento.IdTecnicoNavigation.Apellidos}")
+                        }
+                        else
+                        {
+                            @("No especificado")
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <div style="border-top: 1px solid #ddd; padding-top: 18px; margin-bottom: 18px;">
+                <strong>Actividades realizadas</strong>
+                <p style="margin: 6px 0 0; white-space: pre-wrap;">@(mantenimiento.Descripcion ?? "Sin información")</p>
+            </div>
+
+            <div style="margin-bottom: 18px;">
+                <strong>Observaciones</strong>
+                <p style="margin: 6px 0 0; white-space: pre-wrap;">@(mantenimiento.Observaciones ?? "Sin observaciones")</p>
+            </div>
+
+            <div style="margin-bottom: 18px;">
+                <strong>Resultado</strong>
+                <p style="margin: 6px 0 0;">@(mantenimiento.Resultado ?? "No especificado")</p>
+            </div>
+
+            <div style="border-top: 1px solid #ddd; padding-top: 18px;">
+                <h6 style="margin-bottom: 12px;">Repuestos utilizados</h6>
+
+                @if (mantenimiento.MantenimientoRepuestos != null && mantenimiento.MantenimientoRepuestos.Any())
+                {
+                    <div style="overflow-x: auto;">
+                        <table style="width: 100%; border-collapse: collapse; min-width: 750px;">
+                            <thead>
+                                <tr style="background: #f1f3f5;">
+                                    <th style="padding: 11px; text-align: left;">Nombre</th>
+                                    <th style="padding: 11px; text-align: left;">Código</th>
+                                    <th style="padding: 11px; text-align: left;">Marca</th>
+                                    <th style="padding: 11px; text-align: left;">Modelo</th>
+                                    <th style="padding: 11px; text-align: left;">Número de serie</th>
+                                    <th style="padding: 11px; text-align: center;">Cantidad</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var repuesto in mantenimiento.MantenimientoRepuestos)
+                                {
+                                    <tr style="border-top: 1px solid #ddd;">
+                                        <td style="padding: 11px;">@(repuesto.IdRepuestoNavigation?.Nombre ?? "—")</td>
+                                        <td style="padding: 11px;">@(repuesto.IdRepuestoNavigation?.Codigo ?? "—")</td>
+                                        <td style="padding: 11px;">@(repuesto.IdRepuestoNavigation?.Marca ?? "—")</td>
+                                        <td style="padding: 11px;">@(repuesto.IdRepuestoNavigation?.Modelo ?? "—")</td>
+                                        <td style="padding: 11px;">@(repuesto.IdRepuestoNavigation?.NumeroSerie ?? "—")</td>
+                                        <td style="padding: 11px; text-align: center;">@repuesto.Cantidad</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <p style="color: #777; margin: 0;">No se utilizaron repuestos en este mantenimiento.</p>
+                }
+            </div>
+        </div>
+    }
+
+    <div style="display: flex; justify-content: center; margin-top: 25px;">
+        <a asp-action="Historial" asp-controller="Mantenimiento"
+           style="display: inline-block; width: auto; min-width: 120px; padding: 10px 22px; border-radius: 7px; background: #6c757d; color: white; text-decoration: none; text-align: center;">
+            Regresar
+        </a>
+    </div>
+
+</div>

@@ -1,52 +1,73 @@
 ﻿@{
-    ViewData["Title"] = "Verificar correo";
+    ViewData["Title"] = "Verificar correo electrónico";
 }
 
-<div class="cmse-auth-page">
-    <div class="cmse-auth-card">
-        <h2>Verificar correo electrónico</h2>
+<div class="cmse-verify-page">
 
-        <p>
-            Enviamos un código de 6 dígitos a tu correo.
-            Introdúcelo para completar el registro.
-        </p>
+    <div class="cmse-verify-card">
+
+        <div class="cmse-verify-logo">
+            <img src="~/images/logocmse.jpeg" alt="Logo CMSE" />
+        </div>
+
+        <header class="cmse-verify-header">
+            <h1>Verificar correo electrónico</h1>
+            <p>
+                Estamos a un paso de completar tu registro.
+                Introduce el código de verificación que enviamos
+                a tu correo electrónico.
+            </p>
+        </header>
 
         @if (TempData["Mensaje"] != null)
         {
-            <p role="status">@TempData["Mensaje"]</p>
+            <div class="cmse-verify-message">
+                <span class="cmse-verify-message-icon">✓</span>
+                <span>@TempData["Mensaje"]</span>
+            </div>
         }
 
         @if (ViewBag.Error != null)
         {
-            <p class="cmse-validation" role="alert">
+            <div class="cmse-verify-error">
                 @ViewBag.Error
-            </p>
+            </div>
         }
 
         <form asp-controller="Account"
               asp-action="VerifyEmail"
               method="post"
-              class="cmse-auth-form">
+              class="cmse-verify-form">
 
             @Html.AntiForgeryToken()
 
-            <div class="cmse-form-group">
+            <div class="cmse-verify-field">
                 <label for="codigo">Código de verificación</label>
+
                 <input type="text"
                        id="codigo"
                        name="codigo"
+                       maxlength="6"
+                       minlength="6"
+                       pattern="[0-9]{6}"
                        inputmode="numeric"
                        autocomplete="one-time-code"
-                       pattern="[0-9]{6}"
-                       minlength="6"
-                       maxlength="6"
-                       required
-                       placeholder="Ej. 123456" />
+                       placeholder="000000"
+                       required />
+
+                <small>Ingresa los 6 dígitos que recibiste por correo.</small>
             </div>
 
-            <button type="submit" class="cmse-auth-button">
+            <button type="submit" class="cmse-verify-button">
                 Verificar correo
             </button>
+
         </form>
+
+        <div class="cmse-verify-footer">
+            <span>¿Tienes problemas con la verificación?</span>
+            <a asp-controller="Home" asp-action="Index">Volver al inicio</a>
+        </div>
+
     </div>
 </div>

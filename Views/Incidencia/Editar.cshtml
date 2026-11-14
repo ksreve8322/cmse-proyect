@@ -1,0 +1,202 @@
+﻿@using cmse.Repositories.Models
+@model Incidencia
+
+@{
+    ViewData["Title"] = "Actualizar incidencia";
+}
+
+<div class="container py-4">
+
+    <div class="mb-4">
+        <h1>Actualizar incidencia</h1>
+        <p class="text-muted">
+            Modifica la información de tu incidencia. El equipo asociado no puede cambiarse.
+        </p>
+    </div>
+
+    @if (TempData["Mensaje"] != null)
+    {
+        <div class="alert alert-info" role="alert">
+            @TempData["Mensaje"]
+        </div>
+    }
+
+    @if (Model.ArchivosIncidencia != null)
+    {
+        @foreach (var archivo in Model.ArchivosIncidencia)
+        {
+            <form id="eliminarArchivo_@archivo.IdArchivo"
+                  asp-controller="Incidencia"
+                  asp-action="EliminarArchivo"
+                  method="post">
+
+                @Html.AntiForgeryToken()
+
+                <input type="hidden"
+                       name="idIncidencia"
+                       value="@Model.IdIncidencia" />
+
+                <input type="hidden"
+                       name="idArchivo"
+                       value="@archivo.IdArchivo" />
+            </form>
+        }
+    }
+
+    <div class="card shadow-sm">
+        <div class="card-body p-4">
+
+            <form asp-controller="Incidencia"
+                  asp-action="GuardarEdicion"
+                  asp-route-id="@Model.IdIncidencia"
+                  method="post"
+                  enctype="multipart/form-data">
+
+                @Html.AntiForgeryToken()
+
+                <div asp-validation-summary="ModelOnly"
+                     class="text-danger mb-3"></div>
+
+                <div class="mb-3">
+                    <label class="form-label">Equipo asociado</label>
+
+                    <input type="text"
+                           class="form-control"
+                           value="@Model.IdEquipoNavigation?.Nombre"
+                           readonly />
+
+                    <small class="text-muted">
+                        El equipo no se puede modificar después de registrar la incidencia.
+                    </small>
+                </div>
+
+                <div class="mb-3">
+                    <label for="titulo" class="form-label">Título</label>
+
+                    <input type="text"
+                           id="titulo"
+                           name="titulo"
+                           class="form-control"
+                           maxlength="100"
+                           value="@Model.Titulo"
+                           required />
+
+                    <span class="text-danger">
+                        @Html.ValidationMessage("titulo")
+                    </span>
+                </div>
+
+                <div class="mb-3">
+                    <label for="descripcion" class="form-label">Descripción</label>
+
+                    <textarea id="descripcion"
+                              name="descripcion"
+                              class="form-control"
+                              rows="5"
+                              required>@Model.Descripcion</textarea>
+
+                    <span class="text-danger">
+                        @Html.ValidationMessage("descripcion")
+                    </span>
+                </div>
+
+                <hr />
+
+                <div class="mb-3">
+                    <label class="form-label">
+                        Archivos adjuntos actuales
+                    </label>
+
+                    @if (Model.ArchivosIncidencia != null &&
+                         Model.ArchivosIncidencia.Any())
+                    {
+                        <div class="list-group">
+
+                            @foreach (var archivo in Model.ArchivosIncidencia)
+                            {
+                                <div class="list-group-item d-flex justify-content-between align-items-center flex-wrap gap-2">
+
+                                    <div>
+                                        <strong>@archivo.NombreArchivo</strong>
+
+                                        <small class="text-muted d-block">
+                                            Subido:
+                                            @archivo.FechaSubida.ToString("dd/MM/yyyy HH:mm")
+                                        </small>
+                                    </div>
+
+                                    <div class="d-flex gap-2 flex-wrap">
+
+                                        <a href="@Url.Content(archivo.RutaArchivo)"
+                                           target="_blank"
+                                           rel="noopener noreferrer"
+                                           class="btn btn-sm btn-outline-primary">
+                                            Abrir
+                                        </a>
+
+                                        <a href="@Url.Content(archivo.RutaArchivo)"
+                                           download="@archivo.NombreArchivo"
+                                           class="btn btn-sm btn-outline-secondary">
+                                            Descargar
+                                        </a>
+
+                                        <button type="submit"
+                                                form="eliminarArchivo_@archivo.IdArchivo"
+                                                class="btn btn-sm btn-outline-danger">
+                                            Eliminar
+                                        </button>
+
+                                    </div>
+                                </div>
+                            }
+
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="text-muted">
+                            Esta incidencia no tiene archivos adjuntos.
+                        </p>
+                    }
+                </div>
+
+                <div class="mb-3">
+                    <label for="archivos" class="form-label">
+                        Agregar nuevos archivos
+                    </label>
+
+                    <input type="file"
+                           id="archivos"
+                           name="archivos"
+                           class="form-control"
+                           accept=".jpg,.jpeg,.png,.pdf,.txt,.xml,.html"
+                           multiple />
+
+                    <small class="text-muted">
+                        Máximo 5 archivos en total por incidencia.
+                        Cada archivo puede pesar hasta 10 MB.
+                        Formatos permitidos: JPG, JPEG, PNG, PDF, TXT, XML y HTML.
+                    </small>
+                </div>
+
+                <div class="d-flex justify-content-center flex-wrap gap-2 mt-4">
+
+                    <button type="submit" class="btn btn-primary">
+                        Guardar cambios
+                    </button>
+
+                    <a asp-controller="Incidencia"
+                       asp-action="Details"
+                       asp-route-id="@Model.IdIncidencia"
+                       class="btn btn-secondary">
+                        Cancelar
+                    </a>
+
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+
+</div>

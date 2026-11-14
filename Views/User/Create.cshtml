@@ -1,5 +1,130 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model cmse.VistaModelos.RegistrarUsuarioViewModel
+@using Microsoft.AspNetCore.Mvc.Rendering
+
 @{
+    ViewData["Title"] = "Registrar usuario";
+}
+
+<div class="cmse-register-page">
+    <a asp-controller="User" asp-action="Index" class="cmse-register-back">
+        ← Volver
+    </a>
+
+    <div class="cmse-register-container">
+
+        <header class="cmse-register-heading">
+            <h1>Registrar usuario</h1>
+            <p>Control y Mantenimiento de<br />Sistemas y Equipos</p>
+        </header>
+
+        <form asp-controller="User"
+              asp-action="Create"
+              method="post"
+              class="cmse-register-form">
+
+            @Html.AntiForgeryToken()
+
+            <!-- Columna izquierda -->
+            <div class="cmse-register-fields cmse-register-left">
+
+                <div class="cmse-form-group">
+                    <label asp-for="Nombres">Nombres</label>
+                    <input asp-for="Nombres" placeholder="Ingrese los nombres" />
+                    <span asp-validation-for="Nombres" class="cmse-validation"></span>
+                </div>
+
+                <div class="cmse-form-group">
+                    <label asp-for="Apellidos">Apellidos</label>
+                    <input asp-for="Apellidos" placeholder="Ingrese los apellidos" />
+                    <span asp-validation-for="Apellidos" class="cmse-validation"></span>
+                </div>
+
+                <div class="cmse-form-group">
+                    <label asp-for="IdTipoDocumento">Tipo de documento</label>
+                    <select asp-for="IdTipoDocumento"
+                            asp-items="@(new SelectList(ViewBag.TiposDocumento, "IdTipoDocumento", "Nombre"))">
+                        <option value="">Seleccione un tipo</option>
+                    </select>
+                    <span asp-validation-for="IdTipoDocumento" class="cmse-validation"></span>
+                </div>
+
+                <div class="cmse-form-group">
+                    <label asp-for="NumeroDocumento">Número de documento</label>
+                    <input asp-for="NumeroDocumento" placeholder="Ingrese el documento" />
+                    <span asp-validation-for="NumeroDocumento" class="cmse-validation"></span>
+                </div>
+
+            </div>
+
+            <!-- Logo central -->
+            <div class="cmse-register-logo">
+                <img src="~/images/logocmse.jpeg" alt="Logo CMSE" />
+            </div>
+
+            <!-- Columna derecha -->
+            <div class="cmse-register-fields cmse-register-right">
+
+                <div class="cmse-form-group">
+                    <label asp-for="Correo">Correo electrónico</label>
+                    <input asp-for="Correo"
+                           type="email"
+                           placeholder="Ingrese el correo" />
+                    <span asp-validation-for="Correo" class="cmse-validation"></span>
+                </div>
+
+                <div class="cmse-form-group">
+                    <label asp-for="Telefono">Teléfono</label>
+                    <input asp-for="Telefono" placeholder="Ingrese el teléfono" />
+                    <span asp-validation-for="Telefono" class="cmse-validation"></span>
+                </div>
+
+                <div class="cmse-form-group">
+                    <label asp-for="IdRol">Rol</label>
+                    <select asp-for="IdRol"
+                            asp-items="@(new SelectList(ViewBag.Roles, "IdRol", "Nombre"))">
+                        <option value="">Seleccione un rol</option>
+                    </select>
+                    <span asp-validation-for="IdRol" class="cmse-validation"></span>
+                </div>
+
+                <div class="cmse-form-group">
+                    <label asp-for="Contrasena">Contraseña</label>
+                    <input asp-for="Contrasena"
+                           type="password"
+                           placeholder="Ingrese una contraseña" />
+                    <span asp-validation-for="Contrasena" class="cmse-validation"></span>
+                </div>
+
+                <div class="cmse-form-group">
+                    <label asp-for="ConfirmarContrasena">Confirmar contraseña</label>
+                    <input asp-for="ConfirmarContrasena"
+                           type="password"
+                           placeholder="Repita la contraseña" />
+                    <span asp-validation-for="ConfirmarContrasena" class="cmse-validation"></span>
+                </div>
+
+            </div>
+
+            <div asp-validation-summary="ModelOnly"
+                 class="cmse-validation cmse-register-validation">
+            </div>
+
+            <div class="cmse-register-actions">
+                <button type="submit" class="cmse-auth-button">
+                    Registrar usuario
+                </button>
+
+                <a asp-controller="User"
+                   asp-action="Index"
+                   class="cmse-register-cancel">
+                    Cancelar
+                </a>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
 }

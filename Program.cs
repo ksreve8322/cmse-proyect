@@ -54,5 +54,22 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}")
     .WithStaticAssets();
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<CmseContext>();
 
+    try
+    {
+        db.Database.OpenConnection();
+
+        Console.WriteLine("CONEXIÓN SQL: EXITOSA");
+
+        db.Database.CloseConnection();
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine("ERROR SQL DETALLADO:");
+        Console.WriteLine(ex.ToString());
+    }
+}
 app.Run();

@@ -1,0 +1,633 @@
+﻿@using cmse.Repositories.Models
+@using Microsoft.AspNetCore.Mvc.Rendering
+@model Equipo
+
+@{
+    ViewData["Title"] = "Actualizar equipo";
+    var estados = ViewBag.Estados as IEnumerable<Estado>;
+    var almacenamientos = Model.EquiposComputadore?
+        .AlmacenamientosEquipos?
+        .OrderBy(a => a.IdAlmacenamiento)
+        .ToList() ?? new List<AlmacenamientosEquipo>();
+}
+
+<div class="container py-4">
+
+    <div class="text-center mb-4">
+        <h1 class="fw-bold">Actualizar equipo</h1>
+        <p class="text-muted">
+            Modifica la información general y técnica del equipo.
+        </p>
+    </div>
+
+    <form asp-controller="Equipment"
+          asp-action="GuardarEdicion"
+          asp-route-id="@Model.IdEquipo"
+          method="post">
+
+        @Html.AntiForgeryToken()
+
+        <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+        <!-- DATOS GENERALES -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Datos del equipo</h5>
+            </div>
+
+            <div class="card-body">
+                <div class="row g-3">
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Tipo de equipo</label>
+                        <input class="form-control"
+                               value="@Model.IdTipoEquipoNavigation?.Nombre"
+                               readonly />
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="Nombre" class="form-label fw-bold">
+                            Nombre del equipo
+                        </label>
+                        <input asp-for="Nombre" class="form-control" />
+                        <span asp-validation-for="Nombre" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Código de inventario</label>
+                        <input class="form-control"
+                               value="@Model.CodigoInventario"
+                               readonly />
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="Marca" class="form-label fw-bold">Marca</label>
+                        <input asp-for="Marca" class="form-control" />
+                        <span asp-validation-for="Marca" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="Modelo" class="form-label fw-bold">Modelo</label>
+                        <input asp-for="Modelo" class="form-control" />
+                        <span asp-validation-for="Modelo" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="NumeroSerie" class="form-label fw-bold">
+                            Número de serie
+                        </label>
+                        <input asp-for="NumeroSerie" class="form-control" />
+                        <span asp-validation-for="NumeroSerie" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="Ubicacion" class="form-label fw-bold">
+                            Ubicación
+                        </label>
+                        <input asp-for="Ubicacion" class="form-control" />
+                        <span asp-validation-for="Ubicacion" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="IdEstado" class="form-label fw-bold">
+                            Estado
+                        </label>
+                        <select asp-for="IdEstado"
+                                class="form-select"
+                                asp-items="@(new SelectList(estados, "IdEstado", "Nombre"))">
+                            <option value="">Selecciona un estado</option>
+                        </select>
+                        <span asp-validation-for="IdEstado" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-12">
+                        <label asp-for="Observaciones" class="form-label fw-bold">
+                            Observaciones
+                        </label>
+                        <textarea asp-for="Observaciones"
+                                  class="form-control"
+                                  rows="3"></textarea>
+                        <span asp-validation-for="Observaciones" class="text-danger"></span>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- INFORMACIÓN TÉCNICA -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Información técnica</h5>
+            </div>
+
+            <div class="card-body">
+
+                @if (Model.EquiposComputadore != null)
+                {
+                    <h6 class="fw-bold mb-3">Características del computador</h6>
+
+                    <div class="row g-3">
+
+                        <div class="col-md-6">
+                            <label asp-for="EquiposComputadore.Procesador"
+                                   class="form-label fw-bold">Procesador</label>
+                            <input asp-for="EquiposComputadore.Procesador"
+                                   class="form-control" />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="EquiposComputadore.CapacidadRamGb"
+                                   class="form-label fw-bold">Capacidad RAM (GB)</label>
+                            <input asp-for="EquiposComputadore.CapacidadRamGb"
+                                   type="number" min="1" class="form-control" />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="EquiposComputadore.TipoRam"
+                                   class="form-label fw-bold">Tipo de RAM</label>
+                            <input asp-for="EquiposComputadore.TipoRam"
+                                   class="form-control" />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="EquiposComputadore.Gpu"
+                                   class="form-label fw-bold">GPU</label>
+                            <input asp-for="EquiposComputadore.Gpu"
+                                   class="form-control" />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="EquiposComputadore.SistemaOperativo"
+                                   class="form-label fw-bold">Sistema operativo</label>
+                            <input asp-for="EquiposComputadore.SistemaOperativo"
+                                   class="form-control" />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="EquiposComputadore.Refrigeracion"
+                                   class="form-label fw-bold">Refrigeración</label>
+                            <input asp-for="EquiposComputadore.Refrigeracion"
+                                   class="form-control" />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="EquiposComputadore.Puertos"
+                                   class="form-label fw-bold">Puertos</label>
+                            <input asp-for="EquiposComputadore.Puertos"
+                                   class="form-control" />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="EquiposComputadore.FuentePoder"
+                                   class="form-label fw-bold">Fuente de poder</label>
+                            <input asp-for="EquiposComputadore.FuentePoder"
+                                   class="form-control" />
+                        </div>
+
+                        @if (Model.IdTipoEquipo == 2)
+                        {
+                            <div class="col-md-6">
+                                <label asp-for="EquiposComputadore.Bateria"
+                                       class="form-label fw-bold">Batería</label>
+                                <input asp-for="EquiposComputadore.Bateria"
+                                       class="form-control" />
+                            </div>
+
+                            <div class="col-md-6">
+                                <label asp-for="EquiposComputadore.Pantalla"
+                                       class="form-label fw-bold">Pantalla</label>
+                                <input asp-for="EquiposComputadore.Pantalla"
+                                       class="form-control" />
+                            </div>
+                        }
+                    </div>
+
+                    <!-- ALMACENAMIENTOS -->
+                    <hr class="my-4" />
+
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+                        <h6 class="fw-bold mb-0">Unidades de almacenamiento</h6>
+
+                        <button type="button"
+                                class="btn btn-primary btn-sm"
+                                id="btnAgregarAlmacenamiento">
+                            <i class="bi bi-plus-lg"></i>
+                            Agregar almacenamiento
+                        </button>
+                    </div>
+
+                    <div id="contenedorAlmacenamientos">
+
+                        @for (int i = 0; i < almacenamientos.Count; i++)
+                        {
+                            <div class="row g-2 align-items-end mb-3 fila-almacenamiento">
+
+                                <input type="hidden"
+                                       name="EquiposComputadore.AlmacenamientosEquipos[@i].IdAlmacenamiento"
+                                       value="@almacenamientos[i].IdAlmacenamiento" />
+
+                                <div class="col-md-4">
+                                    <label class="form-label fw-bold">Capacidad</label>
+                                    <input type="number"
+                                           step="0.01"
+                                           min="0.01"
+                                           class="form-control"
+                                           name="EquiposComputadore.AlmacenamientosEquipos[@i].Capacidad"
+                                           value="@almacenamientos[i].Capacidad" />
+                                </div>
+
+                                <div class="col-md-3">
+                                    <label class="form-label fw-bold">Unidad</label>
+                                    <select class="form-select"
+                                            name="EquiposComputadore.AlmacenamientosEquipos[@i].Unidad">
+                                        <option value="">Selecciona</option>
+                                        <option value="GB" selected="@(almacenamientos[i].Unidad == "GB")">GB</option>
+                                        <option value="TB" selected="@(almacenamientos[i].Unidad == "TB")">TB</option>
+                                    </select>
+                                </div>
+
+                                <div class="col-md-3">
+                                    <label class="form-label fw-bold">Tipo</label>
+                                    <select class="form-select"
+                                            name="EquiposComputadore.AlmacenamientosEquipos[@i].TipoAlmacenamiento">
+                                        <option value="">Selecciona</option>
+                                        <option value="HDD" selected="@(almacenamientos[i].TipoAlmacenamiento == "HDD")">HDD</option>
+                                        <option value="SSD" selected="@(almacenamientos[i].TipoAlmacenamiento == "SSD")">SSD</option>
+                                        <option value="NVMe" selected="@(almacenamientos[i].TipoAlmacenamiento == "NVMe")">NVMe</option>
+                                        <option value="eMMC" selected="@(almacenamientos[i].TipoAlmacenamiento == "eMMC")">eMMC</option>
+                                        <option value="Otro" selected="@(almacenamientos[i].TipoAlmacenamiento == "Otro")">Otro</option>
+                                    </select>
+                                </div>
+
+                                <div class="col-md-2">
+                                    <button type="button"
+                                            class="btn btn-danger w-100 btnEliminarAlmacenamiento">
+                                        Eliminar
+                                    </button>
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+                    @if (almacenamientos.Count == 0)
+                    {
+                        <p class="text-muted small" id="mensajeSinAlmacenamiento">
+                            No hay unidades registradas. Agrega al menos una.
+                        </p>
+                    }
+                }
+                else if (Model.EquiposImpresora != null)
+                {
+                    <h6 class="fw-bold mb-3">Características de la impresora</h6>
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label asp-for="EquiposImpresora.TipoImpresora"
+                                   class="form-label fw-bold">Tipo de impresora</label>
+                            <input asp-for="EquiposImpresora.TipoImpresora"
+                                   class="form-control" />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="EquiposImpresora.ResolucionImpresion"
+                                   class="form-label fw-bold">Resolución de impresión</label>
+                            <input asp-for="EquiposImpresora.ResolucionImpresion"
+                                   class="form-control" />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="EquiposImpresora.FormatosSoportados"
+                                   class="form-label fw-bold">Formatos soportados</label>
+                            <input asp-for="EquiposImpresora.FormatosSoportados"
+                                   class="form-control" />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="EquiposImpresora.Puertos"
+                                   class="form-label fw-bold">Puertos</label>
+                            <input asp-for="EquiposImpresora.Puertos"
+                                   class="form-control" />
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-check mt-4">
+                                <input asp-for="EquiposImpresora.ImpresionColor"
+                                       class="form-check-input" />
+                                <label asp-for="EquiposImpresora.ImpresionColor"
+                                       class="form-check-label fw-bold">
+                                    Impresión a color
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                }
+                else if (Model.EquiposPantalla != null)
+                {
+                    <h6 class="fw-bold mb-3">Características de la pantalla</h6>
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label asp-for="EquiposPantalla.TamanoPulgadas"
+                                   class="form-label fw-bold">Tamaño (pulgadas)</label>
+                            <input asp-for="EquiposPantalla.TamanoPulgadas"
+                                   type="number" step="0.1" class="form-control" />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="EquiposPantalla.Resolucion"
+                                   class="form-label fw-bold">Resolución</label>
+                            <input asp-for="EquiposPantalla.Resolucion"
+                                   class="form-control" />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="EquiposPantalla.FrecuenciaActualizacion"
+                                   class="form-label fw-bold">Frecuencia (Hz)</label>
+                            <input asp-for="EquiposPantalla.FrecuenciaActualizacion"
+                                   type="number" min="1" class="form-control" />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="EquiposPantalla.TecnologiaPanel"
+                                   class="form-label fw-bold">Tecnología del panel</label>
+                            <input asp-for="EquiposPantalla.TecnologiaPanel"
+                                   class="form-control" />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="EquiposPantalla.SistemaOperativo"
+                                   class="form-label fw-bold">Sistema operativo</label>
+                            <input asp-for="EquiposPantalla.SistemaOperativo"
+                                   class="form-control" />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="EquiposPantalla.Puertos"
+                                   class="form-label fw-bold">Puertos</label>
+                            <input asp-for="EquiposPantalla.Puertos"
+                                   class="form-control" />
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-check mt-4">
+                                <input asp-for="EquiposPantalla.Hdr"
+                                       class="form-check-input" />
+                                <label asp-for="EquiposPantalla.Hdr"
+                                       class="form-check-label fw-bold">HDR</label>
+                            </div>
+                        </div>
+                    </div>
+                }
+                else if (Model.EquiposProyectore != null)
+                {
+                    <h6 class="fw-bold mb-3">Características del proyector</h6>
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label asp-for="EquiposProyectore.TecnologiaProyeccion"
+                                   class="form-label fw-bold">Tecnología de proyección</label>
+                            <input asp-for="EquiposProyectore.TecnologiaProyeccion"
+                                   class="form-control" />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="EquiposProyectore.FuenteIluminacion"
+                                   class="form-label fw-bold">Fuente de iluminación</label>
+                            <input asp-for="EquiposProyectore.FuenteIluminacion"
+                                   class="form-control" />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="EquiposProyectore.ResolucionNativa"
+                                   class="form-label fw-bold">Resolución nativa</label>
+                            <input asp-for="EquiposProyectore.ResolucionNativa"
+                                   class="form-control" />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="EquiposProyectore.ResolucionMaxima"
+                                   class="form-label fw-bold">Resolución máxima</label>
+                            <input asp-for="EquiposProyectore.ResolucionMaxima"
+                                   class="form-control" />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="EquiposProyectore.BrilloLumenes"
+                                   class="form-label fw-bold">Brillo (lúmenes)</label>
+                            <input asp-for="EquiposProyectore.BrilloLumenes"
+                                   type="number" min="1" class="form-control" />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="EquiposProyectore.RelacionContraste"
+                                   class="form-label fw-bold">Relación de contraste</label>
+                            <input asp-for="EquiposProyectore.RelacionContraste"
+                                   class="form-control" />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="EquiposProyectore.RelacionAspecto"
+                                   class="form-label fw-bold">Relación de aspecto</label>
+                            <input asp-for="EquiposProyectore.RelacionAspecto"
+                                   class="form-control" />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="EquiposProyectore.TamanoProyeccion"
+                                   class="form-label fw-bold">Tamaño de proyección</label>
+                            <input asp-for="EquiposProyectore.TamanoProyeccion"
+                                   class="form-control" />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="EquiposProyectore.DistanciaProyeccion"
+                                   class="form-label fw-bold">Distancia de proyección</label>
+                            <input asp-for="EquiposProyectore.DistanciaProyeccion"
+                                   class="form-control" />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="EquiposProyectore.TipoLente"
+                                   class="form-label fw-bold">Tipo de lente</label>
+                            <input asp-for="EquiposProyectore.TipoLente"
+                                   class="form-control" />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="EquiposProyectore.CorreccionTrapezoidal"
+                                   class="form-label fw-bold">Corrección trapezoidal</label>
+                            <input asp-for="EquiposProyectore.CorreccionTrapezoidal"
+                                   class="form-control" />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="EquiposProyectore.Puertos"
+                                   class="form-label fw-bold">Puertos</label>
+                            <input asp-for="EquiposProyectore.Puertos"
+                                   class="form-control" />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="EquiposProyectore.HorasUso"
+                                   class="form-label fw-bold">Horas de uso</label>
+                            <input asp-for="EquiposProyectore.HorasUso"
+                                   type="number" min="0" class="form-control" />
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-check mt-4">
+                                <input asp-for="EquiposProyectore.AltavocesIntegrados"
+                                       class="form-check-input" />
+                                <label asp-for="EquiposProyectore.AltavocesIntegrados"
+                                       class="form-check-label fw-bold">
+                                    Altavoces integrados
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="alert alert-warning mb-0">
+                        Este equipo no tiene información técnica asociada.
+                    </div>
+                }
+
+            </div>
+        </div>
+
+        <!-- BOTONES -->
+        <div class="d-flex justify-content-center gap-3 flex-wrap">
+            <a asp-action="Index" class="btn btn-secondary">
+                Cancelar
+            </a>
+
+            <button type="submit" class="btn btn-primary">
+                Guardar cambios
+            </button>
+        </div>
+
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const contenedor = document.getElementById("contenedorAlmacenamientos");
+            const botonAgregar = document.getElementById("btnAgregarAlmacenamiento");
+
+            if (!contenedor || !botonAgregar) {
+                return;
+            }
+
+            let siguienteIndice = @almacenamientos.Count;
+
+            function actualizarIndices() {
+                const filas = contenedor.querySelectorAll(".fila-almacenamiento");
+
+                filas.forEach((fila, indice) => {
+                    fila.querySelectorAll("input, select").forEach(control => {
+                        control.name = control.name.replace(
+                            /AlmacenamientosEquipos\[\d+\]/,
+                            "AlmacenamientosEquipos[" + indice + "]"
+                        );
+                    });
+                });
+
+                siguienteIndice = filas.length;
+            }
+
+            function crearFila() {
+                const indice = siguienteIndice++;
+
+                const fila = document.createElement("div");
+                fila.className = "row g-2 align-items-end mb-3 fila-almacenamiento";
+
+                fila.innerHTML = `
+                            <input type="hidden"
+                                   name="EquiposComputadore.AlmacenamientosEquipos[${indice}].IdAlmacenamiento"
+                                   value="0" />
+
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold">Capacidad</label>
+                                <input type="number"
+                                       step="0.01"
+                                       min="0.01"
+                                       class="form-control"
+                                       name="EquiposComputadore.AlmacenamientosEquipos[${indice}].Capacidad"
+                                       required />
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label fw-bold">Unidad</label>
+                                <select class="form-select"
+                                        name="EquiposComputadore.AlmacenamientosEquipos[${indice}].Unidad"
+                                        required>
+                                    <option value="">Selecciona</option>
+                                    <option value="GB">GB</option>
+                                    <option value="TB">TB</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label fw-bold">Tipo</label>
+                                <select class="form-select"
+                                        name="EquiposComputadore.AlmacenamientosEquipos[${indice}].TipoAlmacenamiento"
+                                        required>
+                                    <option value="">Selecciona</option>
+                                    <option value="HDD">HDD</option>
+                                    <option value="SSD">SSD</option>
+                                    <option value="NVMe">NVMe</option>
+                                    <option value="eMMC">eMMC</option>
+                                    <option value="Otro">Otro</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-2">
+                                <button type="button"
+                                        class="btn btn-danger w-100 btnEliminarAlmacenamiento">
+                                    Eliminar
+                                </button>
+                            </div>
+                        `;
+
+                contenedor.appendChild(fila);
+                actualizarIndices();
+                actualizarMensaje();
+            }
+
+            function actualizarMensaje() {
+                const mensaje = document.getElementById("mensajeSinAlmacenamiento");
+
+                if (mensaje) {
+                    mensaje.style.display =
+                        contenedor.querySelectorAll(".fila-almacenamiento").length === 0
+                            ? "block"
+                            : "none";
+                }
+            }
+
+            botonAgregar.addEventListener("click", crearFila);
+
+            contenedor.addEventListener("click", function(evento) {
+                const boton = evento.target.closest(".btnEliminarAlmacenamiento");
+
+                if (!boton) {
+                    return;
+                }
+
+                const fila = boton.closest(".fila-almacenamiento");
+
+                if (fila) {
+                    fila.remove();
+                    actualizarIndices();
+                    actualizarMensaje();
+                }
+            });
+
+            actualizarMensaje();
+        });
+    </script>
+}

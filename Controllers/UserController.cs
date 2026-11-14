@@ -1,16 +1,23 @@
 ﻿
 using cmse.Repositories;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using cmse.VistaModelos;
+using cmse.Utilities;
+using cmse.Repositories.Models;
 namespace cmse.Controllers
 {
     public class UserController : Controller
     {
         private readonly UsuarioRepository _usuarioRepository;
+        private readonly PasswordService _passwordService;
 
-        public UserController(UsuarioRepository usuarioRepository)
+        public UserController(
+            UsuarioRepository usuarioRepository,
+            PasswordService passwordService)
         {
             _usuarioRepository = usuarioRepository;
+            _passwordService = passwordService;
         }
 
         private bool EsAdministrador()
@@ -45,6 +52,83 @@ namespace cmse.Controllers
 
             return View(usuarios);
         }
+        // GET: User/Create
+        public async Task<IActionResult> Create()
+        {
+            if (!EsAdministrador())
+                return RedirectToAction("Login", "Account");
+
+            ViewBag.TiposDocumento = await _usuarioRepository.ObtenerTiposDocumentoAsync();
+            ViewBag.Roles = await _usuarioRepository.ObtenerRolesAsync();
+
+            return View(new RegistrarUsuarioViewModel());
+        }
+
+        // POST: User/Create
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(RegistrarUsuarioViewModel modelo)
+        {
+            if (!EsAdministrador())
+                return RedirectToAction("Login", "Account");
+
+            var tiposDocumento = await _usuarioRepository.ObtenerTiposDocumentoAsync();
+            var roles = await _usuarioRepository.ObtenerRolesAsync();
+
+            ViewBag.TiposDocumento = tiposDocumento;
+            ViewBag.Roles = roles;
+
+            // Comprobar que el tipo de documento seleccionado exista.
+            if (!tiposDocumento.Any(t => t.IdTipoDocumento == modelo.IdTipoDocumento))
+            {
+                ModelState.AddModelError("IdTipoDocumento", "Selecciona un tipo de documento válido.");
+            }
+
+            // Comprobar que el rol seleccionado exista.
+            if (!roles.Any(r => r.IdRol == modelo.IdRol))
+            {
+                ModelState.AddModelError("IdRol", "Selecciona un rol válido.");
+            }
+
+            // Comprobar que el correo no esté registrado.
+            if (await _usuarioRepository.ExisteCorreoAsync(modelo.Correo))
+            {
+                ModelState.AddModelError("Correo", "Este correo ya está registrado.");
+            }
+
+            // Comprobar que el documento no esté registrado.
+            if (await _usuarioRepository.ExisteNumeroDocumentoAsync(modelo.NumeroDocumento))
+            {
+                ModelState.AddModelError("NumeroDocumento", "Este número de documento ya está registrado.");
+            }
+
+            if (!ModelState.IsValid)
+                return View(modelo);
+
+            var usuario = new Usuario
+            {
+                IdRol = modelo.IdRol,
+                IdTipoDocumento = modelo.IdTipoDocumento,
+                Nombres = modelo.Nombres.Trim(),
+                Apellidos = modelo.Apellidos.Trim(),
+                NumeroDocumento = modelo.NumeroDocumento.Trim(),
+                Correo = modelo.Correo.Trim(),
+                Telefono = modelo.Telefono?.Trim(),
+                Contrasena = _passwordService.HashPassword(modelo.Contrasena),
+                Estado = true,
+                IntentosFallidos = 0,
+                BloqueoHasta = null
+            };
+
+            await _usuarioRepository.CrearAsync(usuario);
+
+            TempData["Mensaje"] = "El usuario fue registrado correctamente.";
+            TempData["TipoMensaje"] = "Exito";
+            TempData["TituloModal"] = "Registro exitoso";
+
+            return RedirectToAction(nameof(Index));
+        }
+
         // GET: User/Details/5
         public async Task<IActionResult> Details(int id)
         {
@@ -197,5 +281,77 @@ namespace cmse.Controllers
         }
 
 
+        // POST: User/Eliminar/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Eliminar(int id)
+        {
+            if (!EsAdministrador())
+                return RedirectToAction("Login", "Account");
+
+            // Evitar que el administrador elimine su propia cuenta.
+            int? idUsuarioSesion = HttpContext.Session.GetInt32("UsuarioId");
+
+            if (idUsuarioSesion == id)
+            {
+                TempData["Mensaje"] =
+                    "No puedes eliminar tu propia cuenta desde este módulo.";
+
+                return RedirectToAction(nameof(Details), new { id });
+            }
+
+            var usuario = await _usuarioRepository.ObtenerPorIdAsync(id);
+
+            if (usuario == null)
+            {
+                TempData["Mensaje"] = "El usuario que intentas eliminar no existe.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            // Proteger al último administrador activo.
+            if (usuario.IdRol == 1 && usuario.Estado)
+            {
+                bool existeOtroAdministrador =
+                    await _usuarioRepository.ExisteOtroAdministradorActivoAsync(id);
+
+                if (!existeOtroAdministrador)
+                {
+                    TempData["Mensaje"] =
+                        "No puedes eliminar al último administrador activo.";
+
+                    return RedirectToAction(nameof(Details), new { id });
+                }
+            }
+
+            // Evitar eliminar usuarios con información operativa.
+            bool tieneRegistros =
+                await _usuarioRepository.TieneRegistrosOperativosAsync(id);
+
+            if (tieneRegistros)
+            {
+                TempData["Mensaje"] =
+                    "No se puede eliminar este usuario porque tiene registros operativos asociados.";
+
+                return RedirectToAction(nameof(Details), new { id });
+            }
+
+            try
+            {
+                await _usuarioRepository.EliminarCuentaAsync(id);
+
+                TempData["MensajeExito"] = "Usuario eliminado correctamente.";
+
+                return RedirectToAction(nameof(Index));
+            }
+            catch (DbUpdateException)
+            {
+                TempData["Mensaje"] =
+                    "No se pudo eliminar el usuario porque tiene otros registros relacionados en el sistema.";
+
+                return RedirectToAction(nameof(Details), new { id });
+            }
+        }
+
     }
+
 }

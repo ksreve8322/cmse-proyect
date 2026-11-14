@@ -41,13 +41,15 @@ namespace cmse.Utilities
             string titulo,
             string nombre,
             string mensaje,
-            string contactoSoporte)
+            string contactoSoporte,
+            string? codigoVerificacion = null)
         {
             string contenidoHtml = _plantillaCorreo.GenerarCorreo(
                 titulo,
                 nombre,
                 mensaje,
-                contactoSoporte);
+                contactoSoporte,
+                codigoVerificacion);
 
             string rutaLogo = _plantillaCorreo.ObtenerRutaLogo();
 

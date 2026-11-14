@@ -1,4 +1,6 @@
-﻿using System;
+﻿
+using cmse.TempScaffold;
+using System;
 using System.Collections.Generic;
 
 namespace cmse.Repositories.Models;
@@ -10,4 +12,6 @@ public partial class TiposEquipo
     public string Nombre { get; set; } = null!;
 
     public virtual ICollection<Equipo> Equipos { get; set; } = new List<Equipo>();
+
+    public virtual ICollection<TiposIncidencium> IdTipoIncidencia { get; set; } = new List<TiposIncidencium>();
 }

@@ -1,0 +1,220 @@
+﻿@model cmse.Repositories.Models.Incidencia
+
+@{
+    ViewData["Title"] = "Consultar incidencia";
+
+    int? rolId = Context.Session.GetInt32("RolId");
+    bool esAdministrador = rolId == 1;
+
+    var asignacionActiva = Model.AsignacionesIncidencia?
+        .FirstOrDefault(a => a.FechaFinalizacion == null);
+
+    var diagnosticos = Model.Diagnosticos?
+        .OrderByDescending(d => d.FechaDiagnostico)
+        .ToList();
+}
+
+<div class="cmse-mantenimiento-container">
+
+    <div class="cmse-mantenimiento-header">
+        <h2>Consultar incidencia</h2>
+        <p>Información detallada de la incidencia seleccionada.</p>
+    </div>
+
+    @if (esAdministrador)
+    {
+        <div class="cmse-mantenimiento-acciones mb-4">
+
+            <a asp-controller="Mantenimiento"
+               asp-action="Index"
+               class="cmse-mantenimiento-boton">
+                Asignar técnico
+            </a>
+
+            <a asp-controller="Mantenimiento"
+               asp-action="ConsultarAsignaciones"
+               class="cmse-mantenimiento-boton">
+                Consultar incidencias asignadas
+            </a>
+
+            <a asp-controller="Mantenimiento"
+               asp-action="Consultar"
+               class="cmse-mantenimiento-boton">
+                Consultar mantenimientos
+            </a>
+
+            <a asp-controller="Mantenimiento"
+               asp-action="Programar"
+               class="cmse-mantenimiento-boton">
+                Programar mantenimiento
+            </a>
+
+            <a asp-controller="Mantenimiento"
+               asp-action="Cancelar"
+               class="cmse-mantenimiento-boton">
+                Cancelar mantenimiento programado
+            </a>
+
+        </div>
+    }
+
+    <div class="card shadow-sm p-4">
+
+        <h5 class="mb-3">Información de la incidencia</h5>
+
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <strong>Código de incidencia:</strong>
+                <p>@Model.IdIncidencia</p>
+            </div>
+
+            <div class="col-md-6">
+                <strong>Estado:</strong>
+                <p>@(Model.IdEstadoNavigation?.Nombre ?? "No disponible")</p>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <strong>Título:</strong>
+            <p>@Model.Titulo</p>
+        </div>
+
+        <div class="mb-3">
+            <strong>Descripción:</strong>
+            <p>@Model.Descripcion</p>
+        </div>
+
+        <hr />
+
+        <h5 class="mb-3">Información del equipo</h5>
+
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <strong>Equipo:</strong>
+                <p>@(Model.IdEquipoNavigation?.Nombre ?? "No disponible")</p>
+            </div>
+
+            <div class="col-md-6">
+                <strong>Código de inventario:</strong>
+                <p>@(Model.IdEquipoNavigation?.CodigoInventario ?? "No disponible")</p>
+            </div>
+        </div>
+
+        <hr />
+
+        <h5 class="mb-3">Información del usuario que reportó</h5>
+
+        <div class="mb-3">
+            <strong>Usuario:</strong>
+            <p>
+                @(Model.IdUsuarioNavigation?.Nombres ?? "")
+                @(Model.IdUsuarioNavigation?.Apellidos ?? "")
+            </p>
+        </div>
+
+        <hr />
+
+        <h5 class="mb-3">Asignación del técnico</h5>
+
+        @if (asignacionActiva != null)
+        {
+            <div class="mb-3">
+                <strong>Técnico asignado:</strong>
+                <p>
+                    @asignacionActiva.IdTecnicoNavigation?.Nombres
+                    @asignacionActiva.IdTecnicoNavigation?.Apellidos
+                </p>
+            </div>
+
+            <div class="mb-3">
+                <strong>Fecha de asignación:</strong>
+                <p>@asignacionActiva.FechaAsignacion</p>
+            </div>
+        }
+        else
+        {
+            <p>No hay un técnico asignado actualmente.</p>
+        }
+
+        <hr />
+
+        <h5 class="mb-3">Diagnósticos registrados</h5>
+
+        @if (diagnosticos != null && diagnosticos.Any())
+        {
+            @foreach (var diagnostico in diagnosticos)
+            {
+                <div class="border rounded p-3 mb-3">
+
+                    <div class="row mb-3">
+
+                        <div class="col-md-6">
+                            <strong>Fecha del diagnóstico:</strong>
+                            <p>@diagnostico.FechaDiagnostico.ToString("dd/MM/yyyy HH:mm")</p>
+                        </div>
+
+                        <div class="col-md-6">
+                            <strong>Técnico responsable:</strong>
+                            <p>
+                                @(diagnostico.IdTecnicoNavigation?.Nombres ?? "")
+                                @(diagnostico.IdTecnicoNavigation?.Apellidos ?? "")
+                            </p>
+                        </div>
+
+                    </div>
+
+                    <strong>Resultado del diagnóstico:</strong>
+
+                    <div class="mt-2"
+                         style="white-space: pre-wrap; overflow-wrap: anywhere;">
+                        @diagnostico.Resultado
+                    </div>
+
+                </div>
+            }
+        }
+        else
+        {
+            <p class="text-muted">
+                Esta incidencia todavía no tiene diagnósticos registrados.
+            </p>
+        }
+
+        <hr />
+
+        <h5 class="mb-3">Fechas</h5>
+
+        <div class="row">
+            <div class="col-md-6">
+                <strong>Fecha de registro:</strong>
+                <p>@Model.FechaRegistro</p>
+            </div>
+
+            <div class="col-md-6">
+                <strong>Fecha de cierre:</strong>
+                <p>@(Model.FechaCierre?.ToString() ?? "Sin cerrar")</p>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="d-flex justify-content-center gap-3 mt-4 mb-4">
+
+        <a asp-controller="Mantenimiento"
+           asp-action="ConsultarAsignaciones"
+           class="cmse-mantenimiento-cancelar">
+            Regresar
+        </a>
+
+        @if (esAdministrador)
+        {
+            <a asp-controller="Mantenimiento"
+               asp-action="Index"
+               class="cmse-mantenimiento-boton">
+                Asignar técnico
+            </a>
+        }
+
+    </div>
+
+</div>

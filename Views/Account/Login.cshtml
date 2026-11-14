@@ -1,12 +1,46 @@
-﻿@model cmse.Dtos.LoginDto
+﻿
+@model cmse.Dtos.LoginDto
 
 @{
     ViewData["Title"] = "Iniciar sesión";
+
+    string? tipoMensaje = TempData["TipoMensaje"]?.ToString();
+    string? tituloMensaje = TempData["TituloModal"]?.ToString();
+
+    bool cuentaEliminada = TempData["MensajeExito"] != null;
+
+    string? mensaje = cuentaEliminada
+        ? TempData["MensajeExito"]?.ToString()
+        : TempData["Mensaje"]?.ToString();
+
+    if (string.IsNullOrEmpty(tipoMensaje))
+    {
+        tipoMensaje = cuentaEliminada ? "Exito" : "Advertencia";
+    }
+
+    if (string.IsNullOrEmpty(tituloMensaje))
+    {
+        tituloMensaje = cuentaEliminada ? "¡Cuenta eliminada!" : "Aviso";
+    }
+
+    string claseIcono = tipoMensaje.ToLower() switch
+    {
+        "exito" => "cmse-modal-icon-exito",
+        "error" => "cmse-modal-icon-error",
+        "advertencia" => "cmse-modal-icon-advertencia",
+        _ => "cmse-modal-icon-advertencia"
+    };
+
+    string icono = tipoMensaje.ToLower() switch
+    {
+        "exito" => "✓",
+        "error" => "✕",
+        "advertencia" => "!",
+        _ => "!"
+    };
 }
 
 <div class="cmse-auth-page">
-
-   
     <div class="cmse-auth-card">
 
         <div class="cmse-auth-header">
@@ -16,66 +50,22 @@
 
         <div class="cmse-auth-content">
 
-            
-            @if (TempData["Mensaje"] != null)
-            {
-                <div id="cmse-modal-overlay" class="cmse-modal-overlay">
-                    <section class="cmse-modal"
-                             role="dialog"
-                             aria-modal="true"
-                             aria-labelledby="cmse-modal-title"
-                             aria-describedby="cmse-modal-message">
-
-                        <div class="cmse-modal-icon" aria-hidden="true">
-                            <span>✓</span>
-                        </div>
-
-                        <h2 id="cmse-modal-title">¡Registro completado!</h2>
-
-                        <p id="cmse-modal-message">
-                            @TempData["Mensaje"]
-                        </p>
-
-                        <button type="button"
-                                id="cmse-modal-accept"
-                                class="cmse-modal-button">
-                            Aceptar
-                        </button>
-                    </section>
-                </div>
-
-                <script>
-                    (function () {
-                        const overlay = document.getElementById('cmse-modal-overlay');
-                        const boton = document.getElementById('cmse-modal-accept');
-
-                        if (!overlay || !boton) return;
-
-                        boton.focus();
-
-                        boton.addEventListener('click', function () {
-                            overlay.classList.add('cmse-modal-closing');
-
-                            setTimeout(function () {
-                                overlay.remove();
-                            }, 180);
-                        });
-                    })();
-                </script>
-            }
-
 
             <form asp-action="Login" method="post" class="cmse-auth-form">
 
                 <div class="cmse-form-group">
                     <label asp-for="Correo">Correo</label>
-                    <input asp-for="Correo" type="email" placeholder="Ingresa tu correo" />
+                    <input asp-for="Correo"
+                           type="email"
+                           placeholder="Ingresa tu correo" />
                     <span asp-validation-for="Correo"></span>
                 </div>
 
                 <div class="cmse-form-group">
                     <label asp-for="Contrasena">Contraseña</label>
-                    <input asp-for="Contrasena" type="password" placeholder="Ingresa tu contraseña" />
+                    <input asp-for="Contrasena"
+                           type="password"
+                           placeholder="Ingresa tu contraseña" />
                     <span asp-validation-for="Contrasena"></span>
                 </div>
 
@@ -94,6 +84,12 @@
 
             </form>
 
+            <div class="cmse-forgot-password">
+                <a href="#" id="abrirRecuperacion">
+                    ¿Olvidó su contraseña?
+                </a>
+            </div>
+
             <div class="cmse-auth-links">
                 <span>¿No tienes una cuenta?</span>
                 <a asp-controller="Account" asp-action="Register">
@@ -102,8 +98,96 @@
             </div>
 
         </div>
-
     </div>
-    
-
 </div>
+
+<!-- Modal para solicitar recuperación -->
+<div id="modalRecuperacion"
+     class="cmse-modal-overlay"
+     style="display: none;">
+
+    <section class="cmse-modal"
+             role="dialog"
+             aria-modal="true"
+             aria-labelledby="tituloRecuperacion">
+
+        <button type="button"
+                id="cerrarRecuperacion"
+                class="cmse-recuperacion-volver">
+            <span aria-hidden="true">‹</span> Volver
+        </button>
+
+        <h2 id="tituloRecuperacion">
+            Restablecer Contraseña
+        </h2>
+
+        <p>
+            Ingresa el correo electrónico asociado a tu cuenta.
+            Te enviaremos un enlace para restablecer tu contraseña.
+        </p>
+
+        <form asp-controller="Account"
+              asp-action="SolicitarRecuperacion"
+              method="post">
+
+            <div class="cmse-form-group">
+                <label for="correoRecuperacion">
+                    Correo electrónico
+                </label>
+
+                <input type="email"
+                       id="correoRecuperacion"
+                       name="correo"
+                       placeholder="Ingresa tu correo electrónico"
+                       required
+                       autocomplete="email" />
+            </div>
+
+            <button type="submit" class="cmse-auth-button">
+                Confirmar
+            </button>
+
+        </form>
+
+    </section>
+</div>
+
+<script>
+    (function() {
+        const abrir = document.getElementById('abrirRecuperacion');
+        const cerrar = document.getElementById('cerrarRecuperacion');
+        const modal = document.getElementById('modalRecuperacion');
+        const correo = document.getElementById('correoRecuperacion');
+
+        if (!abrir || !cerrar || !modal || !correo) return;
+
+        function abrirModal() {
+            modal.style.display = 'flex';
+            correo.focus();
+        }
+
+        function cerrarModal() {
+            modal.style.display = 'none';
+            abrir.focus();
+        }
+
+        abrir.addEventListener('click', function(event) {
+            event.preventDefault();
+            abrirModal();
+        });
+
+        cerrar.addEventListener('click', cerrarModal);
+
+        modal.addEventListener('click', function(event) {
+            if (event.target === modal) {
+                cerrarModal();
+            }
+        });
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape' && modal.style.display !== 'none') {
+                cerrarModal();
+            }
+        });
+    })();
+</script>

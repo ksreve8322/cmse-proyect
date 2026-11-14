@@ -1,30 +1,86 @@
 ﻿@model List<cmse.Repositories.Models.Usuario>
 
 @{
-    ViewData["Title"] = "Administración de usuarios";
+    ViewData["Title"] = "Gestionar usuarios";
 
     int paginaActual = ViewBag.PaginaActual;
     int totalPaginas = ViewBag.TotalPaginas;
     int totalUsuarios = ViewBag.TotalUsuarios;
 }
 
-<div class="container mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h2>Administración de usuarios</h2>
-            <p class="text-muted">
-                Consulta y administra los usuarios registrados en CMSE.
-            </p>
-        </div>
+<div class="container mt-4 mb-5">
+
+    <!-- Encabezado -->
+    <div class="mb-4">
+        <h2>Gestionar usuarios</h2>
+        <p class="text-muted">
+            Consulta y administra los usuarios registrados en CMSE.
+        </p>
     </div>
 
     <div class="card shadow-sm">
         <div class="card-body">
 
+            <!-- Buscador -->
+            <div class="d-flex justify-content-center mb-3">
+                <div class="input-group" style="max-width: 500px;">
+
+                    <span class="input-group-text bg-white">
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                             width="18" height="18"
+                             viewBox="0 0 24 24"
+                             fill="none" stroke="currentColor"
+                             stroke-width="2"
+                             stroke-linecap="round"
+                             stroke-linejoin="round">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <path d="m21 21-4.35-4.35"></path>
+                        </svg>
+                    </span>
+
+                    <input type="text"
+                           id="buscarUsuario"
+                           class="form-control"
+                           placeholder="Buscar usuario..."
+                           aria-label="Buscar usuario" />
+                </div>
+            </div>
+
+            <!-- Acciones -->
+            <div class="d-flex flex-wrap justify-content-center gap-2 mb-4">
+
+                <button type="button" id="btnConsultar"
+                        class="btn btn-primary" disabled
+                        title="Atajo: C">
+                    Consultar
+                </button>
+
+                <button type="button" id="btnActualizar"
+                        class="btn btn-primary" disabled
+                        title="Atajo: A">
+                    Actualizar
+                </button>
+
+                <a asp-action="Create"
+                   class="btn btn-primary"
+                   title="Atajo: R">
+                    Registrar
+                </a>
+
+                <button type="button" id="btnEliminar"
+                        class="btn btn-primary" disabled
+                        title="Atajo: E">
+                    Eliminar
+                </button>
+
+            </div>
+
+            <!-- Total -->
             <div class="mb-3">
                 <strong>Total de usuarios:</strong> @totalUsuarios
             </div>
 
+            <!-- Tabla -->
             @if (Model == null || !Model.Any())
             {
                 <div class="alert alert-info">
@@ -34,32 +90,35 @@
             else
             {
                 <div class="table-responsive">
-                    <table class="table table-hover align-middle">
+                    <table class="table table-hover align-middle"
+                           id="tablaUsuarios">
+
                         <thead class="table-light">
                             <tr>
-                                <th>ID</th>
-                                <th>Nombre completo</th>
+                                <th>Nombre</th>
+                                <th>Apellidos</th>
+                                <th>Tipo de documento</th>
                                 <th>Documento</th>
                                 <th>Correo</th>
-                                <th>Teléfono</th>
                                 <th>Rol</th>
                                 <th>Estado</th>
-                                <th>Acciones</th>
                             </tr>
                         </thead>
+
                         <tbody>
                             @foreach (var usuario in Model)
                             {
-                                <tr>
-                                    <td>@usuario.IdUsuario</td>
-                                    <td>@usuario.Nombres @usuario.Apellidos</td>
-                                    <td>
-                                        @usuario.IdTipoDocumentoNavigation.Nombre
-                                        @usuario.NumeroDocumento
-                                    </td>
+                                <tr class="fila-usuario"
+                                    data-id="@usuario.IdUsuario"
+                                    style="cursor: pointer;">
+
+                                    <td>@usuario.Nombres</td>
+                                    <td>@usuario.Apellidos</td>
+                                    <td>@usuario.IdTipoDocumentoNavigation.Nombre</td>
+                                    <td>@usuario.NumeroDocumento</td>
                                     <td>@usuario.Correo</td>
-                                    <td>@(usuario.Telefono ?? "No registrado")</td>
                                     <td>@usuario.IdRolNavigation.Nombre</td>
+
                                     <td>
                                         @if (usuario.Estado)
                                         {
@@ -67,31 +126,23 @@
                                         }
                                         else
                                         {
-                                            <span class="badge bg-danger">Inactivo</span>
+                                            <span class="badge bg-secondary">Inactivo</span>
                                         }
-                                    </td>
-                                    <td>
-                                        <div class="d-flex gap-2">
-                                            <a asp-action="Details"
-                                               asp-route-id="@usuario.IdUsuario"
-                                               class="btn btn-sm btn-primary">
-                                                Ver detalles
-                                            </a>
-
-                                            <a asp-action="Edit"
-                                               asp-route-id="@usuario.IdUsuario"
-                                               class="btn btn-sm btn-warning">
-                                                Editar
-                                            </a>
-                                        </div>
                                     </td>
                                 </tr>
                             }
                         </tbody>
+
                     </table>
+
+                    <div id="sinResultados"
+                         class="alert alert-warning d-none">
+                        No se encontraron usuarios que coincidan con la búsqueda.
+                    </div>
                 </div>
             }
 
+            <!-- Paginación -->
             @if (totalPaginas > 1)
             {
                 <nav aria-label="Paginación de usuarios">
@@ -128,6 +179,262 @@
                 </nav>
             }
 
+            <!-- Regresar -->
+            <div class="d-flex justify-content-center mt-4">
+                <button type="button"
+                        class="btn btn-outline-secondary"
+                        onclick="history.back()">
+                    Regresar
+                </button>
+            </div>
+
         </div>
     </div>
 </div>
+
+<!-- Formulario de eliminación -->
+<form asp-action="Eliminar" method="post" id="formEliminar">
+
+    @Html.AntiForgeryToken()
+
+    <input type="hidden" name="id" id="idUsuarioEliminar" />
+
+    <div id="modalEliminar"
+         class="cmse-modal-overlay"
+         style="display: none;">
+
+        <section class="cmse-modal"
+                 role="dialog"
+                 aria-modal="true"
+                 aria-labelledby="tituloEliminar">
+
+            <div class="cmse-modal-icon cmse-modal-icon-advertencia"
+                 aria-hidden="true">
+                <span>!</span>
+            </div>
+
+            <h2 id="tituloEliminar">
+                ¿Está seguro de que desea eliminar a este usuario?
+            </h2>
+
+            <p id="nombreUsuarioEliminar" class="fw-bold"></p>
+
+            <div class="d-flex justify-content-center gap-2 mt-3">
+
+                <button type="submit" class="cmse-modal-button">
+                    Confirmar
+                </button>
+
+                <button type="button"
+                        id="cancelarEliminar"
+                        class="btn btn-outline-secondary">
+                    Cancelar
+                </button>
+
+            </div>
+
+        </section>
+    </div>
+
+</form>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+
+            const filas = document.querySelectorAll(".fila-usuario");
+
+            const btnConsultar = document.getElementById("btnConsultar");
+            const btnActualizar = document.getElementById("btnActualizar");
+            const btnEliminar = document.getElementById("btnEliminar");
+
+            const buscarUsuario = document.getElementById("buscarUsuario");
+            const tablaUsuarios = document.getElementById("tablaUsuarios");
+            const sinResultados = document.getElementById("sinResultados");
+
+            const modalEliminar = document.getElementById("modalEliminar");
+            const cancelarEliminar = document.getElementById("cancelarEliminar");
+
+            const idUsuarioEliminar = document.getElementById("idUsuarioEliminar");
+            const nombreUsuarioEliminar = document.getElementById("nombreUsuarioEliminar");
+
+            let usuarioSeleccionado = null;
+
+            // Rutas.
+            const urlConsultar = '@Url.Action("Details", "User")/';
+            const urlActualizar = '@Url.Action("Edit", "User")/';
+            const urlRegistrar = '@Url.Action("Create", "User")';
+
+            function actualizarBotones() {
+                const seleccionado = usuarioSeleccionado !== null;
+
+                btnConsultar.disabled = !seleccionado;
+                btnActualizar.disabled = !seleccionado;
+                btnEliminar.disabled = !seleccionado;
+            }
+
+            function consultarUsuario() {
+                if (!usuarioSeleccionado) return;
+
+                window.location.href = urlConsultar + usuarioSeleccionado;
+            }
+
+            function actualizarUsuario() {
+                if (!usuarioSeleccionado) return;
+
+                window.location.href = urlActualizar + usuarioSeleccionado;
+            }
+
+            function registrarUsuario() {
+                window.location.href = urlRegistrar;
+            }
+
+            function abrirConfirmacionEliminar() {
+                if (!usuarioSeleccionado) return;
+
+                const fila = document.querySelector(
+                    '.fila-usuario[data-id="' + usuarioSeleccionado + '"]'
+                );
+
+                if (!fila) return;
+
+                const nombre = fila.cells[0].textContent.trim();
+                const apellidos = fila.cells[1].textContent.trim();
+
+                idUsuarioEliminar.value = usuarioSeleccionado;
+                nombreUsuarioEliminar.textContent = nombre + " " + apellidos;
+
+                modalEliminar.style.display = "flex";
+            }
+
+            // Selección de filas.
+            filas.forEach(function(fila) {
+
+                fila.addEventListener("click", function() {
+
+                    if (fila.style.display === "none") return;
+
+                    filas.forEach(function(otraFila) {
+                        otraFila.classList.remove("table-primary");
+                    });
+
+                    fila.classList.add("table-primary");
+                    usuarioSeleccionado = fila.dataset.id;
+
+                    actualizarBotones();
+                });
+
+                // Doble clic para consultar.
+                fila.addEventListener("dblclick", function() {
+
+                    if (fila.style.display === "none") return;
+
+                    fila.click();
+                    consultarUsuario();
+                });
+
+            });
+
+            // Acciones de los botones.
+            btnConsultar.addEventListener("click", consultarUsuario);
+            btnActualizar.addEventListener("click", actualizarUsuario);
+            btnEliminar.addEventListener("click", abrirConfirmacionEliminar);
+
+            // Cancelar eliminación.
+            cancelarEliminar.addEventListener("click", function() {
+                modalEliminar.style.display = "none";
+            });
+
+            // Buscador.
+            if (buscarUsuario && tablaUsuarios) {
+
+                buscarUsuario.addEventListener("input", function() {
+
+                    const texto = this.value.toLowerCase().trim();
+                    const filasTabla = tablaUsuarios.querySelectorAll("tbody tr");
+
+                    let encontrados = 0;
+
+                    filasTabla.forEach(function(fila) {
+
+                        const coincide = fila.textContent
+                            .toLowerCase()
+                            .includes(texto);
+
+                        fila.style.display = coincide ? "" : "none";
+
+                        if (coincide) {
+                            encontrados++;
+                        } else if (fila.dataset.id === usuarioSeleccionado) {
+                            fila.classList.remove("table-primary");
+                            usuarioSeleccionado = null;
+                        }
+
+                    });
+
+                    sinResultados.classList.toggle(
+                        "d-none",
+                        encontrados !== 0
+                    );
+
+                    actualizarBotones();
+                });
+            }
+
+            // Atajos de teclado en español.
+            document.addEventListener("keydown", function(event) {
+
+                const elemento = event.target;
+
+                // Evitar atajos mientras se escribe.
+                if (
+                    elemento.tagName === "INPUT" ||
+                    elemento.tagName === "TEXTAREA" ||
+                    elemento.tagName === "SELECT" ||
+                    elemento.isContentEditable ||
+                    event.ctrlKey ||
+                    event.altKey ||
+                    event.metaKey
+                ) {
+                    return;
+                }
+
+                // Si el modal está abierto, solo permitir Escape.
+                if (modalEliminar.style.display === "flex") {
+
+                    if (event.key === "Escape") {
+                        modalEliminar.style.display = "none";
+                    }
+
+                    return;
+                }
+
+                switch (event.key.toLowerCase()) {
+
+                    case "c":
+                        event.preventDefault();
+                        consultarUsuario();
+                        break;
+
+                    case "r":
+                        event.preventDefault();
+                        registrarUsuario();
+                        break;
+
+                    case "a":
+                        event.preventDefault();
+                        actualizarUsuario();
+                        break;
+
+                    case "e":
+                        event.preventDefault();
+                        abrirConfirmacionEliminar();
+                        break;
+                }
+
+            });
+
+            actualizarBotones();
+        });
+    </script>
+}
