@@ -1,4 +1,6 @@
-﻿using System;
+﻿
+using cmse.TempScaffold;
+using System;
 using System.Collections.Generic;
 
 namespace cmse.Repositories.Models;
@@ -24,6 +26,16 @@ public partial class Equipo
     public string? Ubicacion { get; set; }
 
     public DateOnly FechaRegistro { get; set; }
+
+    public string? Observaciones { get; set; }
+
+    public virtual EquiposComputadore? EquiposComputadore { get; set; }
+
+    public virtual EquiposImpresora? EquiposImpresora { get; set; }
+
+    public virtual EquiposPantalla? EquiposPantalla { get; set; }
+
+    public virtual EquiposProyectore? EquiposProyectore { get; set; }
 
     public virtual Estado IdEstadoNavigation { get; set; } = null!;
 

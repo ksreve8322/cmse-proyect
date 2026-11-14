@@ -1,0 +1,158 @@
+﻿@model IEnumerable<cmse.Repositories.Models.Mantenimiento>
+
+@{
+    ViewData["Title"] = "Mis mantenimientos";
+}
+
+<div class="cmse-mantenimiento-container">
+
+    <div class="cmse-mantenimiento-header">
+        <h2>Mis mantenimientos</h2>
+        <p>Consulta los mantenimientos que te han sido asignados y su estado actual.</p>
+    </div>
+
+    <div class="cmse-mantenimiento-barra-superior">
+        <div class="cmse-mantenimiento-acciones">
+
+            <a asp-controller="Mantenimiento"
+               asp-action="ConsultarAsignaciones"
+               class="cmse-mantenimiento-boton">
+                Consultar mis asignaciones
+            </a>
+
+            <a asp-controller="Mantenimiento"
+               asp-action="Historial"
+               class="cmse-mantenimiento-boton">
+                Historial de mantenimiento
+            </a>
+
+        </div>
+    </div>
+
+    <div class="cmse-mantenimiento-listado-header">
+        <h3>Mantenimientos asignados</h3>
+        <p>Selecciona una opción para consultar o registrar la ejecución.</p>
+    </div>
+
+    <div class="cmse-mantenimiento-tabla-contenedor">
+
+        @if (Model != null && Model.Any())
+        {
+            <table class="cmse-mantenimiento-tabla">
+
+                <thead>
+                    <tr>
+                        <th>N.º</th>
+                        <th>Equipo</th>
+                        <th>Código de inventario</th>
+                        <th>Tipo de mantenimiento</th>
+                        <th>Fecha programada</th>
+                        <th>Duración estimada</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach (var mantenimiento in Model)
+                    {
+                        <tr>
+                            <td>@mantenimiento.IdMantenimiento</td>
+
+                            <td>
+                                @mantenimiento.IdEquipoNavigation.Nombre
+                            </td>
+
+                            <td>
+                                @mantenimiento.IdEquipoNavigation.CodigoInventario
+                            </td>
+
+                            <td>
+                                @mantenimiento.IdTipoMantenimientoNavigation.Nombre
+                            </td>
+
+                            <td>
+                                @mantenimiento.FechaProgramada.ToString("dd/MM/yyyy HH:mm")
+                            </td>
+
+                            <td>
+                                @(mantenimiento.DuracionEstimadaHoras.HasValue
+                                    ? $"{mantenimiento.DuracionEstimadaHoras.Value:F2} horas"
+                                    : "No definida")
+                            </td>
+
+                            <td>
+                                @mantenimiento.IdEstadoNavigation.Nombre
+                            </td>
+
+                            <td>
+                                <a asp-controller="Mantenimiento"
+                                   asp-action="ConsultarMantenimiento"
+                                   asp-route-id="@mantenimiento.IdMantenimiento"
+                                   class="cmse-mantenimiento-boton">
+                                    Ver detalles
+                                </a>
+
+                                @if (mantenimiento.IdEstado == 11 &&
+                                     mantenimiento.FechaRealizacion == null &&
+                                     mantenimiento.IdIncidencia.HasValue)
+                                {
+                                    <a asp-controller="Mantenimiento"
+                                       asp-action="RegistrarMantenimiento"
+                                       asp-route-id="@mantenimiento.IdIncidencia.Value"
+                                       class="cmse-mantenimiento-boton">
+                                        Registrar ejecución
+                                    </a>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+
+            </table>
+        }
+        else
+        {
+            <div class="cmse-mantenimiento-vacio">
+                <h3>No tienes mantenimientos asignados</h3>
+                <p>Cuando el administrador te asigne un mantenimiento, aparecerá en este listado.</p>
+            </div>
+        }
+
+    </div>
+
+    <div class="cmse-mantenimiento-regresar">
+        <a asp-controller="Home"
+           asp-action="Index"
+           class="cmse-mantenimiento-cancelar">
+            Regresar
+        </a>
+    </div>
+
+</div>
+
+@if (TempData["Exito"] != null || TempData["Error"] != null)
+{
+    var esExito = TempData["Exito"] != null;
+    var mensaje = esExito ? TempData["Exito"] : TempData["Error"];
+
+    <div class="cmse-modal-overlay" id="modalResultado">
+        <div class="cmse-modal">
+            <div class="cmse-modal-icon">
+                @(esExito ? "✓" : "!")
+            </div>
+
+            <h3>
+                @(esExito ? "Operación exitosa" : "No fue posible completar la operación")
+            </h3>
+
+            <p>@mensaje</p>
+
+            <button type="button"
+                    class="cmse-modal-button"
+                    onclick="document.getElementById('modalResultado').remove()">
+                Aceptar
+            </button>
+        </div>
+    </div>
+}

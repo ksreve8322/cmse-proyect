@@ -27,6 +27,7 @@ public partial class Usuario
 
     public byte IntentosFallidos { get; set; }
 
+    public DateTime? BloqueoHasta { get; set; }
     public virtual ICollection<AsignacionesIncidencium> AsignacionesIncidencia { get; set; } = new List<AsignacionesIncidencium>();
 
     public virtual ICollection<Diagnostico> Diagnosticos { get; set; } = new List<Diagnostico>();
@@ -38,4 +39,6 @@ public partial class Usuario
     public virtual ICollection<Incidencia> Incidencia { get; set; } = new List<Incidencia>();
 
     public virtual ICollection<Mantenimiento> Mantenimientos { get; set; } = new List<Mantenimiento>();
+
+    public virtual ICollection<RecuperacionesContrasena> RecuperacionesContrasenas { get; set; } = new List<RecuperacionesContrasena>();
 }

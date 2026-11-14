@@ -3,8 +3,10 @@
 
 @{
     ViewData["Title"] = "Registrar equipo";
+
     var tipos = ViewBag.TiposEquipo as IEnumerable<TiposEquipo>
         ?? Enumerable.Empty<TiposEquipo>();
+
     var estados = ViewBag.Estados as IEnumerable<Estado>
         ?? Enumerable.Empty<Estado>();
 }
@@ -13,148 +15,405 @@
     <div class="mb-4">
         <h1>Registrar equipo</h1>
         <p class="text-muted">
-            Completa los datos para agregar un dispositivo al inventario de CMSE.
+            Completa los datos generales y las especificaciones técnicas del equipo.
         </p>
     </div>
 
-    @if (TempData["Mensaje"] != null)
-    {
-        <div class="alert alert-success" role="alert">
-            @TempData["Mensaje"]
-        </div>
-    }
-
     <div class="card shadow-sm">
         <div class="card-body p-4">
-            <form asp-controller="Equipment"
-                  asp-action="Create"
-                  method="post">
 
+            <form asp-controller="Equipment" asp-action="Create" method="post">
                 @Html.AntiForgeryToken()
 
-                <div asp-validation-summary="ModelOnly"
-                     class="text-danger mb-3"></div>
+                <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+                <h5 class="mb-3">Información general</h5>
 
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <label asp-for="Nombre" class="form-label">
-                            Nombre del equipo *
-                        </label>
-                        <input asp-for="Nombre"
-                               class="form-control"
-                               maxlength="80"
-                               required
+                        <label asp-for="Nombre" class="form-label">Nombre del equipo *</label>
+                        <input asp-for="Nombre" class="form-control" maxlength="80" required
                                placeholder="Ej. Computador oficina 01" />
-                        <span asp-validation-for="Nombre"
-                              class="text-danger"></span>
+                        <span asp-validation-for="Nombre" class="text-danger"></span>
                     </div>
 
                     <div class="col-md-6 mb-3">
-                        <label asp-for="CodigoInventario"
-                               class="form-label">
-                            Código de inventario *
-                        </label>
-                        <input asp-for="CodigoInventario"
-                               class="form-control"
-                               maxlength="30"
-                               required
+                        <label asp-for="CodigoInventario" class="form-label">Código de inventario *</label>
+                        <input asp-for="CodigoInventario" class="form-control" maxlength="30" required
                                placeholder="Ej. CMSE-0001" />
-                        <span asp-validation-for="CodigoInventario"
-                              class="text-danger"></span>
+                        <span asp-validation-for="CodigoInventario" class="text-danger"></span>
                     </div>
 
                     <div class="col-md-6 mb-3">
-                        <label asp-for="IdTipoEquipo" class="form-label">
-                            Tipo de equipo *
-                        </label>
-                        <select asp-for="IdTipoEquipo"
-                                class="form-select"
-                                required>
+                        <label asp-for="IdTipoEquipo" class="form-label">Tipo de equipo *</label>
+                        <select asp-for="IdTipoEquipo" id="tipoEquipo" class="form-select" required>
                             <option value="">Selecciona un tipo</option>
                             @foreach (var tipo in tipos)
                             {
-                                <option value="@tipo.IdTipoEquipo">
-                                    @tipo.Nombre
-                                </option>
+                                <option value="@tipo.IdTipoEquipo">@tipo.Nombre</option>
                             }
                         </select>
-                        <span asp-validation-for="IdTipoEquipo"
-                              class="text-danger"></span>
+                        <span asp-validation-for="IdTipoEquipo" class="text-danger"></span>
                     </div>
 
                     <div class="col-md-6 mb-3">
-                        <label asp-for="IdEstado" class="form-label">
-                            Estado *
-                        </label>
-                        <select asp-for="IdEstado"
-                                class="form-select"
-                                required>
+                        <label asp-for="IdEstado" class="form-label">Estado *</label>
+                        <select asp-for="IdEstado" class="form-select" required>
                             <option value="">Selecciona un estado</option>
                             @foreach (var estado in estados)
                             {
-                                <option value="@estado.IdEstado">
-                                    @estado.Nombre
-                                </option>
+                                <option value="@estado.IdEstado">@estado.Nombre</option>
                             }
                         </select>
-                        <span asp-validation-for="IdEstado"
-                              class="text-danger"></span>
+                        <span asp-validation-for="IdEstado" class="text-danger"></span>
                     </div>
 
                     <div class="col-md-6 mb-3">
-                        <label asp-for="Marca" class="form-label">
-                            Marca
-                        </label>
-                        <input asp-for="Marca"
-                               class="form-control"
-                               maxlength="40"
-                               placeholder="Ej. HP, Dell, Lenovo" />
-                        <span asp-validation-for="Marca"
-                              class="text-danger"></span>
+                        <label asp-for="Marca" class="form-label">Marca</label>
+                        <input asp-for="Marca" class="form-control" maxlength="40" />
                     </div>
 
                     <div class="col-md-6 mb-3">
-                        <label asp-for="Modelo" class="form-label">
-                            Modelo
-                        </label>
-                        <input asp-for="Modelo"
-                               class="form-control"
-                               maxlength="50" />
-                        <span asp-validation-for="Modelo"
-                              class="text-danger"></span>
+                        <label asp-for="Modelo" class="form-label">Modelo</label>
+                        <input asp-for="Modelo" class="form-control" maxlength="50" />
                     </div>
 
                     <div class="col-md-6 mb-3">
-                        <label asp-for="NumeroSerie" class="form-label">
-                            Número de serie
-                        </label>
-                        <input asp-for="NumeroSerie"
-                               class="form-control"
-                               maxlength="50" />
-                        <span asp-validation-for="NumeroSerie"
-                              class="text-danger"></span>
+                        <label asp-for="NumeroSerie" class="form-label">Número de serie</label>
+                        <input asp-for="NumeroSerie" class="form-control" maxlength="50" />
+                        <span asp-validation-for="NumeroSerie" class="text-danger"></span>
                     </div>
 
                     <div class="col-md-6 mb-3">
-                        <label asp-for="Ubicacion" class="form-label">
-                            Ubicación
-                        </label>
-                        <input asp-for="Ubicacion"
-                               class="form-control"
-                               maxlength="100"
-                               placeholder="Ej. Sala de sistemas" />
-                        <span asp-validation-for="Ubicacion"
-                              class="text-danger"></span>
+                        <label asp-for="Ubicacion" class="form-label">Ubicación</label>
+                        <input asp-for="Ubicacion" class="form-control" maxlength="100" />
+                    </div>
+
+                    <div class="col-12 mb-3">
+                        <label asp-for="Observaciones" class="form-label">Observaciones</label>
+                        <textarea asp-for="Observaciones" class="form-control" rows="3"></textarea>
                     </div>
                 </div>
 
+                <hr class="my-4" />
+
+                <!-- COMPUTADOR Y PORTÁTIL -->
+                <div id="seccionComputador" class="seccion-tecnica" hidden>
+                    <h5 class="mb-3">Especificaciones del computador</h5>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Procesador *</label>
+                            <input name="EquiposComputadore.Procesador" class="form-control"
+                                   maxlength="100" data-required />
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Capacidad de RAM (GB) *</label>
+                            <input name="EquiposComputadore.CapacidadRamGb" type="number"
+                                   min="1" class="form-control" data-required />
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Tipo de RAM *</label>
+                            <input name="EquiposComputadore.TipoRam" class="form-control"
+                                   maxlength="30" placeholder="Ej. DDR4, DDR5" data-required />
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">GPU *</label>
+                            <input name="EquiposComputadore.Gpu" class="form-control"
+                                   maxlength="100" data-required />
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Sistema operativo *</label>
+                            <input name="EquiposComputadore.SistemaOperativo" class="form-control"
+                                   maxlength="60" placeholder="Ej. Windows 11" data-required />
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Refrigeración</label>
+                            <input name="EquiposComputadore.Refrigeracion" class="form-control"
+                                   maxlength="100" />
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Puertos</label>
+                            <input name="EquiposComputadore.Puertos" class="form-control"
+                                   maxlength="200" placeholder="Ej. USB, HDMI, Ethernet" />
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Fuente de poder</label>
+                            <input name="EquiposComputadore.FuentePoder" class="form-control"
+                                   maxlength="100" />
+                        </div>
+                    </div>
+
+                    <!-- SOLO PORTÁTIL -->
+                    <div id="camposPortatil" class="row" hidden>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Batería</label>
+                            <input name="EquiposComputadore.Bateria" class="form-control"
+                                   maxlength="100" placeholder="Capacidad o características" />
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Pantalla</label>
+                            <input name="EquiposComputadore.Pantalla" class="form-control"
+                                   maxlength="100" placeholder="Ej. 15.6 pulgadas Full HD" />
+                        </div>
+                    </div>
+
+                    <hr class="my-3" />
+
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5>Unidades de almacenamiento</h5>
+                        <button type="button" class="btn btn-primary btn-sm"
+                                id="agregarAlmacenamiento">
+                            + Agregar almacenamiento
+                        </button>
+                    </div>
+
+                    <p class="text-muted">
+                        Puedes registrar uno o varios discos o unidades de almacenamiento.
+                    </p>
+
+                    <div id="contenedorAlmacenamientos">
+                        <div class="row almacenamiento-item border rounded p-3 mb-3">
+                            <div class="col-md-4 mb-2">
+                                <label class="form-label">Capacidad *</label>
+                                <input name="EquiposComputadore.AlmacenamientosEquipos[0].Capacidad"
+                                       type="number" min="0.01" step="0.01"
+                                       class="form-control" data-required />
+                            </div>
+
+                            <div class="col-md-4 mb-2">
+                                <label class="form-label">Unidad *</label>
+                                <select name="EquiposComputadore.AlmacenamientosEquipos[0].Unidad"
+                                        class="form-select" data-required>
+                                    <option value="">Selecciona</option>
+                                    <option value="GB">GB</option>
+                                    <option value="TB">TB</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-4 mb-2">
+                                <label class="form-label">Tipo de almacenamiento *</label>
+                                <select name="EquiposComputadore.AlmacenamientosEquipos[0].TipoAlmacenamiento"
+                                        class="form-select" data-required>
+                                    <option value="">Selecciona</option>
+                                    <option value="HDD">HDD</option>
+                                    <option value="SSD">SSD</option>
+                                    <option value="NVMe">NVMe</option>
+                                    <option value="eMMC">eMMC</option>
+                                    <option value="Otro">Otro</option>
+                                </select>
+                            </div>
+
+                            <div class="col-12 text-end">
+                                <button type="button"
+                                        class="btn btn-outline-danger btn-sm eliminar-almacenamiento"
+                                        disabled>
+                                    Eliminar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- IMPRESORA -->
+                <div id="seccionImpresora" class="seccion-tecnica" hidden>
+                    <h5 class="mb-3">Especificaciones de la impresora</h5>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Tipo de impresora *</label>
+                            <input name="EquiposImpresora.TipoImpresora" class="form-control"
+                                   maxlength="60" data-required />
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Resolución de impresión *</label>
+                            <input name="EquiposImpresora.ResolucionImpresion" class="form-control"
+                                   maxlength="50" data-required />
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Formatos soportados</label>
+                            <input name="EquiposImpresora.FormatosSoportados"
+                                   class="form-control" maxlength="150" />
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Impresión a color</label>
+                            <select name="EquiposImpresora.ImpresionColor" class="form-select">
+                                <option value="false">No</option>
+                                <option value="true">Sí</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Puertos</label>
+                            <input name="EquiposImpresora.Puertos" class="form-control"
+                                   maxlength="150" />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PANTALLA O TELEVISOR -->
+                <div id="seccionPantalla" class="seccion-tecnica" hidden>
+                    <h5 class="mb-3">Especificaciones de la pantalla o televisor</h5>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Tamaño (pulgadas) *</label>
+                            <input name="EquiposPantalla.TamanoPulgadas" type="number"
+                                   min="1" step="0.1" class="form-control" data-required />
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Resolución *</label>
+                            <input name="EquiposPantalla.Resolucion" class="form-control"
+                                   maxlength="50" data-required />
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Frecuencia de actualización (Hz) *</label>
+                            <input name="EquiposPantalla.FrecuenciaActualizacion"
+                                   type="number" min="1" class="form-control" data-required />
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Tecnología del panel *</label>
+                            <input name="EquiposPantalla.TecnologiaPanel" class="form-control"
+                                   maxlength="50" data-required />
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">HDR</label>
+                            <select name="EquiposPantalla.Hdr" class="form-select">
+                                <option value="">No especificado</option>
+                                <option value="true">Sí</option>
+                                <option value="false">No</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Sistema operativo</label>
+                            <input name="EquiposPantalla.SistemaOperativo"
+                                   class="form-control" maxlength="60" />
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Puertos</label>
+                            <input name="EquiposPantalla.Puertos" class="form-control"
+                                   maxlength="150" />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PROYECTOR -->
+                <div id="seccionProyector" class="seccion-tecnica" hidden>
+                    <h5 class="mb-3">Especificaciones del proyector</h5>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Tecnología de proyección *</label>
+                            <input name="EquiposProyectore.TecnologiaProyeccion"
+                                   class="form-control" maxlength="60" data-required />
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Fuente de iluminación *</label>
+                            <input name="EquiposProyectore.FuenteIluminacion"
+                                   class="form-control" maxlength="60" data-required />
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Resolución nativa *</label>
+                            <input name="EquiposProyectore.ResolucionNativa"
+                                   class="form-control" maxlength="50" data-required />
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Resolución máxima</label>
+                            <input name="EquiposProyectore.ResolucionMaxima"
+                                   class="form-control" maxlength="50" />
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Brillo (lúmenes) *</label>
+                            <input name="EquiposProyectore.BrilloLumenes" type="number"
+                                   min="1" class="form-control" data-required />
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Relación de contraste</label>
+                            <input name="EquiposProyectore.RelacionContraste"
+                                   class="form-control" maxlength="50" />
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Relación de aspecto</label>
+                            <input name="EquiposProyectore.RelacionAspecto"
+                                   class="form-control" maxlength="30" />
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Tamaño de proyección</label>
+                            <input name="EquiposProyectore.TamanoProyeccion"
+                                   class="form-control" maxlength="50" />
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Distancia de proyección</label>
+                            <input name="EquiposProyectore.DistanciaProyeccion"
+                                   class="form-control" maxlength="50" />
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Tipo de lente</label>
+                            <input name="EquiposProyectore.TipoLente"
+                                   class="form-control" maxlength="60" />
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Corrección trapezoidal</label>
+                            <input name="EquiposProyectore.CorreccionTrapezoidal"
+                                   class="form-control" maxlength="60" />
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Puertos</label>
+                            <input name="EquiposProyectore.Puertos"
+                                   class="form-control" maxlength="150" />
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Horas de uso</label>
+                            <input name="EquiposProyectore.HorasUso" type="number"
+                                   min="0" class="form-control" />
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Altavoces integrados</label>
+                            <select name="EquiposProyectore.AltavocesIntegrados"
+                                    class="form-select">
+                                <option value="">No especificado</option>
+                                <option value="true">Sí</option>
+                                <option value="false">No</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <hr class="my-4" />
+
                 <div class="d-flex gap-2 mt-3">
                     <button type="submit" class="btn btn-primary">
-                        Guardar equipo
+                        Registrar equipo
                     </button>
 
-                    <a asp-controller="Equipment"
-                       asp-action="Index"
+                    <a asp-controller="Equipment" asp-action="Index"
                        class="btn btn-outline-secondary">
                         Cancelar
                     </a>
@@ -166,4 +425,144 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const selector = document.getElementById("tipoEquipo");
+
+            const secciones = {
+                computador: document.getElementById("seccionComputador"),
+                impresora: document.getElementById("seccionImpresora"),
+                pantalla: document.getElementById("seccionPantalla"),
+                proyector: document.getElementById("seccionProyector")
+            };
+
+            const camposPortatil = document.getElementById("camposPortatil");
+
+            function configurarCampos(contenedor, activo) {
+                contenedor.querySelectorAll("input, select, textarea")
+                    .forEach(campo => {
+                        campo.disabled = !activo;
+                        campo.required = activo && campo.hasAttribute("data-required");
+                    });
+            }
+
+            function actualizarSeccion() {
+                Object.values(secciones).forEach(seccion => {
+                    seccion.hidden = true;
+                    configurarCampos(seccion, false);
+                });
+
+                camposPortatil.hidden = true;
+                configurarCampos(camposPortatil, false);
+
+                let seleccionada = null;
+
+                switch (selector.value) {
+                    case "1":
+                    case "2":
+                        seleccionada = secciones.computador;
+                        break;
+                    case "3":
+                        seleccionada = secciones.proyector;
+                        break;
+                    case "4":
+                        seleccionada = secciones.pantalla;
+                        break;
+                    case "5":
+                        seleccionada = secciones.impresora;
+                        break;
+                }
+
+                if (seleccionada) {
+                    seleccionada.hidden = false;
+                    configurarCampos(seleccionada, true);
+                }
+
+                // Batería y pantalla solamente para portátiles (ID 2).
+                if (selector.value === "2") {
+                    camposPortatil.hidden = false;
+                    configurarCampos(camposPortatil, true);
+                }
+            }
+
+            selector.addEventListener("change", actualizarSeccion);
+            actualizarSeccion();
+
+            // Administración de almacenamientos.
+            const contenedor = document.getElementById("contenedorAlmacenamientos");
+            const botonAgregar = document.getElementById("agregarAlmacenamiento");
+
+            function reorganizarIndices() {
+                const filas = contenedor.querySelectorAll(".almacenamiento-item");
+
+                filas.forEach((fila, indice) => {
+                    fila.querySelectorAll("[name]").forEach(campo => {
+                        campo.name = campo.name.replace(
+                            /AlmacenamientosEquipos\[\d+\]/,
+                            `AlmacenamientosEquipos[${indice}]`
+                        );
+                    });
+
+                    const boton = fila.querySelector(".eliminar-almacenamiento");
+                    boton.disabled = filas.length === 1;
+                });
+            }
+
+            botonAgregar.addEventListener("click", function() {
+                const fila = document.createElement("div");
+                fila.className = "row almacenamiento-item border rounded p-3 mb-3";
+
+                fila.innerHTML = `
+                            <div class="col-md-4 mb-2">
+                                <label class="form-label">Capacidad *</label>
+                                <input type="number" min="0.01" step="0.01"
+                                       class="form-control" data-required
+                                       name="EquiposComputadore.AlmacenamientosEquipos[0].Capacidad" />
+                            </div>
+                            <div class="col-md-4 mb-2">
+                                <label class="form-label">Unidad *</label>
+                                <select class="form-select" data-required
+                                        name="EquiposComputadore.AlmacenamientosEquipos[0].Unidad">
+                                    <option value="">Selecciona</option>
+                                    <option value="GB">GB</option>
+                                    <option value="TB">TB</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4 mb-2">
+                                <label class="form-label">Tipo de almacenamiento *</label>
+                                <select class="form-select" data-required
+                                        name="EquiposComputadore.AlmacenamientosEquipos[0].TipoAlmacenamiento">
+                                    <option value="">Selecciona</option>
+                                    <option value="HDD">HDD</option>
+                                    <option value="SSD">SSD</option>
+                                    <option value="NVMe">NVMe</option>
+                                    <option value="eMMC">eMMC</option>
+                                    <option value="Otro">Otro</option>
+                                </select>
+                            </div>
+                            <div class="col-12 text-end">
+                                <button type="button"
+                                        class="btn btn-outline-danger btn-sm eliminar-almacenamiento">
+                                    Eliminar
+                                </button>
+                            </div>`;
+
+                contenedor.appendChild(fila);
+                reorganizarIndices();
+                actualizarSeccion();
+            });
+
+            contenedor.addEventListener("click", function(evento) {
+                const boton = evento.target.closest(".eliminar-almacenamiento");
+
+                if (boton && contenedor.querySelectorAll(".almacenamiento-item").length > 1) {
+                    boton.closest(".almacenamiento-item").remove();
+                    reorganizarIndices();
+                }
+            });
+
+            reorganizarIndices();
+        });
+    </script>
 }

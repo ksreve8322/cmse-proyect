@@ -1,6 +1,8 @@
 ﻿
 using System.Security.Cryptography;
+using System.Text;
 using System.Text.Json;
+using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using cmse.Dtos;
 using cmse.Repositories;
@@ -36,6 +38,24 @@ namespace cmse.Controllers
             _notificacionEnvioRepository = notificacionEnvioRepository;
         }
 
+        // =====================================================
+        // MÉTODO AUXILIAR PARA MENSAJES
+        // =====================================================
+
+        private void EstablecerMensaje(
+            string mensaje,
+            string tipo,
+            string titulo)
+        {
+            TempData["Mensaje"] = mensaje;
+            TempData["TipoMensaje"] = tipo;
+            TempData["TituloModal"] = titulo;
+        }
+
+        // =====================================================
+        // REGISTRO - CU-02
+        // =====================================================
+
         [HttpGet]
         public async Task<IActionResult> Register()
         {
@@ -60,6 +80,7 @@ namespace cmse.Controllers
             {
                 ModelState.AddModelError(
                     "Correo", "El correo ya está registrado.");
+
                 return View(modelo);
             }
 
@@ -69,10 +90,10 @@ namespace cmse.Controllers
                 ModelState.AddModelError(
                     "NumeroDocumento",
                     "El número de documento ya está registrado.");
+
                 return View(modelo);
             }
 
-            // Guardar temporalmente los datos, con la contraseña protegida.
             var pendiente = new RegistroPendiente
             {
                 IdRol = 3,
@@ -86,7 +107,6 @@ namespace cmse.Controllers
                     _passwordService.HashPassword(modelo.Contrasena)
             };
 
-            // Código aleatorio de seis dígitos.
             string codigo = RandomNumberGenerator
                 .GetInt32(100000, 1000000).ToString();
 
@@ -111,13 +131,14 @@ namespace cmse.Controllers
                     "Código de verificación - CMSE",
                     "Verifica tu correo electrónico",
                     pendiente.Nombres,
-                    $"Tu código de verificación es: <strong>{codigo}</strong>. " +
-                    "Introdúcelo en la pantalla de verificación para completar " +
-                    "tu registro. Este código vence en 10 minutos.",
-                    "Si no solicitaste este registro, puedes ignorar este correo.");
+                    "Introdúcelo en la pantalla de verificación para completar tu registro.",
+                    "Si no solicitaste este registro, puedes ignorar este correo.",
+                    codigo);
 
-                TempData["Mensaje"] =
-                    "Te enviamos un código de verificación. Revisa tu correo.";
+                EstablecerMensaje(
+                    "Te enviamos un código de verificación. Revisa tu correo.",
+                    "Exito",
+                    "Correo enviado");
 
                 return RedirectToAction(nameof(VerifyEmail));
             }
@@ -142,7 +163,7 @@ namespace cmse.Controllers
             return View();
         }
 
-        // Paso 2: validar el código y solo entonces crear la cuenta.
+        // Paso 2: validar el código y crear la cuenta.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> VerifyEmail(string codigo)
@@ -163,8 +184,11 @@ namespace cmse.Controllers
                 expiraTexto == null)
             {
                 LimpiarRegistroPendiente();
-                TempData["Mensaje"] =
-                    "El registro ha caducado. Inténtalo nuevamente.";
+
+                EstablecerMensaje(
+                    "El registro ha caducado. Inténtalo nuevamente.",
+                    "Advertencia",
+                    "Registro caducado");
 
                 return RedirectToAction(nameof(Register));
             }
@@ -173,8 +197,11 @@ namespace cmse.Controllers
                 DateTimeOffset.UtcNow.ToUnixTimeSeconds() > expira)
             {
                 LimpiarRegistroPendiente();
-                TempData["Mensaje"] =
-                    "El código ha caducado. Regístrate nuevamente.";
+
+                EstablecerMensaje(
+                    "El código ha caducado. Regístrate nuevamente.",
+                    "Advertencia",
+                    "Código caducado");
 
                 return RedirectToAction(nameof(Register));
             }
@@ -184,8 +211,11 @@ namespace cmse.Controllers
             if (intentos >= 5)
             {
                 LimpiarRegistroPendiente();
-                TempData["Mensaje"] =
-                    "Superaste los intentos permitidos. Inicia el registro nuevamente.";
+
+                EstablecerMensaje(
+                    "Superaste los intentos permitidos. Inicia el registro nuevamente.",
+                    "Advertencia",
+                    "Intentos agotados");
 
                 return RedirectToAction(nameof(Register));
             }
@@ -203,8 +233,11 @@ namespace cmse.Controllers
                 if (intentos >= 5)
                 {
                     LimpiarRegistroPendiente();
-                    TempData["Mensaje"] =
-                        "Superaste los intentos permitidos. Inicia el registro nuevamente.";
+
+                    EstablecerMensaje(
+                        "Superaste los intentos permitidos. Inicia el registro nuevamente.",
+                        "Advertencia",
+                        "Intentos agotados");
 
                     return RedirectToAction(nameof(Register));
                 }
@@ -225,24 +258,37 @@ namespace cmse.Controllers
             catch (JsonException)
             {
                 LimpiarRegistroPendiente();
+
+                EstablecerMensaje(
+                    "No fue posible recuperar los datos del registro. Inténtalo nuevamente.",
+                    "Error",
+                    "Error en el registro");
+
                 return RedirectToAction(nameof(Register));
             }
 
             if (datos == null)
             {
                 LimpiarRegistroPendiente();
+
+                EstablecerMensaje(
+                    "No fue posible recuperar los datos del registro. Inténtalo nuevamente.",
+                    "Error",
+                    "Error en el registro");
+
                 return RedirectToAction(nameof(Register));
             }
 
-            // Revalidar por si los datos cambiaron durante la verificación.
             if (await _usuarioRepository.ExisteCorreoAsync(datos.Correo) ||
                 await _usuarioRepository.ExisteNumeroDocumentoAsync(
                     datos.NumeroDocumento))
             {
                 LimpiarRegistroPendiente();
 
-                TempData["Mensaje"] =
-                    "El correo o el documento ya está registrado. Comprueba los datos.";
+                EstablecerMensaje(
+                    "El correo o el documento ya está registrado. Comprueba los datos.",
+                    "Error",
+                    "Datos ya registrados");
 
                 return RedirectToAction(nameof(Register));
             }
@@ -263,7 +309,6 @@ namespace cmse.Controllers
 
             await _usuarioRepository.CrearAsync(usuario);
 
-            // El código ya fue validado y la cuenta ya existe.
             LimpiarRegistroPendiente();
 
             try
@@ -307,6 +352,7 @@ namespace cmse.Controllers
                 // Se conserva la cuenta aunque falle la notificación.
             }
 
+            // Enviar el correo de bienvenida.
             try
             {
                 await _emailManager.EnviarCorreoPlantillaAsync(
@@ -325,9 +371,6 @@ namespace cmse.Controllers
                         usuario.Correo,
                         "enviado");
                 }
-
-                TempData["Mensaje"] =
-                    "Correo verificado y cuenta creada correctamente. Ya puedes iniciar sesión.";
             }
             catch (Exception ex)
             {
@@ -346,18 +389,268 @@ namespace cmse.Controllers
                         // No se pudo registrar el intento de envío.
                     }
                 }
+            }
 
-                TempData["Mensaje"] =
-                    "Correo verificado y cuenta creada. No pudimos enviar el correo de bienvenida.";
+            EstablecerMensaje(
+                "Registro exitoso",
+                "Exito",
+                "¡Bienvenido al sistema!");
+
+            return RedirectToAction("Index", "Home");
+        }
+
+        // =====================================================
+        // RECUPERACIÓN DE CONTRASEÑA - CU-04
+        // =====================================================
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SolicitarRecuperacion(string correo)
+        {
+            if (string.IsNullOrWhiteSpace(correo))
+            {
+                EstablecerMensaje(
+                    "Ingresa tu correo electrónico.",
+                    "Advertencia",
+                    "Dato requerido");
+
+                return RedirectToAction(nameof(Login));
+            }
+
+            correo = correo.Trim();
+
+            var usuario =
+                await _usuarioRepository.ObtenerPorCorreoAsync(correo);
+
+            if (usuario == null)
+            {
+                EstablecerMensaje(
+                    "Correo no registrado en el sistema.",
+                    "Error",
+                    "Correo no encontrado");
+
+                return RedirectToAction(nameof(Login));
+            }
+
+            await _usuarioRepository
+                .InvalidarRecuperacionesAnterioresAsync(usuario.IdUsuario);
+
+            string token = Convert.ToHexString(
+                RandomNumberGenerator.GetBytes(32));
+
+            string tokenHash = CalcularHashToken(token);
+
+            var recuperacion = new RecuperacionesContrasena
+            {
+                IdUsuario = usuario.IdUsuario,
+                TokenHash = tokenHash,
+                FechaCreacion = DateTime.UtcNow,
+                FechaExpiracion = DateTime.UtcNow.AddMinutes(30),
+                Usado = false
+            };
+
+            await _usuarioRepository
+                .CrearRecuperacionContrasenaAsync(recuperacion);
+
+            string? enlace = Url.Action(
+                nameof(RestablecerContrasena),
+                "Account",
+                new { token },
+                Request.Scheme);
+
+            if (string.IsNullOrWhiteSpace(enlace))
+            {
+                await _usuarioRepository
+                    .InvalidarRecuperacionesAnterioresAsync(usuario.IdUsuario);
+
+                EstablecerMensaje(
+                    "No fue posible generar el enlace de recuperación.",
+                    "Error",
+                    "Error al generar el enlace");
+
+                return RedirectToAction(nameof(Login));
+            }
+
+            try
+            {
+                string nombre = WebUtility.HtmlEncode(usuario.Nombres);
+                string enlaceSeguro = WebUtility.HtmlEncode(enlace);
+
+                string contenido = $@"
+                    <div style='font-family:Arial,sans-serif;max-width:600px;margin:auto;'>
+                        <h2>Restablecer contraseña - CMSE</h2>
+                        <p>Hola, {nombre}.</p>
+                        <p>Recibimos una solicitud para restablecer la contraseña de tu cuenta.</p>
+                        <p>Para continuar, utiliza el siguiente enlace:</p>
+                        <p>
+                            <a href='{enlaceSeguro}'
+                               style='display:inline-block;padding:12px 20px;
+                                      background-color:#2563eb;color:white;
+                                      text-decoration:none;border-radius:6px;'>
+                                Restablecer contraseña
+                            </a>
+                        </p>
+                        <p>Este enlace tiene una validez de 30 minutos y solo puede utilizarse una vez.</p>
+                        <p>Si no solicitaste este cambio, puedes ignorar este mensaje.</p>
+                        <p>Equipo CMSE</p>
+                    </div>";
+
+                await _emailManager.EnviarCorreoAsync(
+                    usuario.Correo,
+                    "Restablecimiento de contraseña - CMSE",
+                    contenido);
+
+                EstablecerMensaje(
+                    "Te enviamos un enlace de recuperación. Revisa tu correo electrónico.",
+                    "Exito",
+                    "Correo enviado");
+            }
+            catch (Exception)
+            {
+                await _usuarioRepository
+                    .InvalidarRecuperacionesAnterioresAsync(usuario.IdUsuario);
+
+                EstablecerMensaje(
+                    "No pudimos enviar el correo de recuperación. Inténtalo nuevamente.",
+                    "Error",
+                    "Error al enviar el correo");
             }
 
             return RedirectToAction(nameof(Login));
         }
 
+        [HttpGet]
+        public async Task<IActionResult> RestablecerContrasena(string token)
+        {
+            if (string.IsNullOrWhiteSpace(token))
+            {
+                EstablecerMensaje(
+                    "El enlace de recuperación no es válido.",
+                    "Error",
+                    "Enlace inválido");
+
+                return RedirectToAction(nameof(Login));
+            }
+
+            string tokenHash = CalcularHashToken(token);
+
+            var recuperacion =
+                await _usuarioRepository.ObtenerRecuperacionPorTokenAsync(
+                    tokenHash);
+
+            if (recuperacion == null ||
+                recuperacion.Usado ||
+                recuperacion.FechaExpiracion <= DateTime.UtcNow)
+            {
+                EstablecerMensaje(
+                    "El enlace de recuperación no es válido o ha caducado.",
+                    "Error",
+                    "Enlace inválido o caducado");
+
+                return RedirectToAction(nameof(Login));
+            }
+
+            ViewBag.Token = token;
+
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RestablecerContrasena(
+            string token,
+            string nuevaContrasena,
+            string confirmarContrasena)
+        {
+            if (string.IsNullOrWhiteSpace(token))
+            {
+                EstablecerMensaje(
+                    "El enlace de recuperación no es válido.",
+                    "Error",
+                    "Enlace inválido");
+
+                return RedirectToAction(nameof(Login));
+            }
+
+            if (string.IsNullOrWhiteSpace(nuevaContrasena))
+            {
+                ModelState.AddModelError(
+                    "nuevaContrasena",
+                    "Debes ingresar una nueva contraseña.");
+            }
+
+            if (string.IsNullOrWhiteSpace(confirmarContrasena))
+            {
+                ModelState.AddModelError(
+                    "confirmarContrasena",
+                    "Debes confirmar la nueva contraseña.");
+            }
+            else if (nuevaContrasena != confirmarContrasena)
+            {
+                ModelState.AddModelError(
+                    "confirmarContrasena",
+                    "Las contraseñas no coinciden.");
+            }
+
+            string tokenHash = CalcularHashToken(token);
+
+            var recuperacion =
+                await _usuarioRepository.ObtenerRecuperacionPorTokenAsync(
+                    tokenHash);
+
+            if (recuperacion == null ||
+                recuperacion.Usado ||
+                recuperacion.FechaExpiracion <= DateTime.UtcNow)
+            {
+                EstablecerMensaje(
+                    "El enlace de recuperación no es válido o ha caducado.",
+                    "Error",
+                    "Enlace inválido o caducado");
+
+                return RedirectToAction(nameof(Login));
+            }
+
+            if (!ModelState.IsValid)
+            {
+                ViewBag.Token = token;
+                return View();
+            }
+
+            recuperacion.IdUsuarioNavigation.Contrasena =
+                _passwordService.HashPassword(nuevaContrasena);
+
+            recuperacion.Usado = true;
+
+            await _usuarioRepository.ActualizarAsync(
+                recuperacion.IdUsuarioNavigation);
+
+            await _usuarioRepository.InvalidarRecuperacionesAnterioresAsync(
+                recuperacion.IdUsuario);
+
+            EstablecerMensaje(
+                "Tu contraseña fue restablecida correctamente. Ya puedes iniciar sesión.",
+                "Exito",
+                "Contraseña actualizada");
+
+            return RedirectToAction(nameof(Login));
+        }
+
+        private static string CalcularHashToken(string token)
+        {
+            byte[] hash = SHA256.HashData(
+                Encoding.UTF8.GetBytes(token));
+
+            return Convert.ToHexString(hash);
+        }
+
+        // =====================================================
+        // MÉTODOS AUXILIARES DEL REGISTRO
+        // =====================================================
+
         private static string CalcularHashCodigo(string codigo)
         {
             byte[] hash = SHA256.HashData(
-                System.Text.Encoding.UTF8.GetBytes(codigo));
+                Encoding.UTF8.GetBytes(codigo));
 
             return Convert.ToHexString(hash);
         }
@@ -378,9 +671,13 @@ namespace cmse.Controllers
             public string Apellidos { get; set; } = "";
             public string NumeroDocumento { get; set; } = "";
             public string Correo { get; set; } = "";
-            public string Telefono { get; set; } = "";
+            public string? Telefono { get; set; }
             public string ContrasenaHash { get; set; } = "";
         }
+
+        // =====================================================
+        // INICIO DE SESIÓN - CU-03
+        // =====================================================
 
         [HttpGet]
         public IActionResult Login()
@@ -398,9 +695,7 @@ namespace cmse.Controllers
             var usuario =
                 await _usuarioRepository.ObtenerPorCorreoAsync(modelo.Correo);
 
-            if (usuario == null ||
-                !_passwordService.VerifyPassword(
-                    modelo.Contrasena, usuario.Contrasena))
+            if (usuario == null)
             {
                 ModelState.AddModelError(
                     "", "Correo o contraseña incorrectos.");
@@ -416,18 +711,101 @@ namespace cmse.Controllers
                 return View(modelo);
             }
 
+            DateTime ahora = DateTime.Now;
+
+            if (usuario.BloqueoHasta.HasValue &&
+                usuario.BloqueoHasta.Value > ahora)
+            {
+                ModelState.AddModelError(
+                    "",
+                    $"Tu cuenta está bloqueada temporalmente. " +
+                    $"Inténtalo nuevamente después de las " +
+                    $"{usuario.BloqueoHasta.Value:HH:mm}.");
+
+                return View(modelo);
+            }
+
+            if (usuario.BloqueoHasta.HasValue &&
+                usuario.BloqueoHasta.Value <= ahora)
+            {
+                usuario.BloqueoHasta = null;
+                usuario.IntentosFallidos = 0;
+
+                await _usuarioRepository.ActualizarAsync(usuario);
+            }
+
+            bool contrasenaCorrecta =
+                _passwordService.VerifyPassword(
+                    modelo.Contrasena, usuario.Contrasena);
+
+            if (!contrasenaCorrecta)
+            {
+                if (usuario.IntentosFallidos < 5)
+                    usuario.IntentosFallidos++;
+
+                if (usuario.IntentosFallidos >= 5)
+                {
+                    usuario.BloqueoHasta = ahora.AddMinutes(15);
+
+                    await _usuarioRepository.ActualizarAsync(usuario);
+
+                    ModelState.AddModelError(
+                        "",
+                        "Has superado los 5 intentos fallidos. " +
+                        "Tu cuenta ha sido bloqueada durante 15 minutos.");
+
+                    return View(modelo);
+                }
+
+                await _usuarioRepository.ActualizarAsync(usuario);
+
+                int intentosRestantes = 5 - usuario.IntentosFallidos;
+
+                ModelState.AddModelError(
+                    "",
+                    $"Correo o contraseña incorrectos. " +
+                    $"Intentos restantes: {intentosRestantes}.");
+
+                return View(modelo);
+            }
+
+            if (usuario.IntentosFallidos > 0 ||
+                usuario.BloqueoHasta.HasValue)
+            {
+                usuario.IntentosFallidos = 0;
+                usuario.BloqueoHasta = null;
+
+                await _usuarioRepository.ActualizarAsync(usuario);
+            }
+
             HttpContext.Session.Clear();
-            HttpContext.Session.SetInt32("UsuarioId", usuario.IdUsuario);
+
+            HttpContext.Session.SetInt32(
+                "UsuarioId", usuario.IdUsuario);
+
             HttpContext.Session.SetString(
                 "UsuarioNombre", usuario.Nombres ?? "");
+
             HttpContext.Session.SetString(
                 "UsuarioCorreo", usuario.Correo ?? "");
-            HttpContext.Session.SetInt32("RolId", usuario.IdRol);
+
+            HttpContext.Session.SetInt32(
+                "RolId", usuario.IdRol);
+
             HttpContext.Session.SetString(
                 "RolNombre", usuario.IdRolNavigation?.Nombre ?? "");
 
+            EstablecerMensaje(
+                "Inicio de sesión exitoso",
+                "Exito",
+                "Bienvenido al sistema");
+
             return RedirectToAction("Index", "Home");
         }
+
+        // =====================================================
+        // CIERRE DE SESIÓN - CU-22
+        // =====================================================
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -437,6 +815,7 @@ namespace cmse.Controllers
 
             Response.Headers["Cache-Control"] =
                 "no-store, no-cache, must-revalidate";
+
             Response.Headers["Pragma"] = "no-cache";
             Response.Headers["Expires"] = "0";
 

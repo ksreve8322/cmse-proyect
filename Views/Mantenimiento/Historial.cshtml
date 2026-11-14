@@ -1,0 +1,47 @@
+﻿@model IEnumerable<cmse.Repositories.Models.Equipo>
+
+@{
+    ViewData["Title"] = "Historial de mantenimiento";
+}
+
+<div class="cmse-container" style="max-width: 950px; margin: 30px auto; padding: 25px;">
+    <h2 style="text-align: center; margin-bottom: 10px;">
+        Historial de mantenimiento
+    </h2>
+
+    <p style="text-align: center; color: #777; margin-bottom: 30px;">
+        Selecciona el equipo para consultar su historial de mantenimiento.
+    </p>
+
+    <form asp-action="VerHistorial" asp-controller="Mantenimiento" method="get">
+        <div style="max-width: 650px; margin: 0 auto 25px;">
+            <label for="id" style="display: block; font-weight: 600; margin-bottom: 8px;">
+                Equipo
+            </label>
+
+            <select id="id" name="id" required
+                    style="width: 100%; padding: 11px 14px; border: 1px solid #ccc; border-radius: 7px;">
+                <option value="">Seleccione un equipo</option>
+
+                @foreach (var equipo in Model)
+                {
+                    <option value="@equipo.IdEquipo">
+                        @equipo.Nombre - @equipo.CodigoInventario
+                    </option>
+                }
+            </select>
+        </div>
+
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 12px;">
+            <button type="submit"
+                    style="width: auto; min-width: 220px; padding: 11px 20px; border: none; border-radius: 7px; background: #1769aa; color: white; font-weight: 600; cursor: pointer;">
+                Consultar historial
+            </button>
+
+            <a asp-controller="Home" asp-action="Index"
+               style="display: inline-block; width: auto; min-width: 120px; padding: 10px 20px; border-radius: 7px; background: #6c757d; color: white; text-decoration: none; text-align: center;">
+                Regresar
+            </a>
+        </div>
+    </form>
+</div>

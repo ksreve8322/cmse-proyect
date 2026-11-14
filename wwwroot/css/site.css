@@ -1,3 +1,4 @@
+
 /* =========================
    Configuración general
    ========================= */
@@ -123,7 +124,7 @@ body {
 .cmse-navbar-account {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 14px;
 }
 
     .cmse-navbar-account form {
@@ -544,116 +545,8 @@ body {
 
 
 /* =========================
-   Responsive
-   ========================= */
-
-@media (max-width: 767px) {
-
-    .cmse-navbar-container {
-        min-height: 65px;
-        padding: 0 8px;
-    }
-
-    .cmse-navbar-logo {
-        width: 150px;
-        height: 50px;
-    }
-
-    .cmse-navbar-toggle {
-        display: none !important;
-    }
-
-    .cmse-navbar-menu {
-        display: flex !important;
-        margin-left: 15px;
-        padding: 0;
-    }
-
-    .cmse-navbar-links {
-        display: flex;
-    }
-
-        .cmse-navbar-links li {
-            margin-bottom: 4px;
-        }
-
-        .cmse-navbar-links a {
-            width: auto;
-        }
-
-    .cmse-navbar-account {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        gap: 5px;
-    }
-
-        .cmse-navbar-account a,
-        .cmse-navbar-logout {
-            width: auto;
-            justify-content: center;
-            box-sizing: border-box;
-        }
-
-    .cmse-auth-page {
-        padding: 25px 15px;
-    }
-
-    .cmse-auth-content {
-        padding: 25px 20px;
-    }
-
-    .cmse-home-hero {
-        min-height: auto;
-        flex-direction: column;
-        align-items: flex-start;
-        padding: 40px 28px;
-        margin-top: 15px;
-    }
-
-        .cmse-home-hero h1 {
-            font-size: 34px;
-        }
-
-        .cmse-home-hero p {
-            font-size: 16px;
-        }
-
-    .cmse-home-visual {
-        width: 100%;
-        height: 190px;
-    }
-
-    .cmse-home-icon {
-        width: 110px;
-        height: 110px;
-        font-size: 55px;
-    }
-
-    .cmse-home-circle-1 {
-        width: 180px;
-        height: 180px;
-    }
-
-    .cmse-home-circle-2 {
-        width: 240px;
-        height: 240px;
-    }
-
-    .cmse-module-grid {
-        grid-template-columns: 1fr;
-    }
-}
-
-/* =========================
    CMSE - Notificaciones y perfil
    ========================= */
-
-.cmse-navbar-account {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-}
 
 .cmse-notification-button {
     position: relative;
@@ -791,7 +684,10 @@ body {
     }
 
 
-/* Notificaciones emergentes de CMSE */
+/* =========================
+   CMSE - Notificaciones emergentes
+   ========================= */
+
 .cmse-toast {
     position: fixed;
     top: 24px;
@@ -858,15 +754,11 @@ body {
     pointer-events: none;
 }
 
-@media (max-width: 480px) {
-    .cmse-toast {
-        top: 12px;
-        right: 12px;
-        width: calc(100vw - 24px);
-    }
-}
 
-/* Ventana modal de notificaciones CMSE */
+/* =========================
+   CMSE - Ventanas modales
+   ========================= */
+
 .cmse-modal-overlay {
     position: fixed;
     inset: 0;
@@ -906,11 +798,29 @@ body {
     border: 1px solid #c3ead3;
 }
 
-    .cmse-modal-icon span {
-        font-size: 42px;
-        font-weight: 600;
-        line-height: 1;
-    }
+.cmse-modal-icon-exito {
+    background: #e4f5ec;
+    color: #16804a;
+    border: 1px solid #c3ead3;
+}
+
+.cmse-modal-icon-error {
+    background: #fde8e8;
+    color: #dc3545;
+    border: 1px solid #f5c2c7;
+}
+
+.cmse-modal-icon-advertencia {
+    background: #fff4d6;
+    color: #b7791f;
+    border: 1px solid #ffe09a;
+}
+
+.cmse-modal-icon span {
+    font-size: 42px;
+    font-weight: 600;
+    line-height: 1;
+}
 
 .cmse-modal h2 {
     margin: 0 0 12px;
@@ -976,7 +886,1017 @@ body {
     }
 }
 
+
+/* =========================
+   CMSE - Incidencias
+   ========================= */
+
+.fila-incidencia {
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+}
+
+    .fila-incidencia.seleccionada,
+    .fila-incidencia.seleccionada td {
+        background-color: #cfe2ff !important;
+    }
+
+
+/* =========================
+   CMSE - Recuperación de contraseña
+   ========================= */
+
+.cmse-forgot-password {
+    width: 100%;
+    text-align: center;
+    margin-top: 18px;
+}
+
+    .cmse-forgot-password a {
+        color: var(--cmse-primary, #007bff);
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 500;
+    }
+
+        .cmse-forgot-password a:hover {
+            text-decoration: underline;
+        }
+
+#modalRecuperacion .cmse-modal {
+    padding: 35px;
+    max-width: 450px;
+    width: 90%;
+    position: relative;
+    text-align: center;
+}
+
+#modalRecuperacion .cmse-modal {
+    padding-top: 65px;
+}
+
+.cmse-recuperacion-volver {
+    position: absolute;
+    top: 20px;
+    left: 25px;
+    border: none;
+    background: transparent;
+    padding: 0;
+    color: #777;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+    .cmse-recuperacion-volver:hover {
+        color: var(--cmse-primary, #007bff);
+    }
+
+#modalRecuperacion h2 {
+    margin-top: 30px;
+    margin-bottom: 15px;
+}
+
+#modalRecuperacion p {
+    margin-bottom: 25px;
+    line-height: 1.6;
+}
+
+#modalRecuperacion .cmse-form-group {
+    margin-bottom: 25px;
+    text-align: left;
+}
+
+#modalRecuperacion .cmse-auth-button {
+    margin-top: 5px;
+    width: 100%;
+}
+
+
+/* =========================
+   CMSE - Registro rediseñado
+   ========================= */
+
+.cmse-register-page {
+    min-height: calc(100vh - 120px);
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 45px 35px;
+    background: #f4f8fc;
+}
+
+.cmse-register-back {
+    position: absolute;
+    top: 25px;
+    left: 35px;
+    color: #526174;
+    font-size: 15px;
+    text-decoration: none;
+}
+
+    .cmse-register-back:hover {
+        color: #0d6efd;
+    }
+
+.cmse-register-container {
+    width: 100%;
+    max-width: 1150px;
+    padding: 35px 45px;
+    background: #ffffff;
+    border: 1px solid #d9e5f0;
+    border-radius: 18px;
+    box-shadow: 0 8px 30px rgba(30, 70, 100, 0.10);
+}
+
+.cmse-register-heading {
+    margin-bottom: 40px;
+    text-align: center;
+}
+
+    .cmse-register-heading h1 {
+        margin: 0 0 12px;
+        color: #123b67;
+        font-size: 32px;
+        font-weight: 700;
+    }
+
+    .cmse-register-heading p {
+        margin: 0;
+        color: #526174;
+        font-size: 17px;
+        line-height: 1.5;
+    }
+
+.cmse-register-form {
+    display: grid;
+    grid-template-columns: 1fr 280px 1fr;
+    column-gap: 45px;
+    row-gap: 25px;
+    align-items: center;
+}
+
+.cmse-register-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.cmse-register-logo {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 300px;
+}
+
+    .cmse-register-logo img {
+        display: block;
+        width: 100%;
+        max-width: 270px;
+        height: 270px;
+        object-fit: contain;
+    }
+
+.cmse-register-actions {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    margin-top: 15px;
+}
+
+    .cmse-register-actions .cmse-auth-button,
+    .cmse-register-cancel {
+        width: 230px;
+        box-sizing: border-box;
+        text-align: center;
+    }
+
+.cmse-register-cancel {
+    display: block;
+    padding: 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    color: #526174;
+    font-size: 15px;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+    .cmse-register-cancel:hover {
+        background: #f1f5f9;
+        color: #123b67;
+    }
+
+.cmse-register-validation {
+    grid-column: 1 / -1;
+}
+
+.cmse-register-login {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    margin-top: 20px;
+    text-align: center;
+    color: #6b7280;
+    font-size: 14px;
+}
+
+    .cmse-register-login a {
+        margin-left: 5px;
+        color: #0d6efd;
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+        .cmse-register-login a:hover {
+            text-decoration: underline;
+        }
+
+
+/* =========================
+   CMSE - Verificación de correo
+   ========================= */
+
+.cmse-verify-page {
+    min-height: 85vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 45px 20px;
+}
+
+.cmse-verify-card {
+    width: 100%;
+    max-width: 540px;
+    padding: 45px 50px;
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+    text-align: center;
+}
+
+.cmse-verify-logo {
+    margin-bottom: 25px;
+}
+
+    .cmse-verify-logo img {
+        width: 135px;
+        height: 135px;
+        object-fit: contain;
+    }
+
+.cmse-verify-header {
+    margin-bottom: 28px;
+}
+
+    .cmse-verify-header h1 {
+        font-size: 27px;
+        font-weight: 700;
+        margin-bottom: 15px;
+        color: #202938;
+    }
+
+    .cmse-verify-header p {
+        font-size: 15px;
+        line-height: 1.8;
+        color: #667085;
+        max-width: 390px;
+        margin: 0 auto;
+    }
+
+.cmse-verify-message {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 14px 16px;
+    margin-bottom: 28px;
+    border-radius: 9px;
+    background: #eaf7ef;
+    color: #247344;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.cmse-verify-message-icon {
+    flex-shrink: 0;
+    font-size: 19px;
+    font-weight: bold;
+}
+
+.cmse-verify-form {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.cmse-verify-field {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    text-align: left;
+}
+
+    .cmse-verify-field label {
+        font-size: 15px;
+        font-weight: 600;
+        color: #303846;
+    }
+
+    .cmse-verify-field input {
+        width: 100%;
+        box-sizing: border-box;
+        height: 62px;
+        padding: 10px 15px;
+        border: 1px solid #cbd2dc;
+        border-radius: 9px;
+        outline: none;
+        background: #f9fafb;
+        color: #202938;
+        font-size: 27px;
+        font-weight: 700;
+        letter-spacing: 12px;
+        text-align: center;
+        transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+        .cmse-verify-field input:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.13);
+            background: #fff;
+        }
+
+        .cmse-verify-field input::placeholder {
+            color: #b7bec9;
+            letter-spacing: 12px;
+        }
+
+    .cmse-verify-field small {
+        font-size: 13px;
+        color: #7b8492;
+        line-height: 1.5;
+    }
+
+.cmse-verify-button {
+    width: 100%;
+    min-height: 48px;
+    border: none;
+    border-radius: 9px;
+    background: #2563eb;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.2s;
+}
+
+    .cmse-verify-button:hover {
+        background: #1d4ed8;
+        transform: translateY(-1px);
+    }
+
+.cmse-verify-footer {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    margin-top: 30px;
+    padding-top: 22px;
+    border-top: 1px solid #e5e7eb;
+    font-size: 13px;
+    color: #737d8c;
+}
+
+    .cmse-verify-footer a {
+        color: #2563eb;
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+        .cmse-verify-footer a:hover {
+            text-decoration: underline;
+        }
+
+
+/* =========================
+   CMSE - Botones de tarjetas del panel
+   ========================= */
+
+.cmse-module-card .cmse-home-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.cmse-module-card .cmse-home-primary,
+.cmse-module-card .cmse-home-secondary {
+    width: 100%;
+    min-height: 44px;
+    box-sizing: border-box;
+    padding: 11px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    text-align: center;
+}
+
+.cmse-module-card .cmse-home-primary {
+    background: #0d6efd;
+    color: #ffffff;
+    border: 1px solid #0d6efd;
+}
+
+    .cmse-module-card .cmse-home-primary:hover {
+        background: #0b5ed7;
+        color: #ffffff;
+    }
+
+.cmse-module-card .cmse-home-secondary {
+    background: #ffffff;
+    color: #0d6efd;
+    border: 1px solid #0d6efd;
+}
+
+    .cmse-module-card .cmse-home-secondary:hover {
+        background: #eaf3ff;
+        color: #084298;
+    }
+
+
+/* =========================================
+   CMSE - Gestión de mantenimiento
+========================================= */
+
+.cmse-mantenimiento-container {
+    width: 100%;
+    max-width: 1600px;
+    margin: 35px auto;
+    padding: 0 25px 40px;
+    box-sizing: border-box;
+}
+
+.cmse-mantenimiento-header {
+    margin-bottom: 28px;
+}
+
+    .cmse-mantenimiento-header h2 {
+        margin: 0 0 8px;
+        color: #123b67;
+        font-size: 30px;
+        font-weight: 700;
+    }
+
+    .cmse-mantenimiento-header p {
+        margin: 0;
+        color: #64748b;
+        font-size: 15px;
+    }
+
+.cmse-mantenimiento-acciones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 25px;
+}
+
+.cmse-mantenimiento-boton {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 43px;
+    padding: 10px 18px;
+    border: 1px solid #0d6efd;
+    border-radius: 8px;
+    background: #0d6efd;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+    .cmse-mantenimiento-boton:hover {
+        background: #0b5ed7;
+        color: #ffffff;
+    }
+
+.cmse-mantenimiento-acciones button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.cmse-mantenimiento-panel {
+    padding: 28px;
+    background: #ffffff;
+    border: 1px solid #d9e5f0;
+    border-radius: 14px;
+    box-shadow: 0 5px 18px rgba(30, 70, 100, 0.06);
+}
+
+    .cmse-mantenimiento-panel h3 {
+        margin: 0 0 22px;
+        color: #123b67;
+        font-size: 20px;
+        font-weight: 700;
+    }
+
+.cmse-mantenimiento-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+}
+
+.cmse-mantenimiento-campo {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+    .cmse-mantenimiento-campo label {
+        color: #374151;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    .cmse-mantenimiento-campo input,
+    .cmse-mantenimiento-campo select,
+    .cmse-mantenimiento-campo textarea {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 11px 13px;
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        background: #ffffff;
+        color: #374151;
+        font-size: 14px;
+    }
+
+        .cmse-mantenimiento-campo input:focus,
+        .cmse-mantenimiento-campo select:focus,
+        .cmse-mantenimiento-campo textarea:focus {
+            outline: none;
+            border-color: #0d6efd;
+            box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.12);
+        }
+
+        .cmse-mantenimiento-campo input[readonly],
+        .cmse-mantenimiento-campo textarea[readonly] {
+            background: #f1f5f9;
+            color: #64748b;
+        }
+
+.cmse-mantenimiento-descripcion {
+    margin-top: 20px;
+}
+
+    .cmse-mantenimiento-descripcion textarea {
+        min-height: 110px;
+        resize: vertical;
+    }
+
+.cmse-mantenimiento-formulario {
+    margin-top: 28px;
+    padding-top: 25px;
+    border-top: 1px solid #e2e8f0;
+}
+
+    .cmse-mantenimiento-formulario h3 {
+        margin-bottom: 20px;
+    }
+
+    .cmse-mantenimiento-formulario .cmse-mantenimiento-campo {
+        max-width: 550px;
+    }
+
+    .cmse-mantenimiento-formulario select {
+        min-height: 46px;
+        cursor: pointer;
+    }
+
+.cmse-mantenimiento-formulario-acciones {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 28px;
+}
+
+.cmse-mantenimiento-cancelar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 43px;
+    padding: 10px 22px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    background: #ffffff;
+    color: #526174;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+    .cmse-mantenimiento-cancelar:hover {
+        background: #f1f5f9;
+        color: #123b67;
+    }
+
+.cmse-mantenimiento-vacio {
+    padding: 45px 20px;
+    text-align: center;
+    background: #f8fafc;
+    border: 1px dashed #cbd5e1;
+    border-radius: 12px;
+}
+
+    .cmse-mantenimiento-vacio h3 {
+        margin-bottom: 8px;
+        color: #334155;
+    }
+
+    .cmse-mantenimiento-vacio p {
+        margin: 0;
+        color: #64748b;
+    }
+
+.cmse-mantenimiento-tabla-contenedor {
+    width: 100%;
+    overflow-x: auto;
+    background: #ffffff;
+    border: 1px solid #d9e5f0;
+    border-radius: 12px;
+}
+
+.cmse-mantenimiento-tabla {
+    width: 100%;
+    border-collapse: collapse;
+}
+    /* Solo la tabla de consultar mantenimientos (9 columnas) */
+    .cmse-mantenimiento-tabla:has(th:nth-child(9)) {
+        min-width: 1650px;
+        white-space: nowrap;
+    }
+    .cmse-mantenimiento-tabla th,
+    .cmse-mantenimiento-tabla td {
+        padding: 14px 16px;
+        border-bottom: 1px solid #e5e7eb;
+        text-align: left;
+        font-size: 14px;
+    }
+
+    .cmse-mantenimiento-tabla th {
+        background: #f1f6fc;
+        color: #123b67;
+        font-weight: 700;
+    }
+
+    .cmse-mantenimiento-tabla tbody tr:hover {
+        background: #f8fbff;
+    }
+
+.cmse-mantenimiento-regresar {
+    display: flex;
+    justify-content: center;
+    margin-top: 28px;
+}
+
+
+/* =========================================
+   CMSE - Barra de búsqueda y listado
+========================================= */
+
+.cmse-mantenimiento-barra-superior {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    margin: 18px 0 22px;
+}
+
+    /* Búsqueda centrada */
+
+    .cmse-mantenimiento-barra-superior .cmse-mantenimiento-busqueda {
+        position: relative;
+        width: 100%;
+        max-width: 460px;
+        margin: 0;
+    }
+
+.cmse-mantenimiento-busqueda input {
+    display: block;
+    width: 100%;
+    height: 44px;
+    box-sizing: border-box;
+    padding: 10px 15px 10px 42px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    background: #ffffff;
+    color: #334155;
+    font-size: 14px;
+}
+
+    .cmse-mantenimiento-busqueda input:focus {
+        outline: none;
+        border-color: #0d6efd;
+        box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.12);
+    }
+
+/* Icono dentro de la búsqueda */
+
+.cmse-mantenimiento-lupa {
+    position: absolute;
+    left: 14px;
+    top: 0;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #64748b;
+    font-size: 17px;
+    line-height: 1;
+    pointer-events: none;
+}
+
+/* Botones centrados debajo de la búsqueda */
+
+.cmse-mantenimiento-barra-superior .cmse-mantenimiento-acciones {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin: 0;
+}
+
+/* Filas seleccionables */
+
+.cmse-fila-incidencia {
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+
+    .cmse-fila-incidencia:hover {
+        background: #f1f6fc;
+    }
+
+    .cmse-fila-incidencia.cmse-fila-seleccionada {
+        background: #e2efff;
+        outline: 2px solid #0d6efd;
+        outline-offset: -2px;
+    }
+
+        .cmse-fila-incidencia.cmse-fila-seleccionada td {
+            color: #123b67;
+            font-weight: 600;
+        }
+
+/* Encabezado de la tabla */
+
+.cmse-mantenimiento-listado-header {
+    margin: 0 0 14px;
+}
+
+    .cmse-mantenimiento-listado-header h3 {
+        margin: 0 0 5px;
+        color: #123b67;
+        font-size: 21px;
+        font-weight: 700;
+    }
+
+    .cmse-mantenimiento-listado-header p {
+        margin: 0;
+        color: #64748b;
+        font-size: 14px;
+    }
+
+
+/* =========================
+   Responsive
+   ========================= */
+
+@media (max-width: 850px) {
+
+    .cmse-register-form {
+        grid-template-columns: 1fr 1fr;
+        column-gap: 25px;
+    }
+
+    .cmse-register-logo {
+        grid-column: 1 / -1;
+        grid-row: 1;
+        min-height: auto;
+    }
+
+        .cmse-register-logo img {
+            width: 190px;
+            height: 190px;
+        }
+
+    .cmse-register-left {
+        grid-column: 1;
+    }
+
+    .cmse-register-right {
+        grid-column: 2;
+    }
+}
+
+@media (max-width: 767px) {
+
+    .cmse-navbar-container {
+        min-height: 65px;
+        padding: 0 8px;
+    }
+
+    .cmse-navbar-logo {
+        width: 150px;
+        height: 50px;
+    }
+
+    .cmse-navbar-toggle {
+        display: none !important;
+    }
+
+    .cmse-navbar-menu {
+        display: flex !important;
+        margin-left: 15px;
+        padding: 0;
+    }
+
+    .cmse-navbar-links {
+        display: flex;
+    }
+
+        .cmse-navbar-links li {
+            margin-bottom: 4px;
+        }
+
+        .cmse-navbar-links a {
+            width: auto;
+        }
+
+    .cmse-navbar-account {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 5px;
+    }
+
+        .cmse-navbar-account a,
+        .cmse-navbar-logout {
+            width: auto;
+            justify-content: center;
+            box-sizing: border-box;
+        }
+
+    .cmse-auth-page {
+        padding: 25px 15px;
+    }
+
+    .cmse-auth-content {
+        padding: 25px 20px;
+    }
+
+    .cmse-home-hero {
+        min-height: auto;
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 40px 28px;
+        margin-top: 15px;
+    }
+
+        .cmse-home-hero h1 {
+            font-size: 34px;
+        }
+
+        .cmse-home-hero p {
+            font-size: 16px;
+        }
+
+    .cmse-home-visual {
+        width: 100%;
+        height: 190px;
+    }
+
+    .cmse-home-icon {
+        width: 110px;
+        height: 110px;
+        font-size: 55px;
+    }
+
+    .cmse-home-circle-1 {
+        width: 180px;
+        height: 180px;
+    }
+
+    .cmse-home-circle-2 {
+        width: 240px;
+        height: 240px;
+    }
+
+    .cmse-module-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .cmse-toast {
+        top: 12px;
+        right: 12px;
+        width: calc(100vw - 24px);
+    }
+
+    .cmse-register-page {
+        padding: 65px 15px 25px;
+    }
+
+    .cmse-register-back {
+        left: 20px;
+    }
+
+    .cmse-register-container {
+        padding: 25px 20px;
+    }
+
+    .cmse-register-heading {
+        margin-bottom: 25px;
+    }
+
+        .cmse-register-heading h1 {
+            font-size: 27px;
+        }
+
+    .cmse-register-form {
+        grid-template-columns: 1fr;
+        row-gap: 20px;
+    }
+
+    .cmse-register-logo,
+    .cmse-register-left,
+    .cmse-register-right {
+        grid-column: 1;
+    }
+
+    .cmse-register-logo {
+        grid-row: 1;
+    }
+
+        .cmse-register-logo img {
+            width: 160px;
+            height: 160px;
+        }
+
+    .cmse-register-actions,
+    .cmse-register-validation {
+        grid-column: 1;
+    }
+
+    .cmse-verify-card {
+        padding: 35px 22px;
+    }
+
+    .cmse-verify-header h1 {
+        font-size: 23px;
+    }
+
+    .cmse-verify-logo img {
+        width: 110px;
+        height: 110px;
+    }
+
+    .cmse-mantenimiento-container {
+        margin-top: 20px;
+        padding: 0 12px 30px;
+    }
+
+    .cmse-mantenimiento-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .cmse-mantenimiento-panel {
+        padding: 20px;
+    }
+
+    .cmse-mantenimiento-barra-superior .cmse-mantenimiento-busqueda {
+        max-width: 100%;
+    }
+
+    .cmse-mantenimiento-barra-superior .cmse-mantenimiento-acciones {
+        flex-direction: column;
+        width: 100%;
+    }
+
+        .cmse-mantenimiento-barra-superior .cmse-mantenimiento-acciones > * {
+            width: 100%;
+            box-sizing: border-box;
+        }
+}
+
 @media (max-width: 480px) {
+
     .cmse-modal {
         padding: 30px 22px 24px;
     }
@@ -987,6 +1907,7 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
+
     .cmse-modal-overlay,
     .cmse-modal {
         animation: none;

@@ -1,0 +1,159 @@
+﻿@model cmse.Repositories.Models.Mantenimiento
+
+@{
+    ViewData["Title"] = "Registrar mantenimiento";
+    var repuestos = ViewBag.RepuestosTemporales as IEnumerable<cmse.Controllers.MantenimientoController.RepuestoTemporal>
+        ?? Enumerable.Empty<cmse.Controllers.MantenimientoController.RepuestoTemporal>();
+}
+
+<div class="cmse-container">
+    <h2>Registrar mantenimiento</h2>
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">
+            @TempData["Error"]
+        </div>
+    }
+
+    @if (TempData["Exito"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["Exito"]
+        </div>
+    }
+
+    <div class="cmse-form-section">
+        <h3>Información de la incidencia</h3>
+        <div class="cmse-form-group">
+            <label>ID de incidencia</label>
+            <input type="text" value="@Model.IdIncidencia" readonly />
+        </div>
+    </div>
+
+    <div class="cmse-form-section">
+        <h3>Información del equipo</h3>
+
+        <div class="cmse-form-group">
+            <label>Equipo</label>
+            <input type="text" value="@Model.IdEquipoNavigation.Nombre" readonly />
+        </div>
+
+        <div class="cmse-form-group">
+            <label>Tipo</label>
+            <input type="text" value="@Model.IdEquipoNavigation.IdTipoEquipoNavigation.Nombre" readonly />
+        </div>
+
+        <div class="cmse-form-group">
+            <label>Modelo</label>
+            <input type="text" value="@Model.IdEquipoNavigation.Modelo" readonly />
+        </div>
+
+        <div class="cmse-form-group">
+            <label>Número de serie</label>
+            <input type="text" value="@Model.IdEquipoNavigation.NumeroSerie" readonly />
+        </div>
+    </div>
+
+    <div class="cmse-form-section">
+        <h3>Mantenimiento</h3>
+
+        <div class="cmse-form-group">
+            <label>Fecha programada</label>
+            <input type="text" value="@Model.FechaProgramada.ToString("dd/MM/yyyy HH:mm")" readonly />
+        </div>
+    </div>
+
+    <div class="cmse-form-section">
+        <h3>Repuestos utilizados</h3>
+
+        @if (repuestos.Any())
+        {
+            <div style="overflow-x: auto;">
+                <table class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Código</th>
+                            <th>Cantidad</th>
+                            <th>Valor unitario</th>
+                            <th>Valor total</th>
+                            <th>Fecha de instalación</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var repuesto in repuestos)
+                        {
+                            <tr>
+                                <td>@repuesto.Nombre</td>
+                                <td>@repuesto.Codigo</td>
+                                <td>@repuesto.Cantidad</td>
+                                <td>@repuesto.ValorUnitario.ToString("C")</td>
+                                <td>@((repuesto.Cantidad * repuesto.ValorUnitario).ToString("C"))</td>
+                                <td>@repuesto.FechaInstalacion.ToString("dd/MM/yyyy")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <p>No has agregado repuestos a este mantenimiento.</p>
+        }
+
+        <div style="display: flex; width: 100%; margin-top: 15px;">
+            <a asp-action="RegistrarRepuestos"
+               asp-route-id="@Model.IdMantenimiento"
+               class="cmse-modal-button"
+               style="width: 180px; text-align: center; text-decoration: none; box-sizing: border-box; margin-left: auto;">
+                Registrar repuestos
+            </a>
+        </div>
+    </div>
+
+    <form asp-action="RegistrarMantenimiento" method="post">
+        @Html.AntiForgeryToken()
+
+        <input type="hidden" name="idMantenimiento" value="@Model.IdMantenimiento" />
+
+        <div class="cmse-form-section">
+            <h3>Resultado del mantenimiento</h3>
+
+            <div class="cmse-form-group">
+                <label for="actividades">Actividades realizadas y observaciones</label>
+                <textarea id="actividades"
+                          name="actividades"
+                          rows="6"
+                          required
+                          placeholder="Describe las actividades realizadas y las observaciones..."></textarea>
+            </div>
+
+            <div class="cmse-form-group">
+                <label for="resultado">Resultado del mantenimiento</label>
+                <select id="resultado" name="resultado" required>
+                    <option value="">Seleccione el resultado</option>
+                    <option value="Satisfactorio">Satisfactorio</option>
+                    <option value="Con observaciones">Con observaciones</option>
+                    <option value="Requiere seguimiento">Requiere seguimiento</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="cmse-form-actions"
+             style="display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 12px; width: 100%; margin-top: 25px;">
+
+            <button type="submit"
+                    class="cmse-modal-button"
+                    style="width: 150px; text-align: center;">
+                Registrar
+            </button>
+
+            <a asp-action="ConsultarAsignaciones"
+               class="cmse-modal-button"
+               style="width: 150px; box-sizing: border-box; text-align: center; display: flex; justify-content: center; align-items: center; text-decoration: none;">
+                Cancelar
+            </a>
+        </div>
+    </form>
+</div>

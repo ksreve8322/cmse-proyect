@@ -1,0 +1,194 @@
+﻿@model cmse.Repositories.Models.Incidencia
+
+@{
+    ViewData["Title"] = "Actualizar estado de incidencia";
+
+    int? rolId = Context.Session.GetInt32("RolId");
+    bool esAdministrador = rolId == 1;
+
+    var estadosDisponibles = ViewBag.EstadosDisponibles
+        as IEnumerable<cmse.Repositories.Models.Estado>;
+
+    bool tieneDiagnostico = Model.Diagnosticos != null
+        && Model.Diagnosticos.Any();
+}
+
+<div class="cmse-mantenimiento-container">
+
+    <div class="cmse-mantenimiento-header">
+        <h2>Actualizar estado de incidencia</h2>
+        <p>Modifica el estado de una incidencia que tienes asignada.</p>
+    </div>
+
+    @if (esAdministrador)
+    {
+        <div class="cmse-mantenimiento-acciones mb-4">
+
+            <a asp-controller="Mantenimiento"
+               asp-action="Index"
+               class="cmse-mantenimiento-boton">
+                Asignar técnico
+            </a>
+
+            <a asp-controller="Mantenimiento"
+               asp-action="ConsultarAsignaciones"
+               class="cmse-mantenimiento-boton">
+                Consultar incidencias asignadas
+            </a>
+
+            <a asp-controller="Mantenimiento"
+               asp-action="Consultar"
+               class="cmse-mantenimiento-boton">
+                Consultar mantenimientos
+            </a>
+
+            <a asp-controller="Mantenimiento"
+               asp-action="Programar"
+               class="cmse-mantenimiento-boton">
+                Programar mantenimiento
+            </a>
+
+            <a asp-controller="Mantenimiento"
+               asp-action="Cancelar"
+               class="cmse-mantenimiento-boton">
+                Cancelar mantenimiento programado
+            </a>
+
+        </div>
+    }
+
+    <div class="cmse-mantenimiento-panel">
+
+        <div class="cmse-form-grid">
+
+            <div class="cmse-form-group">
+                <label>Número de incidencia</label>
+                <input type="text"
+                       class="form-control"
+                       value="@Model.IdIncidencia"
+                       readonly />
+            </div>
+
+            <div class="cmse-form-group">
+                <label>Equipo</label>
+                <input type="text"
+                       class="form-control"
+                       value="@Model.IdEquipoNavigation?.Nombre"
+                       readonly />
+            </div>
+
+            <div class="cmse-form-group">
+                <label>Estado actual</label>
+                <input type="text"
+                       class="form-control"
+                       value="@Model.IdEstadoNavigation?.Nombre"
+                       readonly />
+            </div>
+
+            <div class="cmse-form-group">
+                <label>Diagnóstico registrado</label>
+                <input type="text"
+                       class="form-control"
+                       value="@(tieneDiagnostico ? "Sí" : "No")"
+                       readonly />
+            </div>
+
+            <div class="cmse-form-group">
+                <label for="idEstado">Nuevo estado</label>
+
+                <form asp-controller="Mantenimiento"
+                      asp-action="ActualizarEstado"
+                      method="post">
+
+                    @Html.AntiForgeryToken()
+
+                    <input type="hidden"
+                           name="id"
+                           value="@Model.IdIncidencia" />
+
+                    <select id="idEstado"
+                            name="idEstado"
+                            class="form-control"
+                            required>
+
+                        <option value="">
+                            Selecciona el nuevo estado
+                        </option>
+
+                        @if (estadosDisponibles != null)
+                        {
+                            foreach (var estado in estadosDisponibles)
+                            {
+                                <option value="@estado.IdEstado">
+                                    @estado.Nombre
+                                </option>
+                            }
+                        }
+
+                    </select>
+
+                    <div id="advertenciaDiagnostico"
+                         style="display:none; color:#b02a37; margin-top:10px;">
+                        No puedes marcar la incidencia como resuelta porque aún no tiene un diagnóstico registrado.
+                    </div>
+
+                    <div class="cmse-mantenimiento-acciones"
+                         style="margin-top: 30px; padding-top: 10px;">
+
+                        <button type="submit"
+                                id="btnActualizarEstado"
+                                class="cmse-mantenimiento-boton">
+                            Actualizar estado
+                        </button>
+
+                        <a asp-controller="Mantenimiento"
+                           asp-action="ConsultarAsignaciones"
+                           class="cmse-mantenimiento-cancelar">
+                            Cancelar
+                        </a>
+
+                    </div>
+
+                </form>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+
+        const selectorEstado = document.getElementById("idEstado");
+        const advertencia = document.getElementById("advertenciaDiagnostico");
+        const botonActualizar = document.getElementById("btnActualizarEstado");
+
+        const tieneDiagnostico = @tieneDiagnostico.ToString().ToLower();
+
+        function validarEstado() {
+
+            const estadoSeleccionado = parseInt(selectorEstado.value);
+
+            const intentaResolver = estadoSeleccionado === 9;
+            const bloquear = intentaResolver && !tieneDiagnostico;
+
+            advertencia.style.display = bloquear ? "block" : "none";
+            botonActualizar.disabled = bloquear;
+        }
+
+        selectorEstado.addEventListener("change", validarEstado);
+
+        document.querySelector("form").addEventListener("submit", function(event) {
+
+            validarEstado();
+
+            if (botonActualizar.disabled) {
+                event.preventDefault();
+            }
+
+        });
+
+    });
+</script>

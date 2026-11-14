@@ -15,7 +15,7 @@
         <div>
             <h1>Mis incidencias</h1>
             <p class="text-muted mb-0">
-                Consulta las incidencias reportadas de tus equipos.
+                Consulta y actualiza las incidencias reportadas de tus equipos.
             </p>
         </div>
 
@@ -50,33 +50,157 @@
                         <th>Equipo</th>
                         <th>Estado</th>
                         <th>Fecha de registro</th>
-                        <th>Acciones</th>
                     </tr>
                 </thead>
 
                 <tbody>
                     @foreach (var incidencia in Model)
                     {
-                        <tr>
+                        bool estaCerrada =
+                            incidencia.IdEstado == 10 ||
+                            incidencia.FechaCierre.HasValue ||
+                            string.Equals(
+                                incidencia.IdEstadoNavigation?.Nombre,
+                                "Cerrada",
+                                StringComparison.OrdinalIgnoreCase);
+
+                        <tr class="fila-incidencia"
+                            data-id="@incidencia.IdIncidencia"
+                            data-cerrada="@estaCerrada.ToString().ToLowerInvariant()">
+
                             <td>@incidencia.Titulo</td>
                             <td>@incidencia.IdEquipoNavigation?.Nombre</td>
                             <td>@incidencia.IdEstadoNavigation?.Nombre</td>
                             <td>@incidencia.FechaRegistro.ToString("dd/MM/yyyy HH:mm")</td>
-                            <td>
-                                <a asp-controller="Incidencia"
-                                   asp-action="Details"
-                                   asp-route-id="@incidencia.IdIncidencia"
-                                   class="btn btn-sm btn-outline-primary">
-                                    Ver detalles
-                                </a>
-                            </td>
+
                         </tr>
                     }
                 </tbody>
             </table>
         </div>
 
+        <div class="d-flex flex-column align-items-center gap-2 mt-4">
+
+            <div class="d-flex justify-content-center flex-wrap gap-2">
+
+                <button type="button"
+                        class="btn btn-primary"
+                        id="btnConsultarIncidencia"
+                        disabled>
+                    Consultar
+                </button>
+
+                <button type="button"
+                        class="btn btn-primary"
+                        id="btnActualizarIncidencia"
+                        disabled>
+                    Actualizar
+                </button>
+
+            </div>
+
+            <a asp-controller="Home"
+               asp-action="Index"
+               class="btn btn-secondary">
+                Regresar
+            </a>
+
+            <small class="text-muted text-center mt-2">
+                
+            </small>
+
+        </div>
+
+        <script>
+            const filas = document.querySelectorAll('.fila-incidencia');
+
+            const botonConsultar = document.getElementById('btnConsultarIncidencia');
+            const botonActualizar = document.getElementById('btnActualizarIncidencia');
+
+            let incidenciaSeleccionada = null;
+            let incidenciaCerrada = true;
+
+            function consultarIncidencia(id) {
+                const urlDetalle = '@Url.Action("Details", "Incidencia", new { id = "__id__" })';
+                window.location.href = urlDetalle.replace('__id__', id);
+            }
+
+            function actualizarIncidencia(id) {
+                const urlEditar = '@Url.Action("Editar", "Incidencia", new { id = "__id__" })';
+                window.location.href = urlEditar.replace('__id__', id);
+            }
+
+            filas.forEach(fila => {
+
+                fila.addEventListener('click', function() {
+
+                    filas.forEach(f => f.classList.remove('seleccionada'));
+
+                    this.classList.add('seleccionada');
+
+                    incidenciaSeleccionada = this.dataset.id;
+                    incidenciaCerrada = this.dataset.cerrada === 'true';
+
+                    botonConsultar.disabled = false;
+                    botonActualizar.disabled = incidenciaCerrada;
+                });
+
+                fila.addEventListener('dblclick', function() {
+                    consultarIncidencia(this.dataset.id);
+                });
+            });
+
+            botonConsultar.addEventListener('click', function() {
+                if (incidenciaSeleccionada) {
+                    consultarIncidencia(incidenciaSeleccionada);
+                }
+            });
+
+            botonActualizar.addEventListener('click', function() {
+                if (incidenciaSeleccionada && !incidenciaCerrada) {
+                    actualizarIncidencia(incidenciaSeleccionada);
+                }
+            });
+
+            // Atajos de teclado: C para consultar y A para actualizar.
+            document.addEventListener('keydown', function(event) {
+
+                // No ejecutar atajos mientras se escribe en un campo.
+                const elemento = event.target;
+                const escribiendo =
+                    elemento.tagName === 'INPUT' ||
+                    elemento.tagName === 'TEXTAREA' ||
+                    elemento.tagName === 'SELECT' ||
+                    elemento.isContentEditable;
+
+                if (escribiendo || event.ctrlKey || event.altKey ||
+                    event.metaKey || event.repeat) {
+                    return;
+                }
+
+                if (!incidenciaSeleccionada) {
+                    return;
+                }
+
+                const tecla = event.key.toLowerCase();
+
+                if (tecla === 'c') {
+                    event.preventDefault();
+                    consultarIncidencia(incidenciaSeleccionada);
+                }
+
+                if (tecla === 'a' && !incidenciaCerrada) {
+                    event.preventDefault();
+                    actualizarIncidencia(incidenciaSeleccionada);
+                }
+            });
+        </script>
+    }
+
+    @if (Model != null && Model.Any())
+    {
         <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mt-3">
+
             <p class="text-muted mb-0">
                 Total de incidencias: @totalRegistros
                 | Página @paginaActual de @totalPaginas
@@ -117,6 +241,8 @@
                     </ul>
                 </nav>
             }
+
         </div>
     }
+
 </div>

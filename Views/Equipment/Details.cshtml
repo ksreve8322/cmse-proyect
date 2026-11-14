@@ -1,0 +1,490 @@
+﻿@using cmse.Repositories.Models
+@model Equipo
+
+@{
+    ViewData["Title"] = "Consultar equipo";
+}
+
+<div class="container py-4">
+
+    <div class="text-center mb-4">
+        <h1 class="fw-bold">Consultar equipo</h1>
+        <p class="text-muted">
+            Información general y técnica del equipo registrado.
+        </p>
+    </div>
+
+    <!-- DATOS GENERALES -->
+    <div class="card shadow-sm mb-4">
+
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">Datos del equipo</h5>
+        </div>
+
+        <div class="card-body">
+            <div class="row g-3">
+
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">Tipo de equipo</label>
+                    <input class="form-control"
+                           value="@Model.IdTipoEquipoNavigation?.Nombre"
+                           readonly />
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">Nombre</label>
+                    <input class="form-control"
+                           value="@Model.Nombre"
+                           readonly />
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">Código de inventario</label>
+                    <input class="form-control"
+                           value="@Model.CodigoInventario"
+                           readonly />
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">Marca</label>
+                    <input class="form-control"
+                           value="@Model.Marca"
+                           readonly />
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">Modelo</label>
+                    <input class="form-control"
+                           value="@Model.Modelo"
+                           readonly />
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">Número de serie</label>
+                    <input class="form-control"
+                           value="@Model.NumeroSerie"
+                           readonly />
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">Ubicación</label>
+                    <input class="form-control"
+                           value="@Model.Ubicacion"
+                           readonly />
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">Estado</label>
+                    <input class="form-control"
+                           value="@Model.IdEstadoNavigation?.Nombre"
+                           readonly />
+                </div>
+
+                <div class="col-12">
+                    <label class="form-label fw-bold">Observaciones</label>
+                    <textarea class="form-control"
+                              rows="3"
+                              readonly>@Model.Observaciones</textarea>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">Fecha de registro</label>
+                    <input class="form-control"
+                           value="@Model.FechaRegistro.ToString("dd/MM/yyyy")"
+                           readonly />
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- INFORMACIÓN TÉCNICA -->
+    <div class="card shadow-sm mb-4">
+
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">Información técnica</h5>
+        </div>
+
+        <div class="card-body">
+
+            @if (Model.EquiposComputadore != null)
+            {
+                var computador = Model.EquiposComputadore;
+
+                <div class="row g-3">
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Procesador</label>
+                        <input class="form-control"
+                               value="@computador.Procesador" readonly />
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Memoria RAM</label>
+                        <input class="form-control"
+                               value="@($"{computador.CapacidadRamGb} GB")" readonly />
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Tipo de RAM</label>
+                        <input class="form-control"
+                               value="@computador.TipoRam" readonly />
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">GPU</label>
+                        <input class="form-control"
+                               value="@computador.Gpu" readonly />
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Sistema operativo</label>
+                        <input class="form-control"
+                               value="@computador.SistemaOperativo" readonly />
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Refrigeración</label>
+                        <input class="form-control"
+                               value="@computador.Refrigeracion" readonly />
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Puertos</label>
+                        <input class="form-control"
+                               value="@computador.Puertos" readonly />
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Fuente de poder</label>
+                        <input class="form-control"
+                               value="@computador.FuentePoder" readonly />
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Batería</label>
+                        <input class="form-control"
+                               value="@computador.Bateria" readonly />
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Pantalla</label>
+                        <input class="form-control"
+                               value="@computador.Pantalla" readonly />
+                    </div>
+
+                </div>
+
+                <hr />
+
+                <h6 class="fw-bold mb-3">Almacenamientos</h6>
+
+                @if (computador.AlmacenamientosEquipos.Any())
+                {
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover text-center align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Tipo de almacenamiento</th>
+                                    <th>Capacidad</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                @foreach (var almacenamiento in computador.AlmacenamientosEquipos)
+                                {
+                                    <tr>
+                                        <td>@almacenamiento.TipoAlmacenamiento</td>
+                                        <td>
+                                            @almacenamiento.Capacidad
+                                            @almacenamiento.Unidad
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <p class="text-muted">
+                        No hay almacenamientos registrados.
+                    </p>
+                }
+            }
+            else if (Model.EquiposImpresora != null)
+            {
+                var impresora = Model.EquiposImpresora;
+
+                <div class="row g-3">
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Tipo de impresora</label>
+                        <input class="form-control"
+                               value="@impresora.TipoImpresora" readonly />
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Resolución de impresión</label>
+                        <input class="form-control"
+                               value="@impresora.ResolucionImpresion" readonly />
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Formatos soportados</label>
+                        <input class="form-control"
+                               value="@impresora.FormatosSoportados" readonly />
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Impresión a color</label>
+                        <input class="form-control"
+                               value="@(impresora.ImpresionColor ? "Sí" : "No")"
+                               readonly />
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Puertos</label>
+                        <input class="form-control"
+                               value="@impresora.Puertos" readonly />
+                    </div>
+
+                </div>
+            }
+            else if (Model.EquiposPantalla != null)
+            {
+                var pantalla = Model.EquiposPantalla;
+
+                <div class="row g-3">
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Tamaño</label>
+                        <input class="form-control"
+                               value="@($"{pantalla.TamanoPulgadas} pulgadas")" readonly />
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Resolución</label>
+                        <input class="form-control"
+                               value="@pantalla.Resolucion" readonly />
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Frecuencia de actualización</label>
+                        <input class="form-control"
+                               value="@($"{pantalla.FrecuenciaActualizacion} Hz")" readonly />
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Tecnología del panel</label>
+                        <input class="form-control"
+                               value="@pantalla.TecnologiaPanel" readonly />
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">HDR</label>
+                        <input class="form-control"
+                               value="@(pantalla.Hdr.HasValue ? (pantalla.Hdr.Value ? "Sí" : "No") : "No especificado")"
+                               readonly />
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Sistema operativo</label>
+                        <input class="form-control"
+                               value="@pantalla.SistemaOperativo" readonly />
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Puertos</label>
+                        <input class="form-control"
+                               value="@pantalla.Puertos" readonly />
+                    </div>
+
+                </div>
+            }
+            else if (Model.EquiposProyectore != null)
+            {
+                var proyector = Model.EquiposProyectore;
+
+                <div class="row g-3">
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Tecnología de proyección</label>
+                        <input class="form-control"
+                               value="@proyector.TecnologiaProyeccion" readonly />
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Fuente de iluminación</label>
+                        <input class="form-control"
+                               value="@proyector.FuenteIluminacion" readonly />
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Resolución nativa</label>
+                        <input class="form-control"
+                               value="@proyector.ResolucionNativa" readonly />
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Resolución máxima</label>
+                        <input class="form-control"
+                               value="@proyector.ResolucionMaxima" readonly />
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Brillo</label>
+                        <input class="form-control"
+                               value="@($"{proyector.BrilloLumenes} lúmenes")" readonly />
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Relación de contraste</label>
+                        <input class="form-control"
+                               value="@proyector.RelacionContraste" readonly />
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Relación de aspecto</label>
+                        <input class="form-control"
+                               value="@proyector.RelacionAspecto" readonly />
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Tamaño de proyección</label>
+                        <input class="form-control"
+                               value="@proyector.TamanoProyeccion" readonly />
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Distancia de proyección</label>
+                        <input class="form-control"
+                               value="@proyector.DistanciaProyeccion" readonly />
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Tipo de lente</label>
+                        <input class="form-control"
+                               value="@proyector.TipoLente" readonly />
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Corrección trapezoidal</label>
+                        <input class="form-control"
+                               value="@proyector.CorreccionTrapezoidal" readonly />
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Puertos</label>
+                        <input class="form-control"
+                               value="@proyector.Puertos" readonly />
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Horas de uso</label>
+                        <input class="form-control"
+                               value="@proyector.HorasUso" readonly />
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Altavoces integrados</label>
+                        <input class="form-control"
+                               value="@(proyector.AltavocesIntegrados.HasValue ? (proyector.AltavocesIntegrados.Value ? "Sí" : "No") : "No especificado")"
+                               readonly />
+                    </div>
+
+                </div>
+            }
+            else
+            {
+                <p class="text-muted mb-0">
+                    No hay información técnica registrada para este equipo.
+                </p>
+            }
+
+        </div>
+    </div>
+
+    <!-- INCIDENCIAS -->
+    <div class="card shadow-sm mb-4">
+
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">Incidencias registradas</h5>
+        </div>
+
+        <div class="card-body">
+
+            @if (Model.Incidencia.Any())
+            {
+                <div class="table-responsive">
+
+                    <table class="table table-bordered table-hover align-middle text-center">
+
+                        <thead class="table-light">
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Tipo</th>
+                                <th>Técnico</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @foreach (var incidencia in Model.Incidencia
+                                .OrderByDescending(i => i.FechaRegistro))
+                            {
+                                var asignacion = incidencia.AsignacionesIncidencia
+                                    .OrderByDescending(a => a.FechaAsignacion)
+                                    .FirstOrDefault();
+
+                                <tr>
+                                    <td>
+                                        @incidencia.FechaRegistro.ToString("dd/MM/yyyy")
+                                    </td>
+
+                                    <td>
+                                        @(incidencia.IdTipoIncidenciaNavigation?.Nombre
+                                            ?? "No especificado")
+                                    </td>
+
+                                    <td>
+                                        @if (asignacion != null)
+                                        {
+                                            @($"{asignacion.IdTecnicoNavigation.Nombres} {asignacion.IdTecnicoNavigation.Apellidos}")
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">Sin asignar</span>
+                                        }
+                                    </td>
+
+                                    <td>
+                                        @(incidencia.IdEstadoNavigation?.Nombre
+                                            ?? "No especificado")
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+
+                    </table>
+
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-info mb-0">
+                    Este equipo todavía no tiene incidencias registradas.
+                </div>
+            }
+
+        </div>
+    </div>
+
+    <!-- REGRESAR -->
+    <div class="text-center">
+        <a asp-action="Index" class="btn btn-secondary">
+            Regresar
+        </a>
+    </div>
+
+</div>

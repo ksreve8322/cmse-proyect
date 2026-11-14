@@ -1,0 +1,260 @@
+﻿@model cmse.Repositories.Models.Mantenimiento
+
+@{
+    ViewData["Title"] = "Programar mantenimiento";
+}
+
+<div class="cmse-mantenimiento-container">
+
+    <div class="cmse-mantenimiento-header">
+        <h2>Programar mantenimiento</h2>
+        <p>Registra un mantenimiento preventivo o correctivo asociado a una incidencia.</p>
+    </div>
+
+    <div class="cmse-mantenimiento-acciones mb-4">
+
+        <a asp-controller="Mantenimiento"
+           asp-action="Index"
+           class="cmse-mantenimiento-boton">
+            Asignar técnico
+        </a>
+
+        <a asp-controller="Mantenimiento"
+           asp-action="ConsultarAsignaciones"
+           class="cmse-mantenimiento-boton">
+            Consultar incidencias asignadas
+        </a>
+
+        <a asp-controller="Mantenimiento"
+           asp-action="Consultar"
+           class="cmse-mantenimiento-boton">
+            Consultar mantenimientos
+        </a>
+
+        <a asp-controller="Mantenimiento"
+           asp-action="Programar"
+           class="cmse-mantenimiento-boton">
+            Programar mantenimiento
+        </a>
+
+        <a asp-controller="Mantenimiento"
+           asp-action="Cancelar"
+           class="cmse-mantenimiento-boton">
+            Cancelar mantenimiento programado
+        </a>
+
+    </div>
+
+    <div class="cmse-mantenimiento-panel">
+
+        <form asp-controller="Mantenimiento"
+              asp-action="Programar"
+              method="post">
+
+            @Html.AntiForgeryToken()
+
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="cmse-form-grid">
+
+                <div class="cmse-form-group cmse-form-group-completo">
+                    <label for="idIncidencia">Incidencia asociada</label>
+
+                    <select id="idIncidencia"
+                            name="idIncidencia"
+                            class="form-control"
+                            required>
+
+                        <option value="">Selecciona una incidencia</option>
+
+                        @if (ViewBag.Incidencias != null)
+                        {
+                            foreach (var incidencia in ViewBag.Incidencias)
+                            {
+                                <option value="@incidencia.IdIncidencia"
+                                        selected="@(Model?.IdIncidencia == incidencia.IdIncidencia)">
+                                    Incidencia #@incidencia.IdIncidencia - @incidencia.IdEquipoNavigation.Nombre
+                                </option>
+                            }
+                        }
+
+                    </select>
+
+                    <span class="text-danger">
+                        @Html.ValidationMessage("idIncidencia")
+                    </span>
+                </div>
+
+                <div class="cmse-form-group">
+                    <label for="idEquipo">Equipo</label>
+
+                    <select id="idEquipo"
+                            name="idEquipo"
+                            class="form-control"
+                            required>
+
+                        <option value="">Selecciona un equipo</option>
+
+                        @if (ViewBag.Equipos != null)
+                        {
+                            foreach (var equipo in ViewBag.Equipos)
+                            {
+                                <option value="@equipo.IdEquipo"
+                                        selected="@(Model?.IdEquipo == equipo.IdEquipo)">
+                                    @equipo.Nombre - @equipo.CodigoInventario
+                                </option>
+                            }
+                        }
+
+                    </select>
+
+                    <p>Equipos cargados: @ViewBag.TotalEquipos</p>
+
+                    <span class="text-danger">
+                        @Html.ValidationMessage("idEquipo")
+                    </span>
+                </div>
+
+                <div class="cmse-form-group">
+                    <label for="idTecnico">Técnico responsable</label>
+
+                    <select id="idTecnico"
+                            name="idTecnico"
+                            class="form-control"
+                            required>
+
+                        <option value="">Selecciona un técnico</option>
+
+                        @if (ViewBag.Tecnicos != null)
+                        {
+                            foreach (var tecnico in ViewBag.Tecnicos)
+                            {
+                                <option value="@tecnico.IdUsuario"
+                                        selected="@(Model?.IdTecnico == tecnico.IdUsuario)">
+                                    @tecnico.Nombres @tecnico.Apellidos
+                                </option>
+                            }
+                        }
+
+                    </select>
+
+                    <span class="text-danger">
+                        @Html.ValidationMessage("idTecnico")
+                    </span>
+                </div>
+
+                <div class="cmse-form-group">
+                    <label for="idTipoMantenimiento">Tipo de mantenimiento</label>
+
+                    <select id="idTipoMantenimiento"
+                            name="idTipoMantenimiento"
+                            class="form-control"
+                            required>
+
+                        <option value="">Selecciona un tipo</option>
+
+                        @if (ViewBag.TiposMantenimiento != null)
+                        {
+                            foreach (var tipo in ViewBag.TiposMantenimiento)
+                            {
+                                <option value="@tipo.IdTipoMantenimiento"
+                                        selected="@(Model?.IdTipoMantenimiento == tipo.IdTipoMantenimiento)">
+                                    @tipo.Nombre
+                                </option>
+                            }
+                        }
+
+                    </select>
+
+                    <span class="text-danger">
+                        @Html.ValidationMessage("idTipoMantenimiento")
+                    </span>
+                </div>
+
+                <div class="cmse-form-group">
+                    <label for="fechaProgramada">Fecha y hora programada</label>
+
+                    <input type="datetime-local"
+                           id="fechaProgramada"
+                           name="fechaProgramada"
+                           class="form-control"
+                           value="@(Model?.FechaProgramada > DateTime.MinValue
+                               ? Model.FechaProgramada.ToString("yyyy-MM-ddTHH:mm")
+                               : "")"
+                           required />
+
+                    <span class="text-danger">
+                        @Html.ValidationMessage("fechaProgramada")
+                    </span>
+                </div>
+
+                <div class="cmse-form-group">
+                    <label for="duracionEstimadaHoras">Duración estimada (horas)</label>
+
+                    <input type="number"
+                           id="duracionEstimadaHoras"
+                           name="duracionEstimadaHoras"
+                           class="form-control"
+                           min="0.01"
+                           max="999.99"
+                           step="0.01"
+                           placeholder="Ejemplo: 2.50"
+                           value="@Model?.DuracionEstimadaHoras"
+                           required />
+
+                    <span class="text-danger">
+                        @Html.ValidationMessage("duracionEstimadaHoras")
+                    </span>
+                </div>
+
+                <div class="cmse-form-group cmse-form-group-completo">
+                    <label for="descripcion">Descripción del mantenimiento</label>
+
+                    <textarea id="descripcion"
+                              name="descripcion"
+                              class="form-control"
+                              rows="4"
+                              maxlength="1000"
+                              placeholder="Describe las actividades que se realizarán..."
+                              required>@Model?.Descripcion</textarea>
+                </div>
+
+            </div>
+
+            <div class="cmse-mantenimiento-acciones"
+                 style="margin-top: 30px; padding-top: 10px;">
+
+                <button type="submit" class="cmse-mantenimiento-boton">
+                    Programar mantenimiento
+                </button>
+
+                <a asp-controller="Mantenimiento"
+                   asp-action="Index"
+                   class="cmse-mantenimiento-cancelar">
+                    Cancelar
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+
+            const campoFecha = document.getElementById("fechaProgramada");
+
+            if (campoFecha) {
+                const ahora = new Date();
+                ahora.setMinutes(ahora.getMinutes() - ahora.getTimezoneOffset());
+
+                campoFecha.min = ahora.toISOString().slice(0, 16);
+            }
+
+        });
+    </script>
+}

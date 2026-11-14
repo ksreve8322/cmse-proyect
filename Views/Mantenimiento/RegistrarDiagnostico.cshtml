@@ -1,0 +1,173 @@
+﻿@model cmse.Repositories.Models.Incidencia
+
+@{
+    ViewData["Title"] = "Registrar diagnóstico";
+}
+
+<div class="cmse-mantenimiento-container">
+
+    <div class="cmse-mantenimiento-header">
+        <h2>Registrar diagnóstico</h2>
+        <p>Registra los hallazgos y la causa de falla identificada en el equipo.</p>
+    </div>
+
+    <div class="cmse-mantenimiento-panel">
+
+        <form asp-controller="Mantenimiento"
+              asp-action="RegistrarDiagnostico"
+              method="post">
+
+            @Html.AntiForgeryToken()
+
+            <input type="hidden" name="id" value="@Model.IdIncidencia" />
+
+            <h3 class="mb-4">Información de la incidencia</h3>
+
+            <div class="cmse-form-grid">
+
+                <div class="cmse-form-group">
+                    <label>Número de incidencia</label>
+                    <input type="text"
+                           class="form-control"
+                           value="@Model.IdIncidencia"
+                           readonly />
+                </div>
+
+                <div class="cmse-form-group">
+                    <label>Título</label>
+                    <input type="text"
+                           class="form-control"
+                           value="@Model.Titulo"
+                           readonly />
+                </div>
+
+                <div class="cmse-form-group" style="grid-column: 1 / -1;">
+                    <label>Descripción de la incidencia</label>
+                    <textarea class="form-control"
+                              rows="3"
+                              readonly>@Model.Descripcion</textarea>
+                </div>
+
+            </div>
+
+            <hr class="my-4" />
+
+            <h3 class="mb-4">Información del equipo</h3>
+
+            <div class="cmse-form-grid">
+
+                <div class="cmse-form-group">
+                    <label>Equipo</label>
+                    <input type="text"
+                           class="form-control"
+                           value="@Model.IdEquipoNavigation?.Nombre"
+                           readonly />
+                </div>
+
+                <div class="cmse-form-group">
+                    <label>Tipo de equipo</label>
+                    <input type="text"
+                           class="form-control"
+                           value="@Model.IdEquipoNavigation?.IdTipoEquipoNavigation?.Nombre"
+                           readonly />
+                </div>
+
+                <div class="cmse-form-group">
+                    <label>Marca</label>
+                    <input type="text"
+                           class="form-control"
+                           value="@Model.IdEquipoNavigation?.Marca"
+                           readonly />
+                </div>
+
+                <div class="cmse-form-group">
+                    <label>Modelo</label>
+                    <input type="text"
+                           class="form-control"
+                           value="@Model.IdEquipoNavigation?.Modelo"
+                           readonly />
+                </div>
+
+                <div class="cmse-form-group">
+                    <label>Número de serie</label>
+                    <input type="text"
+                           class="form-control"
+                           value="@Model.IdEquipoNavigation?.NumeroSerie"
+                           readonly />
+                </div>
+
+                <div class="cmse-form-group">
+                    <label>Código de inventario</label>
+                    <input type="text"
+                           class="form-control"
+                           value="@Model.IdEquipoNavigation?.CodigoInventario"
+                           readonly />
+                </div>
+
+            </div>
+
+            <hr class="my-4" />
+
+            <h3 class="mb-4">Diagnóstico del equipo</h3>
+
+            <div class="cmse-form-grid">
+
+                <div class="cmse-form-group" style="grid-column: 1 / -1;">
+                    <label for="hallazgos">Hallazgos encontrados *</label>
+                    <textarea id="hallazgos"
+                              name="hallazgos"
+                              class="form-control"
+                              rows="4"
+                              maxlength="2000"
+                              placeholder="Describe los problemas o anomalías encontrados..."
+                              required>@(ViewData.ModelState["hallazgos"]?.AttemptedValue)</textarea>
+
+                    @Html.ValidationMessage("hallazgos", "", new { @class = "text-danger" })
+                </div>
+
+                <div class="cmse-form-group" style="grid-column: 1 / -1;">
+                    <label for="causaFalla">Causa de la falla *</label>
+                    <textarea id="causaFalla"
+                              name="causaFalla"
+                              class="form-control"
+                              rows="4"
+                              maxlength="2000"
+                              placeholder="Indica la causa identificada del problema..."
+                              required>@(ViewData.ModelState["causaFalla"]?.AttemptedValue)</textarea>
+
+                    @Html.ValidationMessage("causaFalla", "", new { @class = "text-danger" })
+                </div>
+
+                <div class="cmse-form-group" style="grid-column: 1 / -1;">
+                    <label for="observaciones">Observaciones</label>
+                    <textarea id="observaciones"
+                              name="observaciones"
+                              class="form-control"
+                              rows="3"
+                              maxlength="2000"
+                              placeholder="Agrega observaciones adicionales si es necesario...">@(ViewData.ModelState["observaciones"]?.AttemptedValue)</textarea>
+                </div>
+
+            </div>
+
+            <div class="cmse-mantenimiento-acciones"
+                 style="margin-top: 30px; padding-top: 10px;">
+
+                <button type="submit"
+                        class="cmse-mantenimiento-boton">
+                    Registrar diagnóstico
+                </button>
+
+                <a asp-controller="Mantenimiento"
+                   asp-action="ConsultarAsignaciones"
+                   class="cmse-mantenimiento-cancelar">
+                    Cancelar
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>

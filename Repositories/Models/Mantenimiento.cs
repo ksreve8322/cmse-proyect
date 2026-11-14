@@ -1,4 +1,5 @@
-﻿using System;
+﻿
+using System;
 using System.Collections.Generic;
 
 namespace cmse.Repositories.Models;
@@ -19,6 +20,8 @@ public partial class Mantenimiento
 
     public DateTime FechaProgramada { get; set; }
 
+    public decimal? DuracionEstimadaHoras { get; set; }
+
     public DateTime? FechaRealizacion { get; set; }
 
     public string? Descripcion { get; set; }
@@ -26,6 +29,8 @@ public partial class Mantenimiento
     public string? Observaciones { get; set; }
 
     public string? Resultado { get; set; }
+
+    public string? MotivoCancelacion { get; set; }
 
     public virtual Equipo IdEquipoNavigation { get; set; } = null!;
 

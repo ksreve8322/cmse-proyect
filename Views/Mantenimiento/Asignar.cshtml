@@ -1,0 +1,124 @@
+﻿@model cmse.Repositories.Models.Incidencia
+
+@{
+    ViewData["Title"] = "Asignar técnico";
+
+    var tecnicos = ViewBag.Tecnicos as IEnumerable<cmse.Repositories.Models.Usuario>
+                    ?? Enumerable.Empty<cmse.Repositories.Models.Usuario>();
+}
+
+<div class="cmse-mantenimiento-container">
+
+    <div class="cmse-mantenimiento-header">
+        <h2>Asignar técnico a incidencia</h2>
+        <p>Revisa la información y selecciona el técnico encargado de atenderla.</p>
+    </div>
+
+    <div class="cmse-mantenimiento-panel">
+
+        <h3>Información de la incidencia</h3>
+
+        <div class="cmse-mantenimiento-grid">
+
+            <div class="cmse-mantenimiento-campo">
+                <label>Número de incidencia</label>
+                <input type="text" value="@Model.IdIncidencia" readonly />
+            </div>
+
+            <div class="cmse-mantenimiento-campo">
+                <label>Título</label>
+                <input type="text" value="@Model.Titulo" readonly />
+            </div>
+
+            <div class="cmse-mantenimiento-campo">
+                <label>Equipo</label>
+                <input type="text" value="@Model.IdEquipoNavigation.Nombre" readonly />
+            </div>
+
+            <div class="cmse-mantenimiento-campo">
+                <label>Código de inventario</label>
+                <input type="text" value="@Model.IdEquipoNavigation.CodigoInventario" readonly />
+            </div>
+
+            <div class="cmse-mantenimiento-campo">
+                <label>Usuario que reportó</label>
+                <input type="text"
+                       value="@($"{Model.IdUsuarioNavigation.Nombres} {Model.IdUsuarioNavigation.Apellidos}")"
+                       readonly />
+            </div>
+
+            <div class="cmse-mantenimiento-campo">
+                <label>Fecha de registro</label>
+                <input type="text"
+                       value="@Model.FechaRegistro.ToString("dd/MM/yyyy HH:mm")"
+                       readonly />
+            </div>
+
+        </div>
+
+        <div class="cmse-mantenimiento-campo cmse-mantenimiento-descripcion">
+            <label>Descripción de la incidencia</label>
+            <textarea readonly>@Model.Descripcion</textarea>
+        </div>
+
+        <form asp-controller="Mantenimiento"
+              asp-action="Asignar"
+              asp-route-id="@Model.IdIncidencia"
+              method="post"
+              class="cmse-mantenimiento-formulario">
+
+            @Html.AntiForgeryToken()
+
+            <h3>Seleccionar técnico</h3>
+
+            @if (!tecnicos.Any())
+            {
+                <div class="cmse-mantenimiento-vacio">
+                    <h3>No hay técnicos disponibles</h3>
+                    <p>No existen técnicos activos para realizar esta asignación.</p>
+                </div>
+            }
+            else
+            {
+                <div class="cmse-mantenimiento-campo">
+                    <label for="idTecnico">Técnico responsable</label>
+
+                    <select id="idTecnico"
+                            name="idTecnico"
+                            required>
+
+                        <option value="">Selecciona un técnico</option>
+
+                        @foreach (var tecnico in tecnicos)
+                        {
+                            <option value="@tecnico.IdUsuario">
+                                @tecnico.Nombres @tecnico.Apellidos
+                            </option>
+                        }
+
+                    </select>
+
+                    @Html.ValidationMessage(
+                        "idTecnico",
+                        null,
+                        new { @class = "cmse-validation" })
+                </div>
+
+                <div class="cmse-mantenimiento-formulario-acciones">
+                    <button type="submit" class="cmse-mantenimiento-boton">
+                        Confirmar asignación
+                    </button>
+
+                    <a asp-controller="Mantenimiento"
+                       asp-action="Index"
+                       class="cmse-mantenimiento-cancelar">
+                        Cancelar
+                    </a>
+                </div>
+            }
+
+        </form>
+
+    </div>
+
+</div>

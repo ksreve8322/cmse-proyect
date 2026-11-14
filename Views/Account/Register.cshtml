@@ -1,27 +1,27 @@
 ﻿@model cmse.Dtos.RegistroDto
 
 @{
-    ViewData["Title"] = "Registro";
+    ViewData["Title"] = "Crear Cuenta";
 }
 
-<div class="cmse-auth-page">
+<div class="cmse-register-page">
 
-    <div class="cmse-auth-card cmse-register-card">
+    @* Enlace fuera del recuadro principal *@
+    <a asp-controller="Home" asp-action="Index" class="cmse-register-back">
+        ← Volver
+    </a>
 
-        <div class="cmse-auth-header">
-            <h1>CMSE</h1>
-            <p>Control y Mantenimiento de Sistemas y Equipos</p>
-        </div>
+    <div class="cmse-register-container">
 
-        <div class="cmse-auth-content">
+        <header class="cmse-register-heading">
+            <h1>Crear Cuenta</h1>
+            <p>Control y Mantenimiento de<br />Sistemas y Equipos</p>
+        </header>
 
-            <h2>Crear cuenta</h2>
+        <form asp-action="Register" method="post" class="cmse-register-form">
 
-            <p class="cmse-auth-subtitle">
-                Registra tus datos para acceder al sistema.
-            </p>
-
-            <form asp-action="Register" method="post" class="cmse-auth-form">
+            @* Columna izquierda *@
+            <div class="cmse-register-fields cmse-register-left">
 
                 <div class="cmse-form-group">
                     <label asp-for="Nombres">Nombres</label>
@@ -36,11 +36,15 @@
                 </div>
 
                 <div class="cmse-form-group">
+                    <label asp-for="NumeroDocumento">Número de documento</label>
+                    <input asp-for="NumeroDocumento" placeholder="Ingresa tu documento" />
+                    <span asp-validation-for="NumeroDocumento"></span>
+                </div>
+
+                <div class="cmse-form-group">
                     <label asp-for="IdTipoDocumento">Tipo de documento</label>
-
                     <select asp-for="IdTipoDocumento">
-                        <option value="">Seleccione un tipo de documento</option>
-
+                        <option value="">Seleccione un tipo</option>
                         @foreach (var tipo in ViewBag.TiposDocumento)
                         {
                             <option value="@tipo.IdTipoDocumento">
@@ -48,18 +52,21 @@
                             </option>
                         }
                     </select>
-
                     <span asp-validation-for="IdTipoDocumento"></span>
                 </div>
 
-                <div class="cmse-form-group">
-                    <label asp-for="NumeroDocumento">Número de documento</label>
-                    <input asp-for="NumeroDocumento" placeholder="Ingresa tu número de documento" />
-                    <span asp-validation-for="NumeroDocumento"></span>
-                </div>
+            </div>
+
+            @* Logo central *@
+            <div class="cmse-register-logo">
+                <img src="~/images/logocmse.jpeg" alt="Logo CMSE" />
+            </div>
+
+            @* Columna derecha *@
+            <div class="cmse-register-fields cmse-register-right">
 
                 <div class="cmse-form-group">
-                    <label asp-for="Correo">Correo</label>
+                    <label asp-for="Correo">Correo electrónico</label>
                     <input asp-for="Correo" type="email" placeholder="Ingresa tu correo" />
                     <span asp-validation-for="Correo"></span>
                 </div>
@@ -76,23 +83,29 @@
                     <span asp-validation-for="Contrasena"></span>
                 </div>
 
-                <div asp-validation-summary="ModelOnly" class="cmse-validation"></div>
+            </div>
 
+            @* Mensajes de validación *@
+            <div asp-validation-summary="ModelOnly" class="cmse-validation cmse-register-validation"></div>
+
+            @* Botones *@
+            <div class="cmse-register-actions">
                 <button type="submit" class="cmse-auth-button">
-                    Crear cuenta
+                    Registrar
                 </button>
 
-            </form>
-
-            <div class="cmse-auth-links">
-                <span>¿Ya tienes una cuenta?</span>
-                <a asp-controller="Account" asp-action="Login">
-                    Iniciar sesión
+                <a asp-controller="Home" asp-action="Index" class="cmse-register-cancel">
+                    Cancelar
                 </a>
             </div>
 
+        </form>
+
+        @* Acceso para usuarios que ya tienen cuenta *@
+        <div class="cmse-register-login">
+            <span>¿Ya tienes una cuenta?</span>
+            <a asp-controller="Account" asp-action="Login">Iniciar sesión</a>
         </div>
 
     </div>
-    
 </div>
