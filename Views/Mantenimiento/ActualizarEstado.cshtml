@@ -62,32 +62,36 @@
         <div class="cmse-form-grid">
 
             <div class="cmse-form-group">
-                <label>Número de incidencia</label>
+                <label for="numeroIncidencia">Número de incidencia</label>
                 <input type="text"
+                       id="numeroIncidencia"
                        class="form-control"
                        value="@Model.IdIncidencia"
                        readonly />
             </div>
 
             <div class="cmse-form-group">
-                <label>Equipo</label>
+                <label for="equipo">Equipo</label>
                 <input type="text"
+                       id="equipo"
                        class="form-control"
                        value="@Model.IdEquipoNavigation?.Nombre"
                        readonly />
             </div>
 
             <div class="cmse-form-group">
-                <label>Estado actual</label>
+                <label for="estadoActual">Estado actual</label>
                 <input type="text"
+                       id="estadoActual"
                        class="form-control"
                        value="@Model.IdEstadoNavigation?.Nombre"
                        readonly />
             </div>
 
             <div class="cmse-form-group">
-                <label>Diagnóstico registrado</label>
+                <label for="diagnosticoRegistrado">Diagnóstico registrado</label>
                 <input type="text"
+                       id="diagnosticoRegistrado"
                        class="form-control"
                        value="@(tieneDiagnostico ? "Sí" : "No")"
                        readonly />

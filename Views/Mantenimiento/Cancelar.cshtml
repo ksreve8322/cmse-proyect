@@ -2,6 +2,10 @@
 
 @{
     ViewData["Title"] = "Cancelar mantenimiento";
+
+    ViewData["MantenimientoAccionActual"] = "Cancelar";
+
+    var rutaAsignar = Url.Action("Index", "Mantenimiento");
 }
 
 <div class="cmse-mantenimiento-container">
@@ -22,39 +26,7 @@
                    autocomplete="off" />
         </div>
 
-        <div class="cmse-mantenimiento-acciones">
-
-            <a asp-controller="Mantenimiento"
-               asp-action="Index"
-               class="cmse-mantenimiento-boton">
-                Asignar técnico
-            </a>
-
-            <a asp-controller="Mantenimiento"
-               asp-action="ConsultarAsignaciones"
-               class="cmse-mantenimiento-boton">
-                Consultar incidencias asignadas
-            </a>
-
-            <a asp-controller="Mantenimiento"
-               asp-action="Consultar"
-               class="cmse-mantenimiento-boton">
-                Consultar mantenimientos
-            </a>
-
-            <a asp-controller="Mantenimiento"
-               asp-action="Programar"
-               class="cmse-mantenimiento-boton">
-                Programar mantenimiento
-            </a>
-
-            <a asp-controller="Mantenimiento"
-               asp-action="Cancelar"
-               class="cmse-mantenimiento-boton">
-                Cancelar mantenimiento programado
-            </a>
-
-        </div>
+        @await Html.PartialAsync("~/Views/Shared/_MenuMantenimiento.cshtml")
 
     </div>
 
@@ -90,7 +62,7 @@
                             </td>
 
                             <td>
-                                @mantenimiento.IdEquipoNavigation.Nombre
+                                @mantenimiento.IdEquipoNavigation?.Nombre
                             </td>
 
                             <td>
@@ -104,7 +76,7 @@
                             </td>
 
                             <td>
-                                @mantenimiento.IdEstadoNavigation.Nombre
+                                @mantenimiento.IdEstadoNavigation?.Nombre
                             </td>
 
                         </tr>
@@ -209,201 +181,29 @@
     </div>
 </div>
 
-@if (TempData["Exito"] != null || TempData["Error"] != null)
-{
-    var esExito = TempData["Exito"] != null;
-    var mensaje = esExito ? TempData["Exito"] : TempData["Error"];
-
-    <div class="cmse-modal-overlay" id="modalResultado">
-        <div class="cmse-modal">
-
-            <div class="cmse-modal-icon">
-                @(esExito ? "✓" : "!")
-            </div>
-
-            <h3>
-                @(esExito ? "Operación exitosa" : "No fue posible completar la operación")
-            </h3>
-
-            <p>@mensaje</p>
-
-            <button type="button"
-                    class="cmse-modal-button"
-                    onclick="document.getElementById('modalResultado').remove()">
-                Aceptar
-            </button>
-
-        </div>
-    </div>
-}
+@await Html.PartialAsync("~/Views/Shared/_ModalResultado.cshtml")
 
 @section Scripts {
 
+    <script src="~/js/mantenimiento-tablas.js" asp-append-version="true"></script>
+
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
+        document.addEventListener("DOMContentLoaded", function () {
 
-            const tabla = document.getElementById("tablaMantenimientos");
-            const cuerpo = tabla?.querySelector("tbody");
-            const encabezados = tabla?.querySelectorAll("thead th") ?? [];
-
-            const buscador = document.getElementById("buscarMantenimiento");
-            const mensajeSinResultados = document.getElementById("mensajeSinResultados");
-
-            const botonCancelar = document.getElementById("btnCancelarMantenimiento");
             const modalConfirmacion = document.getElementById("modalConfirmacion");
             const botonCerrarModal = document.getElementById("btnCerrarModal");
-
             const campoId = document.getElementById("idMantenimiento");
             const campoMotivo = document.getElementById("motivoCancelacion");
+            const formulario = document.getElementById("formCancelarMantenimiento");
 
-            let filas = cuerpo ? Array.from(cuerpo.querySelectorAll("tr")) : [];
             let mantenimientoSeleccionado = null;
 
-            let columnaOrdenada = -1;
-            let direccionAscendente = true;
-
-            function seleccionarFila(fila) {
-
-                filas.forEach(otraFila => {
-                    otraFila.classList.remove("cmse-fila-seleccionada");
-                });
-
-                fila.classList.add("cmse-fila-seleccionada");
-
-                mantenimientoSeleccionado = fila.dataset.id;
-                botonCancelar.disabled = false;
-            }
-
-            filas.forEach(fila => {
-
-                fila.addEventListener("click", function() {
-                    seleccionarFila(this);
-                });
-
-                fila.addEventListener("dblclick", function() {
-                    seleccionarFila(this);
-                    abrirModal();
-                });
-
-            });
-
-            function aplicarBusqueda() {
-
-                if (!buscador) return;
-
-                const texto = buscador.value.toLowerCase().trim();
-                let visibles = 0;
-
-                filas.forEach(fila => {
-
-                    const coincide = fila.textContent.toLowerCase().includes(texto);
-
-                    fila.style.display = coincide ? "" : "none";
-
-                    if (coincide) {
-                        visibles++;
-                    } else if (fila.dataset.id === mantenimientoSeleccionado) {
-
-                        fila.classList.remove("cmse-fila-seleccionada");
-
-                        mantenimientoSeleccionado = null;
-                        botonCancelar.disabled = true;
-                    }
-
-                });
-
-                if (mensajeSinResultados) {
-                    mensajeSinResultados.style.display =
-                        visibles === 0 ? "block" : "none";
-                }
-            }
-
-            buscador?.addEventListener("input", aplicarBusqueda);
-
-            function obtenerValor(fila, indice) {
-
-                const celda = fila.cells[indice];
-
-                if (celda.dataset.valor !== undefined) {
-                    return celda.dataset.valor;
-                }
-
-                return celda.textContent.trim();
-            }
-
-            encabezados.forEach((encabezado, indice) => {
-
-                encabezado.style.cursor = "pointer";
-                encabezado.title = "Haz clic para ordenar esta columna";
-
-                encabezado.addEventListener("click", function() {
-
-                    if (columnaOrdenada === indice) {
-                        direccionAscendente = !direccionAscendente;
-                    } else {
-                        columnaOrdenada = indice;
-                        direccionAscendente = true;
-                    }
-
-                    const tipo = this.dataset.tipo || "texto";
-
-                    filas.sort((a, b) => {
-
-                        const valorA = obtenerValor(a, indice);
-                        const valorB = obtenerValor(b, indice);
-
-                        let comparacion = 0;
-
-                        if (tipo === "numero") {
-
-                            comparacion = Number(valorA) - Number(valorB);
-
-                        } else if (tipo === "fecha") {
-
-                            comparacion = valorA.localeCompare(valorB);
-
-                        } else {
-
-                            comparacion = valorA.localeCompare(
-                                valorB,
-                                "es",
-                                { sensitivity: "base", numeric: true }
-                            );
-
-                        }
-
-                        return direccionAscendente
-                            ? comparacion
-                            : -comparacion;
-
-                    });
-
-                    filas.forEach(fila => cuerpo.appendChild(fila));
-
-                    encabezados.forEach(th => {
-                        th.removeAttribute("aria-sort");
-                        th.textContent = th.textContent.replace(/ [▲▼]$/, "");
-                    });
-
-                    this.setAttribute(
-                        "aria-sort",
-                        direccionAscendente ? "ascending" : "descending"
-                    );
-
-                    this.textContent += direccionAscendente ? " ▲" : " ▼";
-
-                    aplicarBusqueda();
-
-                });
-
-            });
-
             function abrirModal() {
-
                 if (!mantenimientoSeleccionado) return;
 
                 campoId.value = mantenimientoSeleccionado;
                 campoMotivo.value = "";
+                campoMotivo.setCustomValidity("");
 
                 modalConfirmacion.style.display = "flex";
                 campoMotivo.focus();
@@ -413,85 +213,84 @@
                 modalConfirmacion.style.display = "none";
             }
 
-            botonCancelar?.addEventListener("click", abrirModal);
+            const tablaMantenimientos = CMSEMantenimiento.iniciarTabla({
+                tablaId: "tablaMantenimientos",
+                buscadorId: "buscarMantenimiento",
+                botonId: "btnCancelarMantenimiento",
+                mensajeId: "mensajeSinResultados",
+                ordenar: true,
+
+                onSelect: function (id) {
+                    mantenimientoSeleccionado = id;
+                },
+
+                onClear: function () {
+                    mantenimientoSeleccionado = null;
+                },
+
+                onDoubleClick: function () {
+                    abrirModal();
+                },
+
+                onButton: function () {
+                    abrirModal();
+                },
+
+                atajos: {
+                    c: function (id) {
+                        if (!id) return false;
+
+                        mantenimientoSeleccionado = id;
+                        abrirModal();
+                    },
+
+                    a: function () {
+                        window.location.href = '@rutaAsignar';
+                    }
+                }
+            });
 
             botonCerrarModal?.addEventListener("click", cerrarModal);
 
-            modalConfirmacion?.addEventListener("click", function(event) {
-
+            modalConfirmacion?.addEventListener("click", function (event) {
                 if (event.target === modalConfirmacion) {
                     cerrarModal();
                 }
-
             });
 
-            document.getElementById("formCancelarMantenimiento")
-                ?.addEventListener("submit", function(event) {
+            formulario?.addEventListener("submit", function (event) {
 
-                    if (!mantenimientoSeleccionado) {
-                        event.preventDefault();
-                        return;
-                    }
+                if (!mantenimientoSeleccionado) {
+                    event.preventDefault();
+                    return;
+                }
 
-                    if (!campoMotivo.value.trim()) {
-                        event.preventDefault();
+                if (!campoMotivo.value.trim()) {
+                    event.preventDefault();
 
-                        campoMotivo.setCustomValidity(
-                            "Debes ingresar el motivo de la cancelación."
-                        );
+                    campoMotivo.setCustomValidity(
+                        "Debes ingresar el motivo de la cancelación."
+                    );
 
-                        campoMotivo.reportValidity();
-                        return;
-                    }
+                    campoMotivo.reportValidity();
+                    return;
+                }
 
-                    campoMotivo.setCustomValidity("");
+                campoMotivo.setCustomValidity("");
+                campoId.value = mantenimientoSeleccionado;
+            });
 
-                    campoId.value = mantenimientoSeleccionado;
-                });
-
-            campoMotivo?.addEventListener("input", function() {
+            campoMotivo?.addEventListener("input", function () {
                 this.setCustomValidity("");
             });
 
-            document.addEventListener("keydown", function(event) {
+            document.addEventListener("keydown", function (event) {
 
-                if (event.ctrlKey || event.altKey || event.metaKey || event.repeat) {
-                    return;
-                }
-
-                const elemento = event.target;
-
-                if (elemento.tagName === "INPUT" ||
-                    elemento.tagName === "TEXTAREA" ||
-                    elemento.tagName === "SELECT" ||
-                    elemento.isContentEditable) {
-                    return;
-                }
-
-                if (modalConfirmacion.style.display === "flex") {
-
-                    if (event.key === "Escape") {
-                        cerrarModal();
-                    }
-
-                    return;
-                }
-
-                switch (event.key.toLowerCase()) {
-
-                    case "c":
-                        if (mantenimientoSeleccionado) {
-                            event.preventDefault();
-                            abrirModal();
-                        }
-                        break;
-
-                    case "a":
-                        event.preventDefault();
-                        window.location.href =
-                            '@Url.Action("Index", "Mantenimiento")';
-                        break;
-
+                if (
+                    event.key === "Escape" &&
+                    modalConfirmacion.style.display === "flex"
+                ) {
+                    cerrarModal();
                 }
 
             });

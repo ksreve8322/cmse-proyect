@@ -1,4 +1,5 @@
-﻿@model IEnumerable<cmse.Repositories.Models.AsignacionesIncidencium>
+﻿```razor
+@model IEnumerable<cmse.Repositories.Models.AsignacionesIncidencium>
 
 @{
     ViewData["Title"] = "Consultar incidencias asignadas";
@@ -6,6 +7,10 @@
     int? rolId = Context.Session.GetInt32("RolId");
     bool esAdministrador = rolId == 1;
     bool esTecnico = rolId == 2;
+
+    List<int> incidenciasConMantenimiento =
+        ViewBag.IncidenciasConMantenimientoPendiente as List<int>
+        ?? new List<int>();
 
     bool mostrarConfirmacionEstado =
         TempData["ConfirmacionActualizarEstado"] != null;
@@ -112,6 +117,44 @@
         </p>
     </div>
 
+    @if (Model != null && Model.Any())
+    {
+        <div class="text-center mt-4">
+
+            <button type="button"
+                    id="btnConsultarIncidencia"
+                    class="cmse-mantenimiento-boton"
+                    disabled>
+                Consultar incidencia
+            </button>
+
+            @if (esTecnico)
+            {
+                <button type="button"
+                        id="btnActualizarEstado"
+                        class="cmse-mantenimiento-boton"
+                        disabled>
+                    Actualizar estado
+                </button>
+
+                <button type="button"
+                        id="btnRegistrarDiagnostico"
+                        class="cmse-mantenimiento-boton"
+                        disabled>
+                    Registrar diagnóstico
+                </button>
+
+                <button type="button"
+                        id="btnRegistrarMantenimiento"
+                        class="cmse-mantenimiento-boton"
+                        disabled>
+                    Registrar mantenimiento
+                </button>
+            }
+
+        </div>
+    }
+
     <div class="cmse-mantenimiento-tabla-contenedor">
 
         @if (Model != null && Model.Any())
@@ -171,7 +214,8 @@
                             data-id="@incidencia.IdIncidencia"
                             data-tecnico="@asignacion.IdTecnico"
                             data-equipo="@incidencia.IdEquipo"
-                            data-estado="@incidencia.IdEstado">
+                            data-estado="@incidencia.IdEstado"
+                            data-tiene-mantenimiento="@incidenciasConMantenimiento.Contains(incidencia.IdIncidencia).ToString().ToLowerInvariant()">
 
                             <td data-sort="@incidencia.IdIncidencia">
                                 @incidencia.IdIncidencia
@@ -233,44 +277,6 @@
         }
 
     </div>
-
-    @if (Model != null && Model.Any())
-    {
-        <div class="text-center mt-4">
-
-            <button type="button"
-                    id="btnConsultarIncidencia"
-                    class="cmse-mantenimiento-boton"
-                    disabled>
-                Consultar incidencia
-            </button>
-
-            @if (esTecnico)
-            {
-                <button type="button"
-                        id="btnActualizarEstado"
-                        class="cmse-mantenimiento-boton"
-                        disabled>
-                    Actualizar estado
-                </button>
-
-                <button type="button"
-                        id="btnRegistrarDiagnostico"
-                        class="cmse-mantenimiento-boton"
-                        disabled>
-                    Registrar diagnóstico
-                </button>
-
-                <button type="button"
-                        id="btnRegistrarMantenimiento"
-                        class="cmse-mantenimiento-boton"
-                        disabled>
-                    Registrar mantenimiento
-                </button>
-            }
-
-        </div>
-    }
 
     <div class="cmse-mantenimiento-regresar">
         <a asp-controller="Home"
@@ -391,7 +397,7 @@
 @section Scripts {
 
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
+        document.addEventListener("DOMContentLoaded", function () {
 
             const tabla = document.getElementById("tablaAsignaciones");
             const tbody = tabla?.querySelector("tbody");
@@ -416,10 +422,10 @@
             const modalConfirmacion = document.getElementById("modalConfirmacionEstado");
             const botonAceptarConfirmacionEstado = document.getElementById("btnAceptarConfirmacionEstado");
 
-            botonAceptarConfirmacionEstado?.addEventListener("click", function() {
+            botonAceptarConfirmacionEstado?.addEventListener("click", function () {
                 modalConfirmacion?.classList.add("cmse-modal-closing");
 
-                setTimeout(function() {
+                setTimeout(function () {
                     modalConfirmacion?.remove();
                 }, 200);
             });
@@ -428,10 +434,10 @@
             const modalMantenimiento = document.getElementById("modalConfirmacionMantenimiento");
             const botonAceptarMantenimiento = document.getElementById("btnAceptarConfirmacionMantenimiento");
 
-            botonAceptarMantenimiento?.addEventListener("click", function() {
+            botonAceptarMantenimiento?.addEventListener("click", function () {
                 modalMantenimiento?.classList.add("cmse-modal-closing");
 
-                setTimeout(function() {
+                setTimeout(function () {
                     modalMantenimiento?.remove();
                 }, 200);
             });
@@ -440,10 +446,10 @@
             const modalRepuesto = document.getElementById("modalConfirmacionRepuesto");
             const botonAceptarRepuesto = document.getElementById("btnAceptarConfirmacionRepuesto");
 
-            botonAceptarRepuesto?.addEventListener("click", function() {
+            botonAceptarRepuesto?.addEventListener("click", function () {
                 modalRepuesto?.classList.add("cmse-modal-closing");
 
-                setTimeout(function() {
+                setTimeout(function () {
                     modalRepuesto?.remove();
                 }, 200);
             });
@@ -534,7 +540,8 @@
                 }
 
                 if (botonMantenimiento) {
-                    botonMantenimiento.disabled = false;
+                    botonMantenimiento.disabled =
+                        fila.dataset.tieneMantenimiento !== "true";
                 }
             }
 
@@ -613,11 +620,11 @@
 
             obtenerFilas().forEach(fila => {
 
-                fila.addEventListener("click", function() {
+                fila.addEventListener("click", function () {
                     seleccionarIncidencia(this);
                 });
 
-                fila.addEventListener("dblclick", function() {
+                fila.addEventListener("dblclick", function () {
                     window.location.href =
                         rutaConsultar + "?id=" + this.dataset.id;
                 });
@@ -625,12 +632,12 @@
 
             tabla?.querySelectorAll(".cmse-fila-encabezados th")
                 .forEach(encabezado => {
-                    encabezado.addEventListener("click", function() {
+                    encabezado.addEventListener("click", function () {
                         ordenarTabla(this);
                     });
                 });
 
-            botonConsultar?.addEventListener("click", function() {
+            botonConsultar?.addEventListener("click", function () {
 
                 if (incidenciaSeleccionada) {
                     window.location.href =
@@ -638,7 +645,7 @@
                 }
             });
 
-            botonActualizar?.addEventListener("click", function() {
+            botonActualizar?.addEventListener("click", function () {
 
                 if (incidenciaSeleccionada) {
                     window.location.href =
@@ -646,7 +653,7 @@
                 }
             });
 
-            botonDiagnostico?.addEventListener("click", function() {
+            botonDiagnostico?.addEventListener("click", function () {
 
                 if (incidenciaSeleccionada) {
                     window.location.href =
@@ -654,9 +661,10 @@
                 }
             });
 
-            botonMantenimiento?.addEventListener("click", function() {
+            botonMantenimiento?.addEventListener("click", function () {
 
-                if (incidenciaSeleccionada) {
+                if (incidenciaSeleccionada &&
+                    botonMantenimiento.dataset.disponible !== "false") {
                     window.location.href =
                         rutaMantenimiento + "?id=" + incidenciaSeleccionada;
                 }
@@ -664,7 +672,7 @@
 
             buscador?.addEventListener("input", aplicarBusqueda);
 
-            document.addEventListener("keydown", function(event) {
+            document.addEventListener("keydown", function (event) {
 
                 if (event.ctrlKey || event.altKey || event.metaKey || event.repeat) {
                     return;
@@ -721,3 +729,4 @@
         });
     </script>
 }
+```

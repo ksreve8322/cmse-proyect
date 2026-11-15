@@ -12,6 +12,7 @@
     </div>
 
     <div class="cmse-mantenimiento-barra-superior">
+
         <div class="cmse-mantenimiento-acciones">
 
             <a asp-controller="Mantenimiento"
@@ -27,6 +28,7 @@
             </a>
 
         </div>
+
     </div>
 
     <div class="cmse-mantenimiento-listado-header">
@@ -57,18 +59,21 @@
                     @foreach (var mantenimiento in Model)
                     {
                         <tr>
-                            <td>@mantenimiento.IdMantenimiento</td>
 
                             <td>
-                                @mantenimiento.IdEquipoNavigation.Nombre
+                                @mantenimiento.IdMantenimiento
                             </td>
 
                             <td>
-                                @mantenimiento.IdEquipoNavigation.CodigoInventario
+                                @mantenimiento.IdEquipoNavigation?.Nombre
                             </td>
 
                             <td>
-                                @mantenimiento.IdTipoMantenimientoNavigation.Nombre
+                                @mantenimiento.IdEquipoNavigation?.CodigoInventario
+                            </td>
+
+                            <td>
+                                @mantenimiento.IdTipoMantenimientoNavigation?.Nombre
                             </td>
 
                             <td>
@@ -82,10 +87,11 @@
                             </td>
 
                             <td>
-                                @mantenimiento.IdEstadoNavigation.Nombre
+                                @mantenimiento.IdEstadoNavigation?.Nombre
                             </td>
 
                             <td>
+
                                 <a asp-controller="Mantenimiento"
                                    asp-action="ConsultarMantenimiento"
                                    asp-route-id="@mantenimiento.IdMantenimiento"
@@ -104,7 +110,9 @@
                                         Registrar ejecución
                                     </a>
                                 }
+
                             </td>
+
                         </tr>
                     }
                 </tbody>
@@ -131,28 +139,4 @@
 
 </div>
 
-@if (TempData["Exito"] != null || TempData["Error"] != null)
-{
-    var esExito = TempData["Exito"] != null;
-    var mensaje = esExito ? TempData["Exito"] : TempData["Error"];
-
-    <div class="cmse-modal-overlay" id="modalResultado">
-        <div class="cmse-modal">
-            <div class="cmse-modal-icon">
-                @(esExito ? "✓" : "!")
-            </div>
-
-            <h3>
-                @(esExito ? "Operación exitosa" : "No fue posible completar la operación")
-            </h3>
-
-            <p>@mensaje</p>
-
-            <button type="button"
-                    class="cmse-modal-button"
-                    onclick="document.getElementById('modalResultado').remove()">
-                Aceptar
-            </button>
-        </div>
-    </div>
-}
+@await Html.PartialAsync("~/Views/Shared/_ModalResultado.cshtml")
