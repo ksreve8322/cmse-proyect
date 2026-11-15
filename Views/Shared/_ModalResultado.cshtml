@@ -1,0 +1,27 @@
+﻿@if (TempData["Exito"] != null || TempData["Error"] != null)
+{
+    var esExito = TempData["Exito"] != null;
+    var mensaje = esExito ? TempData["Exito"] : TempData["Error"];
+
+    <div class="cmse-modal-overlay" id="modalResultado">
+        <div class="cmse-modal">
+            <div class="cmse-modal-icon">
+                @(esExito ? "✓" : "!")
+            </div>
+
+            <h3>
+                @(esExito
+                    ? "Operación exitosa"
+                    : "No fue posible completar la operación")
+            </h3>
+
+            <p>@mensaje</p>
+
+            <button type="button"
+                    class="cmse-modal-button"
+                    onclick="document.getElementById('modalResultado')?.remove()">
+                Aceptar
+            </button>
+        </div>
+    </div>
+}

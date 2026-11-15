@@ -3,6 +3,9 @@
 @{
     ViewData["Title"] = "Consultar mantenimiento";
 
+    int? rolId = Context.Session.GetInt32("RolId");
+    bool esAdministrador = rolId == 1;
+
     var fechaFinalizacionEstimada = Model.DuracionEstimadaHoras.HasValue
         ? Model.FechaProgramada.AddHours((double)Model.DuracionEstimadaHoras.Value)
         : (DateTime?)null;
@@ -14,17 +17,20 @@
 
     <div class="d-flex justify-content-center flex-wrap gap-2 mb-4">
 
-        <a asp-controller="Mantenimiento"
-           asp-action="Index"
-           class="btn btn-primary">
-            Asignar técnico
-        </a>
+        @if (esAdministrador)
+        {
+            <a asp-controller="Mantenimiento"
+               asp-action="Index"
+               class="btn btn-primary">
+                Asignar técnico
+            </a>
 
-        <a asp-controller="Mantenimiento"
-           asp-action="ConsultarAsignaciones"
-           class="btn btn-primary">
-            Consultar incidencias asignadas
-        </a>
+            <a asp-controller="Mantenimiento"
+               asp-action="ConsultarAsignaciones"
+               class="btn btn-primary">
+                Consultar incidencias asignadas
+            </a>
+        }
 
         <a asp-controller="Mantenimiento"
            asp-action="Consultar"
@@ -32,21 +38,25 @@
             Consultar mantenimientos
         </a>
 
-        <a asp-controller="Mantenimiento"
-           asp-action="Programar"
-           class="btn btn-primary">
-            Programar mantenimiento
-        </a>
+        @if (esAdministrador)
+        {
+            <a asp-controller="Mantenimiento"
+               asp-action="Programar"
+               class="btn btn-primary">
+                Programar mantenimiento
+            </a>
 
-        <a asp-controller="Mantenimiento"
-           asp-action="Cancelar"
-           class="btn btn-primary">
-            Cancelar mantenimiento programado
-        </a>
+            <a asp-controller="Mantenimiento"
+               asp-action="Cancelar"
+               class="btn btn-primary">
+                Cancelar mantenimiento programado
+            </a>
+        }
 
     </div>
 
     <div class="card shadow-sm mx-auto" style="max-width: 900px;">
+
         <div class="card-header text-center">
             <h4 class="mb-0">Información del mantenimiento</h4>
         </div>
@@ -58,6 +68,7 @@
                     <strong>ID del mantenimiento:</strong>
                     <p>@Model.IdMantenimiento</p>
                 </div>
+
                 <div class="col-md-6">
                     <strong>Estado:</strong>
                     <p>@Model.IdEstadoNavigation?.Nombre</p>
@@ -71,6 +82,7 @@
                     <strong>Equipo:</strong>
                     <p>@Model.IdEquipoNavigation?.Nombre</p>
                 </div>
+
                 <div class="col-md-6">
                     <strong>Código de inventario:</strong>
                     <p>@Model.IdEquipoNavigation?.CodigoInventario</p>
@@ -88,6 +100,7 @@
                             : "No disponible")
                     </p>
                 </div>
+
                 <div class="col-md-6">
                     <strong>Tipo de mantenimiento:</strong>
                     <p>@Model.IdTipoMantenimientoNavigation?.Nombre</p>
@@ -101,6 +114,7 @@
                     <strong>Fecha y hora programada:</strong>
                     <p>@Model.FechaProgramada.ToString("dd/MM/yyyy HH:mm")</p>
                 </div>
+
                 <div class="col-md-6">
                     <strong>Duración estimada:</strong>
                     <p>
@@ -120,6 +134,7 @@
                             : "No disponible")
                     </p>
                 </div>
+
                 <div class="col-md-6">
                     <strong>Fecha de realización:</strong>
                     <p>
@@ -145,39 +160,60 @@
 
             <div class="mb-3">
                 <strong>Descripción:</strong>
-                <p>@(string.IsNullOrWhiteSpace(Model.Descripcion) ? "Sin descripción" : Model.Descripcion)</p>
+                <p>
+                    @(string.IsNullOrWhiteSpace(Model.Descripcion)
+                        ? "Sin descripción"
+                        : Model.Descripcion)
+                </p>
             </div>
 
             <div class="mb-3">
                 <strong>Observaciones:</strong>
-                <p>@(string.IsNullOrWhiteSpace(Model.Observaciones) ? "Sin observaciones" : Model.Observaciones)</p>
+                <p>
+                    @(string.IsNullOrWhiteSpace(Model.Observaciones)
+                        ? "Sin observaciones"
+                        : Model.Observaciones)
+                </p>
             </div>
 
             <div class="mb-3">
                 <strong>Resultado:</strong>
-                <p>@(string.IsNullOrWhiteSpace(Model.Resultado) ? "Sin resultado registrado" : Model.Resultado)</p>
+                <p>
+                    @(string.IsNullOrWhiteSpace(Model.Resultado)
+                        ? "Sin resultado registrado"
+                        : Model.Resultado)
+                </p>
             </div>
 
             <div class="mb-3">
                 <strong>Motivo de cancelación:</strong>
-                <p>@(string.IsNullOrWhiteSpace(Model.MotivoCancelacion) ? "No aplica" : Model.MotivoCancelacion)</p>
+                <p>
+                    @(string.IsNullOrWhiteSpace(Model.MotivoCancelacion)
+                        ? "No aplica"
+                        : Model.MotivoCancelacion)
+                </p>
             </div>
 
         </div>
     </div>
 
-    <div class="d-flex justify-content-center gap-3 mt-4 mb-4">
-        <a asp-controller="Mantenimiento"
-           asp-action="Consultar"
-           class="btn btn-secondary">
-            Regresar
-        </a>
+    @if (esAdministrador)
+    {
+        <div class="d-flex justify-content-center gap-3 mt-4 mb-4">
 
-        <a asp-controller="Mantenimiento"
-           asp-action="Programar"
-           class="btn btn-primary">
-            Programar mantenimiento
-        </a>
-    </div>
+            <a asp-controller="Mantenimiento"
+               asp-action="Consultar"
+               class="btn btn-secondary">
+                Regresar
+            </a>
+
+            <a asp-controller="Mantenimiento"
+               asp-action="Programar"
+               class="btn btn-primary">
+                Programar mantenimiento
+            </a>
+
+        </div>
+    }
 
 </div>

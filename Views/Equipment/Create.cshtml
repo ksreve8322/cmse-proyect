@@ -32,14 +32,14 @@
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label asp-for="Nombre" class="form-label">Nombre del equipo *</label>
-                        <input asp-for="Nombre" class="form-control" maxlength="80" required
+                        <input asp-for="Nombre" id="Nombre" class="form-control" maxlength="80" required
                                placeholder="Ej. Computador oficina 01" />
                         <span asp-validation-for="Nombre" class="text-danger"></span>
                     </div>
 
                     <div class="col-md-6 mb-3">
                         <label asp-for="CodigoInventario" class="form-label">Código de inventario *</label>
-                        <input asp-for="CodigoInventario" class="form-control" maxlength="30" required
+                        <input asp-for="CodigoInventario" id="CodigoInventario" class="form-control" maxlength="30" required
                                placeholder="Ej. CMSE-0001" />
                         <span asp-validation-for="CodigoInventario" class="text-danger"></span>
                     </div>
@@ -58,7 +58,7 @@
 
                     <div class="col-md-6 mb-3">
                         <label asp-for="IdEstado" class="form-label">Estado *</label>
-                        <select asp-for="IdEstado" class="form-select" required>
+                        <select asp-for="IdEstado" id="IdEstado" class="form-select" required>
                             <option value="">Selecciona un estado</option>
                             @foreach (var estado in estados)
                             {
@@ -70,28 +70,28 @@
 
                     <div class="col-md-6 mb-3">
                         <label asp-for="Marca" class="form-label">Marca</label>
-                        <input asp-for="Marca" class="form-control" maxlength="40" />
+                        <input asp-for="Marca" id="Marca" class="form-control" maxlength="40" />
                     </div>
 
                     <div class="col-md-6 mb-3">
                         <label asp-for="Modelo" class="form-label">Modelo</label>
-                        <input asp-for="Modelo" class="form-control" maxlength="50" />
+                        <input asp-for="Modelo" id="Modelo" class="form-control" maxlength="50" />
                     </div>
 
                     <div class="col-md-6 mb-3">
                         <label asp-for="NumeroSerie" class="form-label">Número de serie</label>
-                        <input asp-for="NumeroSerie" class="form-control" maxlength="50" />
+                        <input asp-for="NumeroSerie" id="NumeroSerie" class="form-control" maxlength="50" />
                         <span asp-validation-for="NumeroSerie" class="text-danger"></span>
                     </div>
 
                     <div class="col-md-6 mb-3">
                         <label asp-for="Ubicacion" class="form-label">Ubicación</label>
-                        <input asp-for="Ubicacion" class="form-control" maxlength="100" />
+                        <input asp-for="Ubicacion" id="Ubicacion" class="form-control" maxlength="100" />
                     </div>
 
                     <div class="col-12 mb-3">
                         <label asp-for="Observaciones" class="form-label">Observaciones</label>
-                        <textarea asp-for="Observaciones" class="form-control" rows="3"></textarea>
+                        <textarea asp-for="Observaciones" id="Observaciones" class="form-control" rows="3"></textarea>
                     </div>
                 </div>
 

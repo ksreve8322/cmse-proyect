@@ -2,6 +2,17 @@
 
 @{
     ViewData["Title"] = "Consultar mantenimientos";
+
+    int? rolId = Context.Session.GetInt32("RolId");
+    bool esAdministrador = rolId == 1;
+
+    if (ViewBag.EsAdministrador is bool administrador)
+    {
+        esAdministrador = administrador;
+    }
+
+    var rutaConsultar = Url.Action("ConsultarMantenimiento", "Mantenimiento");
+    var rutaAsignar = Url.Action("Index", "Mantenimiento");
 }
 
 <div class="cmse-mantenimiento-container">
@@ -22,39 +33,14 @@
                    autocomplete="off" />
         </div>
 
-        <div class="cmse-mantenimiento-acciones">
+        @{
+            ViewData["MantenimientoAccionActual"] = "Consultar";
+        }
 
-            <a asp-controller="Mantenimiento"
-               asp-action="Index"
-               class="cmse-mantenimiento-boton">
-                Asignar técnico
-            </a>
-
-            <a asp-controller="Mantenimiento"
-               asp-action="ConsultarAsignaciones"
-               class="cmse-mantenimiento-boton">
-                Consultar incidencias asignadas
-            </a>
-
-            <a asp-controller="Mantenimiento"
-               asp-action="Consultar"
-               class="cmse-mantenimiento-boton">
-                Consultar mantenimientos
-            </a>
-
-            <a asp-controller="Mantenimiento"
-               asp-action="Programar"
-               class="cmse-mantenimiento-boton">
-                Programar mantenimiento
-            </a>
-
-            <a asp-controller="Mantenimiento"
-               asp-action="Cancelar"
-               class="cmse-mantenimiento-boton">
-                Cancelar mantenimiento programado
-            </a>
-
-        </div>
+        @if (esAdministrador)
+        {
+            @await Html.PartialAsync("_MenuMantenimiento")
+        }
 
     </div>
 
@@ -87,22 +73,34 @@
                     @foreach (var mantenimiento in Model)
                     {
                         var fechaFinalizacionEstimada = mantenimiento.DuracionEstimadaHoras.HasValue
-                            ? mantenimiento.FechaProgramada.AddHours((double)mantenimiento.DuracionEstimadaHoras.Value)
+                            ? mantenimiento.FechaProgramada.AddHours(
+                                (double)mantenimiento.DuracionEstimadaHoras.Value)
                             : (DateTime?)null;
 
                         <tr class="cmse-fila-incidencia"
                             data-id="@mantenimiento.IdMantenimiento">
 
-                            <td data-valor="@mantenimiento.IdMantenimiento">@mantenimiento.IdMantenimiento</td>
-                            <td>@mantenimiento.IdEquipoNavigation.Nombre</td>
-                            <td>@mantenimiento.IdEquipoNavigation.CodigoInventario</td>
-
-                            <td>
-                                @mantenimiento.IdTecnicoNavigation.Nombres
-                                @mantenimiento.IdTecnicoNavigation.Apellidos
+                            <td data-valor="@mantenimiento.IdMantenimiento">
+                                @mantenimiento.IdMantenimiento
                             </td>
 
-                            <td>@mantenimiento.IdTipoMantenimientoNavigation.Nombre</td>
+                            <td>
+                                @mantenimiento.IdEquipoNavigation?.Nombre
+                            </td>
+
+                            <td>
+                                @mantenimiento.IdEquipoNavigation?.CodigoInventario
+                            </td>
+
+                            <td>
+                                @(mantenimiento.IdTecnicoNavigation != null
+                                    ? $"{mantenimiento.IdTecnicoNavigation.Nombres} {mantenimiento.IdTecnicoNavigation.Apellidos}"
+                                    : "Sin técnico asignado")
+                            </td>
+
+                            <td>
+                                @mantenimiento.IdTipoMantenimientoNavigation?.Nombre
+                            </td>
 
                             <td data-valor="@mantenimiento.FechaProgramada.ToString("yyyy-MM-dd HH:mm:ss")">
                                 @mantenimiento.FechaProgramada.ToString("dd/MM/yyyy HH:mm")
@@ -120,7 +118,9 @@
                                     : "No disponible")
                             </td>
 
-                            <td>@mantenimiento.IdEstadoNavigation.Nombre</td>
+                            <td>
+                                @mantenimiento.IdEstadoNavigation?.Nombre
+                            </td>
 
                         </tr>
                     }
@@ -163,235 +163,49 @@
 
 </div>
 
-@if (TempData["Exito"] != null || TempData["Error"] != null)
-{
-    var esExito = TempData["Exito"] != null;
-    var mensaje = esExito ? TempData["Exito"] : TempData["Error"];
-
-    <div class="cmse-modal-overlay" id="modalResultado">
-        <div class="cmse-modal">
-            <div class="cmse-modal-icon">
-                @(esExito ? "✓" : "!")
-            </div>
-
-            <h3>
-                @(esExito ? "Operación exitosa" : "No fue posible completar la operación")
-            </h3>
-
-            <p>@mensaje</p>
-
-            <button type="button"
-                    class="cmse-modal-button"
-                    onclick="document.getElementById('modalResultado').remove()">
-                Aceptar
-            </button>
-        </div>
-    </div>
-}
+@await Html.PartialAsync("~/Views/Shared/_ModalResultado.cshtml")
 
 @section Scripts {
+    <script src="~/js/mantenimiento-tablas.js" asp-append-version="true"></script>
 
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
+        document.addEventListener("DOMContentLoaded", function () {
+            const esAdministrador = @esAdministrador.ToString().ToLowerInvariant();
 
-            const tabla = document.getElementById("tablaMantenimientos");
-            const cuerpo = tabla?.querySelector("tbody");
-            const encabezados = tabla?.querySelectorAll("thead th") ?? [];
-            const buscador = document.getElementById("buscarMantenimiento");
-            const mensajeSinResultados = document.getElementById("mensajeSinResultados");
-            const botonConsultar = document.getElementById("btnConsultarMantenimiento");
-
-            let filas = cuerpo ? Array.from(cuerpo.querySelectorAll("tr")) : [];
-            let mantenimientoSeleccionado = null;
-            let columnaOrdenada = -1;
-            let direccionAscendente = true;
-
-            const rutaConsultar = '@Url.Action("ConsultarMantenimiento", "Mantenimiento")';
-
-            function seleccionarFila(fila) {
-
-                filas.forEach(otraFila => {
-                    otraFila.classList.remove("cmse-fila-seleccionada");
-                });
-
-                fila.classList.add("cmse-fila-seleccionada");
-
-                mantenimientoSeleccionado = fila.dataset.id;
-                botonConsultar.disabled = false;
+            if (!window.CMSEMantenimiento) {
+                console.error("No se cargó mantenimiento-tablas.js");
+                return;
             }
 
-            filas.forEach(fila => {
+            window.CMSEMantenimiento.iniciarTabla({
+                tablaId: "tablaMantenimientos",
+                buscadorId: "buscarMantenimiento",
+                botonId: "btnConsultarMantenimiento",
+                mensajeId: "mensajeSinResultados",
+                ordenar: true,
 
-                fila.addEventListener("click", function() {
-                    seleccionarFila(this);
-                });
+                onButton: function (id) {
+                    window.location.href = '@rutaConsultar' + "?id=" + encodeURIComponent(id);
+                },
 
-                fila.addEventListener("dblclick", function() {
-                    window.location.href =
-                        rutaConsultar + "?id=" + this.dataset.id;
-                });
+                onDoubleClick: function (id) {
+                    window.location.href = '@rutaConsultar' + "?id=" + encodeURIComponent(id);
+                },
 
-            });
+                atajos: {
+                    m: function (id) {
+                        if (!id) return false;
 
-            function aplicarBusqueda() {
+                        window.location.href = '@rutaConsultar' + "?id=" + encodeURIComponent(id);
+                    },
 
-                const texto = buscador.value.toLowerCase().trim();
-                let visibles = 0;
+                    a: function () {
+                        if (!esAdministrador) return false;
 
-                filas.forEach(fila => {
-
-                    const coincide = fila.textContent.toLowerCase().includes(texto);
-
-                    fila.style.display = coincide ? "" : "none";
-
-                    if (coincide) {
-                        visibles++;
-                    } else if (fila.dataset.id === mantenimientoSeleccionado) {
-                        fila.classList.remove("cmse-fila-seleccionada");
-                        mantenimientoSeleccionado = null;
-                        botonConsultar.disabled = true;
+                        window.location.href = '@rutaAsignar';
                     }
-
-                });
-
-                if (mensajeSinResultados) {
-                    mensajeSinResultados.style.display =
-                        visibles === 0 ? "block" : "none";
                 }
-            }
-
-            buscador?.addEventListener("input", aplicarBusqueda);
-
-            function obtenerValor(fila, indice, tipo) {
-
-                const celda = fila.cells[indice];
-
-                if (celda.dataset.valor !== undefined) {
-                    return celda.dataset.valor;
-                }
-
-                return celda.textContent.trim();
-            }
-
-            encabezados.forEach((encabezado, indice) => {
-
-                encabezado.style.cursor = "pointer";
-                encabezado.title = "Haz clic para ordenar esta columna";
-
-                encabezado.addEventListener("click", function() {
-
-                    if (columnaOrdenada === indice) {
-                        direccionAscendente = !direccionAscendente;
-                    } else {
-                        columnaOrdenada = indice;
-                        direccionAscendente = true;
-                    }
-
-                    const tipo = this.dataset.tipo || "texto";
-
-                    filas.sort((a, b) => {
-
-                        let valorA = obtenerValor(a, indice, tipo);
-                        let valorB = obtenerValor(b, indice, tipo);
-
-                        let comparacion = 0;
-
-                        if (tipo === "numero") {
-
-                            const numeroA = valorA === "" ? null : Number(valorA);
-                            const numeroB = valorB === "" ? null : Number(valorB);
-
-                            if (numeroA === null) return 1;
-                            if (numeroB === null) return -1;
-
-                            comparacion = numeroA - numeroB;
-
-                        } else if (tipo === "fecha") {
-
-                            if (!valorA) return 1;
-                            if (!valorB) return -1;
-
-                            comparacion = valorA.localeCompare(valorB);
-
-                        } else {
-
-                            comparacion = valorA.localeCompare(
-                                valorB,
-                                "es",
-                                { sensitivity: "base", numeric: true }
-                            );
-
-                        }
-
-                        return direccionAscendente ? comparacion : -comparacion;
-
-                    });
-
-                    filas.forEach(fila => cuerpo.appendChild(fila));
-
-                    encabezados.forEach(th => {
-                        th.removeAttribute("aria-sort");
-                        th.textContent = th.textContent.replace(/ [▲▼]$/, "");
-                    });
-
-                    this.setAttribute(
-                        "aria-sort",
-                        direccionAscendente ? "ascending" : "descending"
-                    );
-
-                    this.textContent += direccionAscendente ? " ▲" : " ▼";
-
-                    aplicarBusqueda();
-
-                });
-
             });
-
-            botonConsultar?.addEventListener("click", function() {
-
-                if (mantenimientoSeleccionado) {
-                    window.location.href =
-                        rutaConsultar + "?id=" + mantenimientoSeleccionado;
-                }
-
-            });
-
-            document.addEventListener("keydown", function(event) {
-
-                if (event.ctrlKey || event.altKey || event.metaKey || event.repeat) {
-                    return;
-                }
-
-                const elemento = event.target;
-
-                if (elemento.tagName === "INPUT" ||
-                    elemento.tagName === "TEXTAREA" ||
-                    elemento.tagName === "SELECT" ||
-                    elemento.isContentEditable) {
-                    return;
-                }
-
-                switch (event.key.toLowerCase()) {
-
-                    case "m":
-                        if (mantenimientoSeleccionado) {
-                            event.preventDefault();
-                            window.location.href =
-                                rutaConsultar + "?id=" + mantenimientoSeleccionado;
-                        }
-                        break;
-
-                    case "a":
-                        event.preventDefault();
-                        window.location.href =
-                            '@Url.Action("Index", "Mantenimiento")';
-                        break;
-
-                }
-
-            });
-
         });
     </script>
 }
-    

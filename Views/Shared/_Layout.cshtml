@@ -376,24 +376,30 @@
 
             let destino = null;
 
-            switch (event.key.toLowerCase()) {
-                case "i":
-                    destino = '@Url.Action("ConsultarAsignaciones", "Mantenimiento")';
-                    break;
+switch (event.key.toLowerCase()) {
 
-                case "m":
-                    destino = '@Url.Action("Consultar", "Mantenimiento")';
-                    break;
+    case "i":
+        destino = '@Url.Action("ConsultarAsignaciones", "Mantenimiento")';
+        break;
 
-                case "p":
-                    destino = '@Url.Action("Programar", "Mantenimiento")';
-                    break;
-            }
+    case "m":
+        destino = '@Url.Action("Consultar", "Mantenimiento")';
+        break;
 
-            if (destino) {
-                event.preventDefault();
-                window.location.href = destino;
-            }
+    case "p":
+        @if (esAdministrador)
+        {
+            <text>
+                destino = '@Url.Action("Programar", "Mantenimiento")';
+            </text>
+        }
+        break;
+}
+
+if (destino) {
+    event.preventDefault();
+    window.location.href = destino;
+}
 
         }, true);
     </script>

@@ -1,0 +1,52 @@
+﻿@{
+    var accionActual = ViewData["MantenimientoAccionActual"]?.ToString();
+}
+
+<div class="cmse-mantenimiento-acciones">
+
+    @if (accionActual != "Index")
+    {
+        <a asp-controller="Mantenimiento"
+           asp-action="Index"
+           class="cmse-mantenimiento-boton">
+            Asignar técnico
+        </a>
+    }
+
+    @if (accionActual != "ConsultarAsignaciones")
+    {
+        <a asp-controller="Mantenimiento"
+           asp-action="ConsultarAsignaciones"
+           class="cmse-mantenimiento-boton">
+            Consultar incidencias asignadas
+        </a>
+    }
+
+    @if (accionActual != "Consultar")
+    {
+        <a asp-controller="Mantenimiento"
+           asp-action="Consultar"
+           class="cmse-mantenimiento-boton">
+            Consultar mantenimientos
+        </a>
+    }
+
+    @if (accionActual != "Programar")
+    {
+        <a asp-controller="Mantenimiento"
+           asp-action="Programar"
+           class="cmse-mantenimiento-boton">
+            Programar mantenimiento
+        </a>
+    }
+
+    @if (accionActual != "Cancelar")
+    {
+        <a asp-controller="Mantenimiento"
+           asp-action="Cancelar"
+           class="cmse-mantenimiento-boton">
+            Cancelar mantenimiento programado
+        </a>
+    }
+
+</div>

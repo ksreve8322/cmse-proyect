@@ -2,6 +2,12 @@
 
 @{
     ViewData["Title"] = "Gestionar mantenimiento";
+    ViewData["MantenimientoAccionActual"] = "Index";
+
+    var rutaAsignar = Url.Action("Asignar", "Mantenimiento");
+    var rutaIncidencias = Url.Action("ConsultarAsignaciones", "Mantenimiento");
+    var rutaMantenimientos = Url.Action("Consultar", "Mantenimiento");
+    var rutaProgramar = Url.Action("Programar", "Mantenimiento");
 }
 
 <div class="cmse-mantenimiento-container">
@@ -31,29 +37,7 @@
                 Asignar técnico
             </button>
 
-            <a asp-controller="Mantenimiento"
-               asp-action="ConsultarAsignaciones"
-               class="cmse-mantenimiento-boton">
-                Consultar incidencias asignadas
-            </a>
-
-            <a asp-controller="Mantenimiento"
-               asp-action="Consultar"
-               class="cmse-mantenimiento-boton">
-                Consultar mantenimientos
-            </a>
-
-            <a asp-controller="Mantenimiento"
-               asp-action="Programar"
-               class="cmse-mantenimiento-boton">
-                Programar mantenimiento
-            </a>
-
-            <a asp-controller="Mantenimiento"
-               asp-action="Cancelar"
-               class="cmse-mantenimiento-boton">
-                Cancelar mantenimiento programado
-            </a>
+            @await Html.PartialAsync("~/Views/Shared/_MenuMantenimiento.cshtml")
 
         </div>
 
@@ -88,18 +72,34 @@
                         <tr class="cmse-fila-incidencia"
                             data-id="@incidencia.IdIncidencia">
 
-                            <td>@incidencia.IdIncidencia</td>
-                            <td>@incidencia.Titulo</td>
-                            <td>@incidencia.IdEquipoNavigation.Nombre</td>
-                            <td>@incidencia.IdEquipoNavigation.CodigoInventario</td>
-
                             <td>
-                                @incidencia.IdUsuarioNavigation.Nombres
-                                @incidencia.IdUsuarioNavigation.Apellidos
+                                @incidencia.IdIncidencia
                             </td>
 
-                            <td>@incidencia.FechaRegistro.ToString("dd/MM/yyyy HH:mm")</td>
-                            <td>@incidencia.IdEstadoNavigation.Nombre</td>
+                            <td>
+                                @incidencia.Titulo
+                            </td>
+
+                            <td>
+                                @incidencia.IdEquipoNavigation?.Nombre
+                            </td>
+
+                            <td>
+                                @incidencia.IdEquipoNavigation?.CodigoInventario
+                            </td>
+
+                            <td>
+                                @incidencia.IdUsuarioNavigation?.Nombres
+                                @incidencia.IdUsuarioNavigation?.Apellidos
+                            </td>
+
+                            <td>
+                                @incidencia.FechaRegistro.ToString("dd/MM/yyyy HH:mm")
+                            </td>
+
+                            <td>
+                                @incidencia.IdEstadoNavigation?.Nombre
+                            </td>
 
                         </tr>
                     }
@@ -133,161 +133,52 @@
 
 </div>
 
-@if (TempData["Exito"] != null || TempData["Error"] != null)
-{
-    var esExito = TempData["Exito"] != null;
-    var mensaje = esExito ? TempData["Exito"] : TempData["Error"];
-
-    <div class="cmse-modal-overlay" id="modalResultado">
-
-        <div class="cmse-modal">
-
-            <div class="cmse-modal-icon">
-                @(esExito ? "✓" : "!")
-            </div>
-
-            <h3>
-                @(esExito ? "Operación exitosa" : "No fue posible completar la operación")
-            </h3>
-
-            <p>@mensaje</p>
-
-            <button type="button"
-                    class="cmse-modal-button"
-                    onclick="document.getElementById('modalResultado').remove()">
-                Aceptar
-            </button>
-
-        </div>
-
-    </div>
-}
+@await Html.PartialAsync("~/Views/Shared/_ModalResultado.cshtml")
 
 @section Scripts {
 
+    <script src="~/js/mantenimiento-tablas.js" asp-append-version="true"></script>
+
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
+        document.addEventListener("DOMContentLoaded", function () {
 
-            const filas = document.querySelectorAll(".cmse-fila-incidencia");
-            const botonAsignar = document.getElementById("btnAsignarTecnico");
-            const buscador = document.getElementById("buscarIncidencia");
-            const mensajeSinResultados = document.getElementById("mensajeSinResultados");
+            CMSEMantenimiento.iniciarTabla({
+                tablaId: "tablaIncidencias",
+                buscadorId: "buscarIncidencia",
+                botonId: "btnAsignarTecnico",
+                mensajeId: "mensajeSinResultados",
+                ordenar: false,
 
-            let incidenciaSeleccionada = null;
+                onButton: function (id) {
+                    window.location.href =
+                        '@rutaAsignar' + "?id=" + encodeURIComponent(id);
+                },
 
-            const rutaAsignar = '@Url.Action("Asignar", "Mantenimiento")';
-            const rutaIncidencias = '@Url.Action("ConsultarAsignaciones", "Mantenimiento")';
-            const rutaMantenimientos = '@Url.Action("Consultar", "Mantenimiento")';
-            const rutaProgramar = '@Url.Action("Programar", "Mantenimiento")';
+                onDoubleClick: function (id) {
+                    window.location.href =
+                        '@rutaAsignar' + "?id=" + encodeURIComponent(id);
+                },
 
-            // Seleccionar una incidencia
-            filas.forEach(fila => {
+                atajos: {
+                    a: function (id) {
+                        if (!id) return false;
 
-                fila.addEventListener("click", function() {
+                        window.location.href =
+                            '@rutaAsignar' + "?id=" + encodeURIComponent(id);
+                    },
 
-                    filas.forEach(otraFila => {
-                        otraFila.classList.remove("cmse-fila-seleccionada");
-                    });
+                    i: function () {
+                        window.location.href = '@rutaIncidencias';
+                    },
 
-                    this.classList.add("cmse-fila-seleccionada");
+                    m: function () {
+                        window.location.href = '@rutaMantenimientos';
+                    },
 
-                    incidenciaSeleccionada = this.dataset.id;
-                    botonAsignar.disabled = false;
-
-                });
-
-                // Doble clic para abrir la asignación
-                fila.addEventListener("dblclick", function() {
-
-                    window.location.href = rutaAsignar + "?id=" + this.dataset.id;
-
-                });
-
-            });
-
-            // Botón de asignación
-            botonAsignar.addEventListener("click", function() {
-
-                if (incidenciaSeleccionada) {
-                    window.location.href = rutaAsignar + "?id=" + incidenciaSeleccionada;
-                }
-
-            });
-
-            // Buscar incidencias
-            buscador?.addEventListener("input", function() {
-
-                const texto = this.value.toLowerCase().trim();
-                let visibles = 0;
-
-                filas.forEach(fila => {
-
-                    const coincide = fila.textContent.toLowerCase().includes(texto);
-
-                    fila.style.display = coincide ? "" : "none";
-
-                    if (coincide) {
-                        visibles++;
+                    p: function () {
+                        window.location.href = '@rutaProgramar';
                     }
-                    else if (fila.classList.contains("cmse-fila-seleccionada")) {
-
-                        fila.classList.remove("cmse-fila-seleccionada");
-                        incidenciaSeleccionada = null;
-                        botonAsignar.disabled = true;
-
-                    }
-
-                });
-
-                if (mensajeSinResultados) {
-                    mensajeSinResultados.style.display =
-                        visibles === 0 ? "block" : "none";
                 }
-
-            });
-
-            // Atajos de teclado
-            document.addEventListener("keydown", function(event) {
-
-                if (event.ctrlKey || event.altKey || event.metaKey || event.repeat) {
-                    return;
-                }
-
-                const elemento = event.target;
-
-                if (elemento.tagName === "INPUT" ||
-                    elemento.tagName === "TEXTAREA" ||
-                    elemento.tagName === "SELECT" ||
-                    elemento.isContentEditable) {
-                    return;
-                }
-
-                switch (event.key.toLowerCase()) {
-
-                    case "a":
-                        if (incidenciaSeleccionada) {
-                            event.preventDefault();
-                            window.location.href =
-                                rutaAsignar + "?id=" + incidenciaSeleccionada;
-                        }
-                        break;
-
-                    case "i":
-                        event.preventDefault();
-                        window.location.href = rutaIncidencias;
-                        break;
-
-                    case "m":
-                        event.preventDefault();
-                        window.location.href = rutaMantenimientos;
-                        break;
-
-                    case "p":
-                        event.preventDefault();
-                        window.location.href = rutaProgramar;
-                        break;
-                }
-
             });
 
         });

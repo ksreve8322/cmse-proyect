@@ -94,9 +94,10 @@ namespace cmse.Controllers
         }
 
         // Consultar todos los mantenimientos registrados
+
         public async Task<IActionResult> Consultar()
         {
-            if (!EsAdministrador())
+            if (!EsAdministrador() && !EsTecnico())
             {
                 if (!HttpContext.Session.GetInt32("UsuarioId").HasValue)
                     return RedirectToAction("Login", "Account");
@@ -104,17 +105,29 @@ namespace cmse.Controllers
                 return RedirectToAction("Index", "Home");
             }
 
-            var mantenimientos = await _contexto.Mantenimientos
+            var mantenimientosQuery = _contexto.Mantenimientos
                 .Include(m => m.IdEquipoNavigation)
                 .Include(m => m.IdTecnicoNavigation)
                 .Include(m => m.IdEstadoNavigation)
                 .Include(m => m.IdTipoMantenimientoNavigation)
                 .Include(m => m.IdIncidenciaNavigation)
+                .AsQueryable();
+
+            if (EsTecnico())
+            {
+                int idTecnico = HttpContext.Session.GetInt32("UsuarioId")!.Value;
+
+                mantenimientosQuery = mantenimientosQuery
+                    .Where(m => m.IdTecnico == idTecnico);
+            }
+
+            var mantenimientos = await mantenimientosQuery
                 .OrderByDescending(m => m.FechaProgramada)
                 .ToListAsync();
 
             return View(mantenimientos);
         }
+
 
         // Consultar los mantenimientos asignados al técnico
         [HttpGet]
@@ -335,6 +348,20 @@ namespace cmse.Controllers
 
                 asignacionesQuery = asignacionesQuery
                     .Where(a => a.IdTecnico == idTecnico);
+
+                ViewBag.IncidenciasConMantenimientoPendiente =
+                    await _contexto.Mantenimientos
+                        .Where(m =>
+                            m.IdTecnico == idTecnico &&
+                            m.IdEstado == 11 &&
+                            m.FechaRealizacion == null &&
+                            m.IdIncidencia.HasValue)
+                        .Select(m => m.IdIncidencia!.Value)
+                        .ToListAsync();
+            }
+            else
+            {
+                ViewBag.IncidenciasConMantenimientoPendiente = new List<int>();
             }
 
             var asignaciones = await asignacionesQuery
