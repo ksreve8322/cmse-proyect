@@ -125,6 +125,7 @@ namespace cmse.Controllers
             string? titulo,
             string? descripcion,
             int idEquipo,
+            int idTipoIncidencia,
             List<IFormFile>? archivos)
         {
             int? idUsuario = ObtenerUsuarioId();
@@ -167,6 +168,13 @@ namespace cmse.Controllers
                 ModelState.AddModelError(
                     "idEquipo",
                     "Selecciona un equipo válido.");
+            }
+
+            if (idTipoIncidencia != 1 && idTipoIncidencia != 2)
+            {
+                ModelState.AddModelError(
+                    "idTipoIncidencia",
+                    "Selecciona un tipo de incidencia válido.");
             }
 
             var estadoInicial = await _context.Estados
@@ -223,6 +231,7 @@ namespace cmse.Controllers
             {
                 IdUsuario = idUsuario.Value,
                 IdEquipo = idEquipo,
+                IdTipoIncidencia = idTipoIncidencia,
                 IdEstado = estadoInicial!.IdEstado,
                 Titulo = titulo,
                 Descripcion = descripcion,

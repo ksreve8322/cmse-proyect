@@ -1,5 +1,6 @@
 ﻿
 using System.Net;
+using Microsoft.AspNetCore.Hosting;
 
 namespace cmse.Utilities
 {
@@ -21,13 +22,13 @@ namespace cmse.Utilities
         }
 
         public string GenerarCorreo(
-        string titulo,
-        string nombre,
-        string mensaje,
-        string contactoSoporte,
-        string? codigoVerificacion = null)
+            string titulo,
+            string nombre,
+            string mensaje,
+            string contactoSoporte,
+            string? codigoVerificacion = null)
         {
-            // imagen incrustada mediante CID.
+            // Imagen incrustada mediante CID.
             // EmailManager debe adjuntar el logo con ContentId = "logoCmse".
 
             string imagenHtml = """
@@ -44,10 +45,12 @@ namespace cmse.Utilities
 
             string mensajeSeguro = WebUtility.HtmlEncode(mensaje)
                 .Replace("\r\n", "<br>")
-                .Replace("\n", "<br>");
+                .Replace("\n", "<br>")
+                .Replace("\r", "<br>");
 
             string contactoSeguro =
                 WebUtility.HtmlEncode(contactoSoporte);
+
             string codigoHtml = string.Empty;
 
             if (!string.IsNullOrWhiteSpace(codigoVerificacion))
@@ -56,38 +59,39 @@ namespace cmse.Utilities
                     WebUtility.HtmlEncode(codigoVerificacion);
 
                 codigoHtml = $"""
-        <table role="presentation" width="100%"
-            cellpadding="0" cellspacing="0" border="0"
-            style="margin:25px 0;">
-            <tr>
-                <td align="center"
-                    style="background-color:#eff6ff;
-                    border:1px solid #bfdbfe;
-                    border-radius:10px;padding:24px;">
+                    <table role="presentation" width="100%"
+                        cellpadding="0" cellspacing="0" border="0"
+                        style="margin:25px 0;">
+                        <tr>
+                            <td align="center"
+                                style="background-color:#eff6ff;
+                                border:1px solid #bfdbfe;
+                                border-radius:10px;padding:24px;">
 
-                    <p style="margin:0 0 12px;
-                        font-size:13px;font-weight:bold;
-                        color:#475569;">
-                        TU CÓDIGO DE VERIFICACIÓN
-                    </p>
+                                <p style="margin:0 0 12px;
+                                    font-size:13px;font-weight:bold;
+                                    color:#475569;">
+                                    TU CÓDIGO DE VERIFICACIÓN
+                                </p>
 
-                    <p style="margin:0;
-                        font-size:36px;font-weight:bold;
-                        letter-spacing:8px;
-                        color:#2563eb;">
-                        {codigoSeguro}
-                    </p>
+                                <p style="margin:0;
+                                    font-size:36px;font-weight:bold;
+                                    letter-spacing:8px;
+                                    color:#2563eb;">
+                                    {codigoSeguro}
+                                </p>
 
-                    <p style="margin:12px 0 0;
-                        font-size:12px;color:#64748b;">
-                        Válido durante 10 minutos
-                    </p>
+                                <p style="margin:12px 0 0;
+                                    font-size:12px;color:#64748b;">
+                                    Válido durante 10 minutos
+                                </p>
 
-                </td>
-            </tr>
-        </table>
-        """;
+                            </td>
+                        </tr>
+                    </table>
+                    """;
             }
+
             return $$"""
                 <!DOCTYPE html>
                 <html lang="es">
@@ -95,19 +99,19 @@ namespace cmse.Utilities
                     <meta charset="UTF-8">
                     <meta name="viewport"
                           content="width=device-width, initial-scale=1.0">
-                    <title>{tituloSeguro}</title>
+                    <title>{{tituloSeguro}}</title>
                 </head>
                 <body style="margin:0;padding:0;
-                background-color:#17365d;
-                font-family:Arial,Helvetica,sans-serif;
-                color:#263445;">
+                    background-color:#17365d;
+                    font-family:Arial,Helvetica,sans-serif;
+                    color:#263445;">
 
                     <table role="presentation" width="100%"
                         cellpadding="0" cellspacing="0" border="0"
                         style="background-color:#24476b;
-                background-image:linear-gradient(135deg,#10243e 0%,#24476b 50%,#426b91 100%);
-                padding:32px 10px;">
-                <tr>
+                        background-image:linear-gradient(135deg,#10243e 0%,#24476b 50%,#426b91 100%);
+                        padding:32px 10px;">
+                        <tr>
                             <td align="center">
 
                                 <table role="presentation" width="600"
@@ -154,7 +158,7 @@ namespace cmse.Utilities
                                             <p style="font-size:15px;
                                                 line-height:1.8;color:#405166;">
                                                 {{mensajeSeguro}}
-                                               </p>
+                                            </p>
 
                                             {{codigoHtml}}
 

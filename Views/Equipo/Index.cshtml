@@ -288,21 +288,21 @@
     function consultarEquipo() {
         if (!validarSeleccion()) return;
 
-        window.location.href = "/Equipment/Details/" + equipoSeleccionado;
+        window.location.href = "/Equipo/Details/" + equipoSeleccionado;
     }
 
     // ACTUALIZAR
     function actualizarEquipo() {
         if (!esAdministrador || !validarSeleccion()) return;
 
-        window.location.href = "/Equipment/Editar/" + equipoSeleccionado;
+        window.location.href = "/Equipo/Editar/" + equipoSeleccionado;
     }
 
     // ELIMINAR
     function eliminarEquipo() {
         if (!esAdministrador || !validarSeleccion()) return;
 
-        window.location.href = "/Equipment/Eliminar/" + equipoSeleccionado;
+        window.location.href = "/Equipo/Eliminar/" + equipoSeleccionado;
     }
 
     // BÚSQUEDA
@@ -370,7 +370,7 @@
 
                 case "r":
                     event.preventDefault();
-                    window.location.href = '@Url.Action("Create", "Equipment")';
+                    window.location.href = '@Url.Action("Create", "Equipo")';
                     break;
 
                 case "e":

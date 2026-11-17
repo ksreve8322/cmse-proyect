@@ -397,7 +397,7 @@ public partial class CmseContext : DbContext
         modelBuilder.Entity<Incidencia>(entity =>
         {
             entity.HasKey(e => e.IdIncidencia);
-            entity.ToTable("incidencias");
+            entity.ToTable("incidencias", tb => tb.UseSqlOutputClause(false));
 
             entity.Property(e => e.IdIncidencia).HasColumnName("id_incidencia");
             entity.Property(e => e.Descripcion).HasColumnName("descripcion");
@@ -436,7 +436,7 @@ public partial class CmseContext : DbContext
         modelBuilder.Entity<Mantenimiento>(entity =>
         {
             entity.HasKey(e => e.IdMantenimiento);
-            entity.ToTable("mantenimientos");
+            entity.ToTable("mantenimientos", tb => tb.UseSqlOutputClause(false));
 
             entity.Property(e => e.IdMantenimiento).HasColumnName("id_mantenimiento");
             entity.Property(e => e.Descripcion).HasColumnName("descripcion");
