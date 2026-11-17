@@ -5,11 +5,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace cmse.Controllers
 {
-    public class EquipmentController : Controller
+    public class EquipoController : Controller
     {
         private readonly CmseContext _context;
 
-        public EquipmentController(CmseContext context)
+        public EquipoController(CmseContext context)
         {
             _context = context;
         }
@@ -168,6 +168,11 @@ namespace cmse.Controllers
             {
                 ModelState.Remove(clave);
             }
+            // Las especificaciones se validan según el tipo de equipo.
+            ModelState.Remove(nameof(Equipo.EquiposComputadore));
+            ModelState.Remove(nameof(Equipo.EquiposImpresora));
+            ModelState.Remove(nameof(Equipo.EquiposPantalla));
+            ModelState.Remove(nameof(Equipo.EquiposProyectore));
 
             equipo.Nombre = equipo.Nombre?.Trim() ?? "";
             equipo.Marca = equipo.Marca?.Trim();
@@ -654,6 +659,30 @@ namespace cmse.Controllers
             {
                 ModelState.Remove(clave);
             }
+            var prefijosNoSeleccionados = equipo.IdTipoEquipo switch
+            {
+                1 or 2 => new[] { "EquiposImpresora", "EquiposPantalla", "EquiposProyectore" },
+                3 => new[] { "EquiposComputadore", "EquiposImpresora", "EquiposPantalla" },
+                4 => new[] { "EquiposComputadore", "EquiposImpresora", "EquiposProyectore" },
+                5 => new[] { "EquiposComputadore", "EquiposPantalla", "EquiposProyectore" },
+                _ => new[] { "EquiposComputadore", "EquiposImpresora", "EquiposPantalla", "EquiposProyectore" }
+            };
+
+            foreach (var prefijo in prefijosNoSeleccionados)
+            {
+                foreach (var clave in ModelState.Keys
+                    .Where(k => k.Equals(prefijo, StringComparison.OrdinalIgnoreCase) ||
+                                k.StartsWith(prefijo + ".", StringComparison.OrdinalIgnoreCase))
+                    .ToList())
+                {
+                    ModelState.Remove(clave);
+                }
+            }
+            // Evitar validar especificaciones de tipos de equipo no seleccionados.
+            ModelState.Remove(nameof(Equipo.EquiposComputadore));
+            ModelState.Remove(nameof(Equipo.EquiposImpresora));
+            ModelState.Remove(nameof(Equipo.EquiposPantalla));
+            ModelState.Remove(nameof(Equipo.EquiposProyectore));
 
             equipo.Nombre = equipo.Nombre?.Trim() ?? "";
             equipo.CodigoInventario =
@@ -1052,8 +1081,9 @@ namespace cmse.Controllers
             return View("Delete", equipo);
         }
 
+
         // =========================================================
-        // M08 - ELIMINAR EQUIPO (SOLO ADMINISTRADOR)
+        // M08 - DAR DE BAJA EQUIPO (SOLO ADMINISTRADOR)
         // =========================================================
 
         [HttpPost]
@@ -1065,67 +1095,25 @@ namespace cmse.Controllers
                 return acceso;
 
             var equipo = await _context.Equipos
-                .Include(e => e.EquiposComputadore)
-                    .ThenInclude(c => c!.AlmacenamientosEquipos)
-                .Include(e => e.EquiposImpresora)
-                .Include(e => e.EquiposPantalla)
-                .Include(e => e.EquiposProyectore)
                 .FirstOrDefaultAsync(e => e.IdEquipo == id);
 
             if (equipo == null)
                 return NotFound();
 
-            bool tieneIncidencias = await _context.Incidencias
-                .AnyAsync(i => i.IdEquipo == id);
-
-            bool tieneMantenimientos = await _context.Mantenimientos
-                .AnyAsync(m => m.IdEquipo == id);
-
-            if (tieneIncidencias || tieneMantenimientos)
+            if (equipo.IdEstado == 4)
             {
-                TempData["Error"] =
-                    "No se puede eliminar este equipo porque tiene incidencias o mantenimientos registrados.";
-
+                TempData["Error"] = "Este equipo ya se encuentra dado de baja.";
                 return RedirectToAction(nameof(Index));
             }
 
-            if (equipo.EquiposComputadore != null)
-            {
-                if (equipo.EquiposComputadore.AlmacenamientosEquipos.Any())
-                {
-                    _context.Set<AlmacenamientosEquipo>().RemoveRange(
-                        equipo.EquiposComputadore.AlmacenamientosEquipos);
-                }
-
-                _context.Set<EquiposComputadore>().Remove(
-                    equipo.EquiposComputadore);
-            }
-
-            if (equipo.EquiposImpresora != null)
-            {
-                _context.Set<EquiposImpresora>().Remove(
-                    equipo.EquiposImpresora);
-            }
-
-            if (equipo.EquiposPantalla != null)
-            {
-                _context.Set<EquiposPantalla>().Remove(
-                    equipo.EquiposPantalla);
-            }
-
-            if (equipo.EquiposProyectore != null)
-            {
-                _context.Set<EquiposProyectore>().Remove(
-                    equipo.EquiposProyectore);
-            }
-
-            _context.Equipos.Remove(equipo);
+            equipo.IdEstado = 4;
 
             await _context.SaveChangesAsync();
 
-            TempData["Mensaje"] = "Equipo eliminado correctamente.";
+            TempData["Mensaje"] = "Equipo dado de baja correctamente.";
 
             return RedirectToAction(nameof(Index));
         }
+
     }
 }

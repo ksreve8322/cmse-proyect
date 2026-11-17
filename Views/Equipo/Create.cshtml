@@ -22,7 +22,7 @@
     <div class="card shadow-sm">
         <div class="card-body p-4">
 
-            <form asp-controller="Equipment" asp-action="Create" method="post">
+            <form asp-controller="Equipo" asp-action="Create" method="post">
                 @Html.AntiForgeryToken()
 
                 <div asp-validation-summary="All" class="text-danger mb-3"></div>
@@ -435,7 +435,7 @@
                         Registrar equipo
                     </button>
 
-                    <a asp-controller="Equipment" asp-action="Index"
+                    <a asp-controller="Equipo" asp-action="Index"
                        class="btn btn-outline-secondary">
                         Cancelar
                     </a>
@@ -450,7 +450,9 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            const selector = document.getElementById("tipoEquipo");
+            
+            const selector = document.getElementById("IdTipoEquipo");
+
 
             const secciones = {
                 computador: document.getElementById("seccionComputador"),
@@ -502,10 +504,10 @@
                 }
 
                 // Batería y pantalla solamente para portátiles (ID 2).
-                if (selector.value === "2") {
-                    camposPortatil.hidden = false;
-                    configurarCampos(camposPortatil, true);
-                }
+                const esPortatil = selector.value === "2";
+
+                camposPortatil.hidden = !esPortatil;
+                configurarCampos(camposPortatil, esPortatil);
             }
 
             selector.addEventListener("change", actualizarSeccion);

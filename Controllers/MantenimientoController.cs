@@ -1175,10 +1175,12 @@ namespace cmse.Controllers
 
                 return RedirectToAction(nameof(Consultar));
             }
-            catch (DbUpdateException)
+            catch (DbUpdateException ex)
             {
+                string detalle = ex.InnerException?.Message ?? ex.Message;
+
                 TempData["Error"] =
-                    "No fue posible guardar el mantenimiento. Verifica los datos e inténtalo nuevamente.";
+                    $"Error al guardar el mantenimiento: {detalle}";
 
                 await CargarDatosProgramacion();
 

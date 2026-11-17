@@ -46,6 +46,19 @@
     </div>
 
     <div class="cmse-mantenimiento-panel">
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-danger">
+                @TempData["Error"]
+            </div>
+        }
+
+        @if (TempData["Exito"] != null)
+        {
+            <div class="alert alert-success">
+                @TempData["Exito"]
+            </div>
+        }
 
         <form asp-controller="Mantenimiento"
               asp-action="Programar"
@@ -53,7 +66,7 @@
 
             @Html.AntiForgeryToken()
 
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div asp-validation-summary="All" class="text-danger"></div>
 
             <div class="cmse-form-grid">
 
@@ -72,6 +85,7 @@
                             foreach (var incidencia in ViewBag.Incidencias)
                             {
                                 <option value="@incidencia.IdIncidencia"
+                                        data-equipo-id="@incidencia.IdEquipo"
                                         selected="@(Model?.IdIncidencia == incidencia.IdIncidencia)">
                                     Incidencia #@incidencia.IdIncidencia - @incidencia.IdEquipoNavigation.Nombre
                                 </option>
@@ -246,6 +260,53 @@
     <script>
         document.addEventListener("DOMContentLoaded", function() {
 
+            const incidenciaSelect = document.getElementById("idIncidencia");
+            const equipoSelect = document.getElementById("idEquipo");
+
+            function actualizarEquipo() {
+
+                const opcionSeleccionada =
+                    incidenciaSelect.options[incidenciaSelect.selectedIndex];
+
+                const idEquipo = opcionSeleccionada?.dataset.equipoId;
+
+                const opcionesEquipo = Array.from(equipoSelect.options);
+
+                opcionesEquipo.forEach(opcion => {
+
+                    if (opcion.value === "") {
+                        opcion.hidden = false;
+                        opcion.disabled = false;
+                        return;
+                    }
+
+                    if (!idEquipo) {
+                        opcion.hidden = false;
+                        opcion.disabled = false;
+                        return;
+                    }
+
+                    const coincide = opcion.value === idEquipo;
+
+                    opcion.hidden = !coincide;
+                    opcion.disabled = !coincide;
+                });
+
+                if (idEquipo &&
+                    opcionesEquipo.some(opcion => opcion.value === idEquipo)) {
+
+                    equipoSelect.value = idEquipo;
+
+                } else {
+
+                    equipoSelect.value = "";
+                }
+            }
+
+            incidenciaSelect.addEventListener("change", actualizarEquipo);
+
+            actualizarEquipo();
+
             const campoFecha = document.getElementById("fechaProgramada");
 
             if (campoFecha) {
@@ -254,7 +315,6 @@
 
                 campoFecha.min = ahora.toISOString().slice(0, 16);
             }
-
         });
     </script>
 }
