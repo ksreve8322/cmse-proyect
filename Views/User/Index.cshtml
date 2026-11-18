@@ -221,7 +221,9 @@
 
             <div class="d-flex justify-content-center gap-2 mt-3">
 
-                <button type="submit" class="cmse-modal-button">
+                <button type="submit"
+                        id="confirmarEliminar"
+                        class="cmse-modal-button">
                     Confirmar
                 </button>
 
@@ -254,6 +256,8 @@
 
             const modalEliminar = document.getElementById("modalEliminar");
             const cancelarEliminar = document.getElementById("cancelarEliminar");
+            const formEliminar = document.getElementById("formEliminar");
+            const confirmarEliminar = document.getElementById("confirmarEliminar");
 
             const idUsuarioEliminar = document.getElementById("idUsuarioEliminar");
             const nombreUsuarioEliminar = document.getElementById("nombreUsuarioEliminar");
@@ -343,6 +347,11 @@
             // Cancelar eliminación.
             cancelarEliminar.addEventListener("click", function() {
                 modalEliminar.style.display = "none";
+            });
+            // Evitar envíos duplicados al confirmar la eliminación.
+            formEliminar.addEventListener("submit", function() {
+                confirmarEliminar.disabled = true;
+                confirmarEliminar.textContent = "Eliminando...";
             });
 
             // Buscador.

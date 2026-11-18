@@ -25,7 +25,9 @@
             <form asp-controller="Equipo" asp-action="Create" method="post">
                 @Html.AntiForgeryToken()
 
-                <div asp-validation-summary="All" class="text-danger mb-3"></div>
+                <input type="hidden" name="tokenCodigoInventario" value="@ViewBag.TokenCodigoInventario" />
+
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger mb-3"></div>
 
                 <h5 class="mb-3">Información general</h5>
 
@@ -37,12 +39,11 @@
                         <span asp-validation-for="Nombre" class="text-danger"></span>
                     </div>
 
-                    <div class="col-md-6 mb-3">
-                        <label asp-for="CodigoInventario" class="form-label">Código de inventario *</label>
-                        <input asp-for="CodigoInventario" id="CodigoInventario" class="form-control" maxlength="30" required
-                               placeholder="Ej. CMSE-0001" />
-                        <span asp-validation-for="CodigoInventario" class="text-danger"></span>
+                    <div class="col-md-6">
+                        <label asp-for="CodigoInventario" class="form-label">Código de inventario</label>
+                        <input asp-for="CodigoInventario" class="form-control" readonly />
                     </div>
+                    
 
                     <div class="col-md-6 mb-3">
                         <label asp-for="IdTipoEquipo" class="form-label">Tipo de equipo *</label>
@@ -56,16 +57,9 @@
                         <span asp-validation-for="IdTipoEquipo" class="text-danger"></span>
                     </div>
 
-                    <div class="col-md-6 mb-3">
-                        <label asp-for="IdEstado" class="form-label">Estado *</label>
-                        <select asp-for="IdEstado" id="IdEstado" class="form-select" required>
-                            <option value="">Selecciona un estado</option>
-                            @foreach (var estado in estados)
-                            {
-                                <option value="@estado.IdEstado">@estado.Nombre</option>
-                            }
-                        </select>
-                        <span asp-validation-for="IdEstado" class="text-danger"></span>
+                    <div class="col-md-6">
+                        <label class="form-label">Estado</label>
+                        <input type="text" class="form-control" value="Activo" readonly />
                     </div>
 
                     <div class="col-md-6 mb-3">

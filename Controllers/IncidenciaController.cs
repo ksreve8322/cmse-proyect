@@ -124,8 +124,8 @@ namespace cmse.Controllers
         public async Task<IActionResult> Create(
             string? titulo,
             string? descripcion,
-            int idEquipo,
-            int idTipoIncidencia,
+            int? idEquipo,
+            int? idTipoIncidencia,
             List<IFormFile>? archivos)
         {
             int? idUsuario = ObtenerUsuarioId();
@@ -160,8 +160,9 @@ namespace cmse.Controllers
                     "La descripción es obligatoria.");
             }
 
-            bool equipoValido = await _context.Equipos
-                .AnyAsync(e => e.IdEquipo == idEquipo);
+            bool equipoValido = idEquipo.HasValue &&
+            await _context.Equipos
+            .AnyAsync(e => e.IdEquipo == idEquipo.Value);
 
             if (!equipoValido)
             {
@@ -170,7 +171,8 @@ namespace cmse.Controllers
                     "Selecciona un equipo válido.");
             }
 
-            if (idTipoIncidencia != 1 && idTipoIncidencia != 2)
+            if (!idTipoIncidencia.HasValue ||
+            (idTipoIncidencia.Value != 1 && idTipoIncidencia.Value != 2))
             {
                 ModelState.AddModelError(
                     "idTipoIncidencia",
@@ -230,8 +232,8 @@ namespace cmse.Controllers
             var incidencia = new Incidencia
             {
                 IdUsuario = idUsuario.Value,
-                IdEquipo = idEquipo,
-                IdTipoIncidencia = idTipoIncidencia,
+                IdEquipo = idEquipo.GetValueOrDefault(),
+                IdTipoIncidencia = idTipoIncidencia.GetValueOrDefault(),
                 IdEstado = estadoInicial!.IdEstado,
                 Titulo = titulo,
                 Descripcion = descripcion,

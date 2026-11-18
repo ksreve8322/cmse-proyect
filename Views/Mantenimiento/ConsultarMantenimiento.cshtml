@@ -20,12 +20,6 @@
         @if (esAdministrador)
         {
             <a asp-controller="Mantenimiento"
-               asp-action="Index"
-               class="btn btn-primary">
-                Asignar técnico
-            </a>
-
-            <a asp-controller="Mantenimiento"
                asp-action="ConsultarAsignaciones"
                class="btn btn-primary">
                 Consultar incidencias asignadas
@@ -37,21 +31,6 @@
            class="btn btn-primary">
             Consultar mantenimientos
         </a>
-
-        @if (esAdministrador)
-        {
-            <a asp-controller="Mantenimiento"
-               asp-action="Programar"
-               class="btn btn-primary">
-                Programar mantenimiento
-            </a>
-
-            <a asp-controller="Mantenimiento"
-               asp-action="Cancelar"
-               class="btn btn-primary">
-                Cancelar mantenimiento programado
-            </a>
-        }
 
     </div>
 
@@ -197,23 +176,23 @@
         </div>
     </div>
 
-    @if (esAdministrador)
-    {
-        <div class="d-flex justify-content-center gap-3 mt-4 mb-4">
+    <div class="d-flex justify-content-center gap-3 mt-4 mb-4">
 
-            <a asp-controller="Mantenimiento"
-               asp-action="Consultar"
-               class="btn btn-secondary">
-                Regresar
-            </a>
+        <a asp-controller="Mantenimiento"
+           asp-action="Consultar"
+           class="btn btn-secondary">
+            Regresar
+        </a>
 
+        @if (esAdministrador)
+        {
             <a asp-controller="Mantenimiento"
                asp-action="Programar"
                class="btn btn-primary">
                 Programar mantenimiento
             </a>
+        }
 
-        </div>
-    }
+    </div>
 
 </div>

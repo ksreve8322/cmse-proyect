@@ -289,11 +289,9 @@ namespace cmse.Controllers
             }
 
             var mantenimiento = await _contexto.Mantenimientos
-                .FirstOrDefaultAsync(m =>
-                    m.IdMantenimiento == id &&
-                    m.IdEstado == 11 &&
-                    m.FechaRealizacion == null);
-
+    .FirstOrDefaultAsync(m =>
+        m.IdMantenimiento == id);
+           
             if (mantenimiento == null)
             {
                 TempData["Error"] =
@@ -640,12 +638,19 @@ namespace cmse.Controllers
 
                 return RedirectToAction(nameof(ConsultarAsignaciones));
             }
-
+            ModelState.Remove("hallazgos");
+            ModelState.Remove("causaFalla");
             if (string.IsNullOrWhiteSpace(hallazgos))
             {
                 ModelState.AddModelError(
                     "hallazgos",
                     "Debes ingresar los hallazgos encontrados.");
+            }
+            else if (hallazgos.Length > 2000)
+            {
+                ModelState.AddModelError(
+                    "hallazgos",
+                    "Los hallazgos no pueden superar los 2000 caracteres.");
             }
 
             if (string.IsNullOrWhiteSpace(causaFalla))
@@ -653,6 +658,12 @@ namespace cmse.Controllers
                 ModelState.AddModelError(
                     "causaFalla",
                     "Debes indicar la causa de la falla.");
+            }
+            else if (causaFalla.Length > 2000)
+            {
+                ModelState.AddModelError(
+                    "causaFalla",
+                    "La causa de la falla no puede superar los 2000 caracteres.");
             }
 
             if (!ModelState.IsValid)
@@ -935,13 +946,13 @@ namespace cmse.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Programar(
-            int idIncidencia,
-            int idEquipo,
-            int idTecnico,
-            int idTipoMantenimiento,
-            DateTime fechaProgramada,
-            decimal duracionEstimadaHoras,
-            string? descripcion)
+    int? idIncidencia,
+    int idEquipo,
+    int idTecnico,
+    int idTipoMantenimiento,
+    DateTime fechaProgramada,
+    decimal duracionEstimadaHoras,
+    string? descripcion)
         {
             if (!EsAdministrador())
             {
@@ -950,7 +961,21 @@ namespace cmse.Controllers
 
                 return RedirectToAction("Index", "Home");
             }
+            // Eliminar errores automáticos cuando los campos llegan vacíos.
+            if (string.IsNullOrWhiteSpace(Request.Form["idEquipo"]))
+                ModelState.Remove("idEquipo");
 
+            if (string.IsNullOrWhiteSpace(Request.Form["idTecnico"]))
+                ModelState.Remove("idTecnico");
+
+            if (string.IsNullOrWhiteSpace(Request.Form["idTipoMantenimiento"]))
+                ModelState.Remove("idTipoMantenimiento");
+
+            if (string.IsNullOrWhiteSpace(Request.Form["fechaProgramada"]))
+                ModelState.Remove("fechaProgramada");
+
+            if (string.IsNullOrWhiteSpace(Request.Form["duracionEstimadaHoras"]))
+                ModelState.Remove("duracionEstimadaHoras");
             if (fechaProgramada <= DateTime.Now)
             {
                 ModelState.AddModelError(
@@ -965,50 +990,71 @@ namespace cmse.Controllers
                     "duracionEstimadaHoras",
                     "La duración debe ser mayor que cero y no superar 999,99 horas.");
             }
-
-            var asignacion = await _contexto.AsignacionesIncidencia
-                .Include(a => a.IdIncidenciaNavigation)
-                .FirstOrDefaultAsync(a =>
-                    a.IdIncidencia == idIncidencia &&
-                    a.FechaFinalizacion == null &&
-                    a.IdIncidenciaNavigation.FechaCierre == null &&
-                    (a.IdIncidenciaNavigation.IdEstado == 7 ||
-                     a.IdIncidenciaNavigation.IdEstado == 8) &&
-                    a.IdIncidenciaNavigation.Diagnosticos.Any());
-
-            if (asignacion == null)
+            if (string.IsNullOrWhiteSpace(descripcion))
             {
                 ModelState.AddModelError(
-                    "idIncidencia",
-                    "Selecciona una incidencia asignada, con diagnóstico y disponible para mantenimiento.");
+                    "descripcion",
+                    "Debes ingresar una descripción del mantenimiento.");
             }
-            else
+            else if (descripcion.Length > 1000)
             {
-                if (asignacion.IdIncidenciaNavigation.IdEquipo != idEquipo)
-                {
-                    ModelState.AddModelError(
-                        "idEquipo",
-                        "El equipo seleccionado no corresponde a la incidencia.");
-                }
+                ModelState.AddModelError(
+                    "descripcion",
+                    "La descripción no puede superar los 1000 caracteres.");
+            }
 
-                if (asignacion.IdTecnico != idTecnico)
-                {
-                    ModelState.AddModelError(
-                        "idTecnico",
-                        "El técnico seleccionado no corresponde a la asignación de la incidencia.");
-                }
+            if (idIncidencia.HasValue)
+            {
+                var asignacion = await _contexto.AsignacionesIncidencia
+                    .Include(a => a.IdIncidenciaNavigation)
+                    .FirstOrDefaultAsync(a =>
+                        a.IdIncidencia == idIncidencia.Value &&
+                        a.FechaFinalizacion == null &&
+                        a.IdIncidenciaNavigation.FechaCierre == null &&
+                        (a.IdIncidenciaNavigation.IdEstado == 7 ||
+                         a.IdIncidenciaNavigation.IdEstado == 8) &&
+                        a.IdIncidenciaNavigation.Diagnosticos.Any());
 
-                bool yaTieneMantenimiento = await _contexto.Mantenimientos
-                    .AnyAsync(m =>
-                        m.IdIncidencia == idIncidencia &&
-                        (m.IdEstado == 11 || m.IdEstado == 12));
-
-                if (yaTieneMantenimiento)
+                if (asignacion == null)
                 {
                     ModelState.AddModelError(
                         "idIncidencia",
-                        "Esta incidencia ya tiene un mantenimiento programado o en proceso.");
+                        "Selecciona una incidencia asignada, con diagnóstico y disponible para mantenimiento.");
                 }
+                else
+                {
+                    if (asignacion.IdIncidenciaNavigation.IdEquipo != idEquipo)
+                    {
+                        ModelState.AddModelError(
+                            "idEquipo",
+                            "El equipo seleccionado no corresponde a la incidencia.");
+                    }
+
+                    if (asignacion.IdTecnico != idTecnico)
+                    {
+                        ModelState.AddModelError(
+                            "idTecnico",
+                            "El técnico seleccionado no corresponde a la asignación de la incidencia.");
+                    }
+
+                    bool yaTieneMantenimiento = await _contexto.Mantenimientos
+                        .AnyAsync(m =>
+                            m.IdIncidencia == idIncidencia.Value &&
+                            (m.IdEstado == 11 || m.IdEstado == 12));
+
+                    if (yaTieneMantenimiento)
+                    {
+                        ModelState.AddModelError(
+                            "idIncidencia",
+                            "Esta incidencia ya tiene un mantenimiento programado o en proceso.");
+                    }
+                }
+            }
+            else if (idTipoMantenimiento != 1)
+            {
+                ModelState.AddModelError(
+                    "idIncidencia",
+                    "Los mantenimientos correctivos deben estar asociados a una incidencia.");
             }
 
             bool equipoValido = await _contexto.Equipos
@@ -1263,11 +1309,15 @@ namespace cmse.Controllers
             int idTecnico = HttpContext.Session.GetInt32("UsuarioId")!.Value;
 
             var mantenimiento = await _contexto.Mantenimientos
-                .FirstOrDefaultAsync(m =>
-                    m.IdMantenimiento == idMantenimiento &&
-                    m.IdTecnico == idTecnico &&
-                    m.IdEstado == 11 &&
-                    m.FechaRealizacion == null);
+    .Include(m => m.IdEquipoNavigation)
+        .ThenInclude(e => e.IdTipoEquipoNavigation)
+    .Include(m => m.IdTipoMantenimientoNavigation)
+    .Include(m => m.IdIncidenciaNavigation)
+    .FirstOrDefaultAsync(m =>
+        m.IdMantenimiento == idMantenimiento &&
+        m.IdTecnico == idTecnico &&
+        m.IdEstado == 11 &&
+        m.FechaRealizacion == null);
 
             if (mantenimiento == null)
             {
@@ -1312,20 +1362,38 @@ namespace cmse.Controllers
                 return RedirectToAction(nameof(ConsultarAsignaciones));
             }
 
-            if (string.IsNullOrWhiteSpace(actividades) ||
-    string.IsNullOrWhiteSpace(resultado) ||
-    !new[] {
+            if (string.IsNullOrWhiteSpace(actividades))
+            {
+                ModelState.AddModelError(
+                    "actividades",
+                    "Debes describir las actividades realizadas.");
+            }
+            else if (actividades.Length > 2000)
+            {
+                ModelState.AddModelError(
+                    "actividades",
+                    "Las actividades no pueden superar los 2000 caracteres.");
+            }
+
+            if (string.IsNullOrWhiteSpace(resultado) ||
+                !new[]
+                {
         "Satisfactorio",
         "Con observaciones",
         "Requiere seguimiento"
-    }.Contains(resultado))
+                }.Contains(resultado))
             {
-                TempData["Error"] =
-                    "Debes ingresar las actividades y seleccionar un resultado válido.";
+                ModelState.AddModelError(
+                    "resultado",
+                    "Debes seleccionar un resultado válido.");
+            }
 
-                return RedirectToAction(
-                    nameof(RegistrarMantenimiento),
-                    new { id = idIncidencia });
+            if (!ModelState.IsValid)
+            {
+                ViewBag.RepuestosTemporales =
+                    ObtenerRepuestosTemporales(idMantenimiento);
+
+                return View(mantenimiento);
             }
 
             var repuestos = ObtenerRepuestosTemporales(idMantenimiento);
@@ -1504,9 +1572,9 @@ namespace cmse.Controllers
             string? marca,
             string? modelo,
             string? numeroSerie,
-            int cantidad,
-            decimal valorUnitario,
-            DateOnly fechaInstalacion,
+            int? cantidad,
+decimal? valorUnitario,
+DateOnly? fechaInstalacion,
             string? observaciones)
         {
             if (!EsTecnico())
@@ -1520,11 +1588,15 @@ namespace cmse.Controllers
             int idTecnico = HttpContext.Session.GetInt32("UsuarioId")!.Value;
 
             var mantenimiento = await _contexto.Mantenimientos
-                .FirstOrDefaultAsync(m =>
-                    m.IdMantenimiento == idMantenimiento &&
-                    m.IdTecnico == idTecnico &&
-                    m.IdEstado == 11 &&
-                    m.FechaRealizacion == null);
+    .Include(m => m.IdEquipoNavigation)
+        .ThenInclude(e => e.IdTipoEquipoNavigation)
+    .Include(m => m.IdTipoMantenimientoNavigation)
+    .Include(m => m.IdIncidenciaNavigation)
+    .FirstOrDefaultAsync(m =>
+        m.IdMantenimiento == idMantenimiento &&
+        m.IdTecnico == idTecnico &&
+        m.IdEstado == 11 &&
+        m.FechaRealizacion == null);
 
             if (mantenimiento == null ||
                 !mantenimiento.IdIncidencia.HasValue)
@@ -1553,24 +1625,40 @@ namespace cmse.Controllers
 
                 return RedirectToAction(nameof(ConsultarAsignaciones));
             }
-
+            ModelState.Remove("nombre");
+            ModelState.Remove("codigo");
+            ModelState.Remove("cantidad");
+            ModelState.Remove("valorUnitario");
+            ModelState.Remove("fechaInstalacion");
             nombre = nombre?.Trim() ?? "";
             codigo = codigo?.Trim() ?? "";
+            marca = marca?.Trim() ?? "";
+            modelo = modelo?.Trim() ?? "";
+            if (string.IsNullOrWhiteSpace(nombre))
+                ModelState.AddModelError("nombre", "El nombre del repuesto es obligatorio.");
 
-            if (string.IsNullOrWhiteSpace(nombre) ||
-                string.IsNullOrWhiteSpace(codigo) ||
-                cantidad <= 0 ||
-                valorUnitario <= 0 ||
-                fechaInstalacion == default ||
-                fechaInstalacion > DateOnly.FromDateTime(DateTime.Today))
-            {
-                TempData["Error"] =
-                    "Verifica los datos del repuesto. La cantidad y el valor deben ser mayores que cero y la fecha no puede ser futura.";
+            if (string.IsNullOrWhiteSpace(codigo))
+                ModelState.AddModelError("codigo", "El código del repuesto es obligatorio.");
 
-                return RedirectToAction(
-                    nameof(RegistrarRepuestos),
-                    new { id = idMantenimiento });
-            }
+            if (string.IsNullOrWhiteSpace(marca))
+                ModelState.AddModelError("marca", "La marca del repuesto es obligatoria.");
+
+            if (string.IsNullOrWhiteSpace(modelo))
+                ModelState.AddModelError("modelo", "El modelo del repuesto es obligatorio.");
+
+            if (!cantidad.HasValue || cantidad <= 0)
+                ModelState.AddModelError("cantidad", "La cantidad debe ser mayor que cero.");
+
+            if (!valorUnitario.HasValue || valorUnitario <= 0)
+                ModelState.AddModelError("valorUnitario", "El valor unitario debe ser mayor que cero.");
+
+            if (!fechaInstalacion.HasValue)
+                ModelState.AddModelError("fechaInstalacion", "La fecha de instalación es obligatoria.");
+            else if (fechaInstalacion.Value > DateOnly.FromDateTime(DateTime.Today))
+                ModelState.AddModelError("fechaInstalacion", "La fecha de instalación no puede ser futura.");
+
+            if (!ModelState.IsValid)
+                return View("RegistrarRepuestos", mantenimiento);
 
             var repuestos = ObtenerRepuestosTemporales(idMantenimiento);
 
@@ -1581,9 +1669,9 @@ namespace cmse.Controllers
                 Marca = marca?.Trim(),
                 Modelo = modelo?.Trim(),
                 NumeroSerie = numeroSerie?.Trim(),
-                Cantidad = cantidad,
-                ValorUnitario = valorUnitario,
-                FechaInstalacion = fechaInstalacion,
+                Cantidad = cantidad.Value,
+                ValorUnitario = valorUnitario.Value,
+                FechaInstalacion = fechaInstalacion.Value,
                 Observaciones = observaciones?.Trim()
             });
 

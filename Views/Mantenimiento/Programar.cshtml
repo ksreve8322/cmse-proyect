@@ -46,6 +46,7 @@
     </div>
 
     <div class="cmse-mantenimiento-panel">
+
         @if (TempData["Error"] != null)
         {
             <div class="alert alert-danger">
@@ -62,23 +63,53 @@
 
         <form asp-controller="Mantenimiento"
               asp-action="Programar"
-              method="post">
+              method="post"
+              novalidate>
 
             @Html.AntiForgeryToken()
 
-            <div asp-validation-summary="All" class="text-danger"></div>
+            <div asp-validation-summary="None" class="text-danger"></div>
 
             <div class="cmse-form-grid">
 
+                <!-- TIPO DE MANTENIMIENTO -->
+                <div class="cmse-form-group">
+                    <label for="idTipoMantenimiento">Tipo de mantenimiento</label>
+
+                    <select id="idTipoMantenimiento"
+                            name="idTipoMantenimiento"
+                            class="form-control"
+                            required>
+
+                        <option value="">Selecciona un tipo</option>
+
+                        @if (ViewBag.TiposMantenimiento != null)
+                        {
+                            foreach (var tipo in ViewBag.TiposMantenimiento)
+                            {
+                                <option value="@tipo.IdTipoMantenimiento"
+                                        selected="@(Model?.IdTipoMantenimiento == tipo.IdTipoMantenimiento)">
+                                    @tipo.Nombre
+                                </option>
+                            }
+                        }
+
+                    </select>
+
+                    <span class="text-danger">
+                        @Html.ValidationMessage("idTipoMantenimiento")
+                    </span>
+                </div>
+
+                <!-- INCIDENCIA ASOCIADA -->
                 <div class="cmse-form-group cmse-form-group-completo">
                     <label for="idIncidencia">Incidencia asociada</label>
 
                     <select id="idIncidencia"
                             name="idIncidencia"
-                            class="form-control"
-                            required>
+                            class="form-control">
 
-                        <option value="">Selecciona una incidencia</option>
+                        <option value="">Sin incidencia asociada</option>
 
                         @if (ViewBag.Incidencias != null)
                         {
@@ -99,6 +130,7 @@
                     </span>
                 </div>
 
+                <!-- EQUIPO -->
                 <div class="cmse-form-group">
                     <label for="idEquipo">Equipo</label>
 
@@ -129,6 +161,7 @@
                     </span>
                 </div>
 
+                <!-- TÉCNICO -->
                 <div class="cmse-form-group">
                     <label for="idTecnico">Técnico responsable</label>
 
@@ -157,34 +190,7 @@
                     </span>
                 </div>
 
-                <div class="cmse-form-group">
-                    <label for="idTipoMantenimiento">Tipo de mantenimiento</label>
-
-                    <select id="idTipoMantenimiento"
-                            name="idTipoMantenimiento"
-                            class="form-control"
-                            required>
-
-                        <option value="">Selecciona un tipo</option>
-
-                        @if (ViewBag.TiposMantenimiento != null)
-                        {
-                            foreach (var tipo in ViewBag.TiposMantenimiento)
-                            {
-                                <option value="@tipo.IdTipoMantenimiento"
-                                        selected="@(Model?.IdTipoMantenimiento == tipo.IdTipoMantenimiento)">
-                                    @tipo.Nombre
-                                </option>
-                            }
-                        }
-
-                    </select>
-
-                    <span class="text-danger">
-                        @Html.ValidationMessage("idTipoMantenimiento")
-                    </span>
-                </div>
-
+                <!-- FECHA -->
                 <div class="cmse-form-group">
                     <label for="fechaProgramada">Fecha y hora programada</label>
 
@@ -202,6 +208,7 @@
                     </span>
                 </div>
 
+                <!-- DURACIÓN -->
                 <div class="cmse-form-group">
                     <label for="duracionEstimadaHoras">Duración estimada (horas)</label>
 
@@ -221,19 +228,25 @@
                     </span>
                 </div>
 
-                <div class="cmse-form-group cmse-form-group-completo">
-                    <label for="descripcion">Descripción del mantenimiento</label>
+           
+                <!-- DESCRIPCIÓN -->
+                    <div class="cmse-form-group cmse-form-group-completo">
+                        <label for="descripcion">Descripción del mantenimiento</label>
 
-                    <textarea id="descripcion"
-                              name="descripcion"
-                              class="form-control"
-                              rows="4"
-                              maxlength="1000"
-                              placeholder="Describe las actividades que se realizarán..."
-                              required>@Model?.Descripcion</textarea>
+                        <textarea id="descripcion"
+                                  name="descripcion"
+                                  class="form-control"
+                                  rows="4"
+                                  maxlength="1000"
+                                  placeholder="Describe las actividades que se realizarán..."
+                                  required>@Model?.Descripcion</textarea>
+
+                        <span class="text-danger">
+                            @Html.ValidationMessage("descripcion")
+                        </span>
+                    </div>
+
                 </div>
-
-            </div>
 
             <div class="cmse-mantenimiento-acciones"
                  style="margin-top: 30px; padding-top: 10px;">
@@ -262,6 +275,21 @@
 
             const incidenciaSelect = document.getElementById("idIncidencia");
             const equipoSelect = document.getElementById("idEquipo");
+            const tipoMantenimientoSelect =
+                document.getElementById("idTipoMantenimiento");
+
+            function actualizarIncidenciaObligatoria() {
+
+                const esCorrectivo = tipoMantenimientoSelect.value === "2";
+
+                incidenciaSelect.required = esCorrectivo;
+
+                const opcionSinIncidencia = incidenciaSelect.options[0];
+
+                opcionSinIncidencia.textContent = esCorrectivo
+                    ? "Selecciona una incidencia"
+                    : "Sin incidencia asociada";
+            }
 
             function actualizarEquipo() {
 
@@ -305,6 +333,12 @@
 
             incidenciaSelect.addEventListener("change", actualizarEquipo);
 
+            tipoMantenimientoSelect.addEventListener(
+                "change",
+                actualizarIncidenciaObligatoria
+            );
+
+            actualizarIncidenciaObligatoria();
             actualizarEquipo();
 
             const campoFecha = document.getElementById("fechaProgramada");

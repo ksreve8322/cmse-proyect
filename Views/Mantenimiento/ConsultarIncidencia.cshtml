@@ -23,7 +23,7 @@
 
     @if (esAdministrador)
     {
-        <div class="cmse-mantenimiento-acciones mb-4">
+        <div class="cmse-mantenimiento-acciones mb-4 justify-content-center">
 
             <a asp-controller="Mantenimiento"
                asp-action="Index"
@@ -205,15 +205,6 @@
            class="cmse-mantenimiento-cancelar">
             Regresar
         </a>
-
-        @if (esAdministrador)
-        {
-            <a asp-controller="Mantenimiento"
-               asp-action="Index"
-               class="cmse-mantenimiento-boton">
-                Asignar técnico
-            </a>
-        }
 
     </div>
 

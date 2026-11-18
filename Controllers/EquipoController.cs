@@ -635,19 +635,54 @@ namespace cmse.Controllers
 
             await CargarListasAsync();
 
-            return View(new Equipo());
+            var resultados = await _context.Database
+    .SqlQueryRaw<long>("SELECT NEXT VALUE FOR dbo.SeqCodigoInventario AS Value")
+    .ToListAsync();
+
+            var siguienteCodigo = resultados.Single();
+
+            var equipo = new Equipo
+            {
+                CodigoInventario = $"CMSE-{siguienteCodigo:D4}",
+                IdEstado = 1
+            };
+
+            var token = Guid.NewGuid().ToString("N");
+
+            HttpContext.Session.SetString(
+                $"CodigoInventario:{token}",
+                equipo.CodigoInventario);
+
+            ViewBag.TokenCodigoInventario = token;
+
+            return View(equipo);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Equipo equipo)
+        public async Task<IActionResult> Create(Equipo equipo, string tokenCodigoInventario)
         {
             var acceso = ValidarAdministrador();
             if (acceso != null)
                 return acceso;
+            if (string.IsNullOrWhiteSpace(tokenCodigoInventario))
+                return BadRequest("No se recibió el token del código de inventario.");
+
+            var claveToken = $"CodigoInventario:{tokenCodigoInventario}";
+
+            var codigoReservado = HttpContext.Session.GetString(claveToken);
+
+            if (string.IsNullOrWhiteSpace(codigoReservado))
+                return BadRequest("El código de inventario reservado no es válido o ha expirado.");
+
+            ModelState.Remove(nameof(Equipo.CodigoInventario));
+
+            equipo.CodigoInventario = codigoReservado;
+
 
             ModelState.Remove(nameof(Equipo.IdEquipo));
             ModelState.Remove(nameof(Equipo.FechaRegistro));
+            ModelState.Remove(nameof(Equipo.IdEstado));
             ModelState.Remove(nameof(Equipo.IdEstadoNavigation));
             ModelState.Remove(nameof(Equipo.IdTipoEquipoNavigation));
             ModelState.Remove(nameof(Equipo.Incidencia));
@@ -685,10 +720,33 @@ namespace cmse.Controllers
             ModelState.Remove(nameof(Equipo.EquiposProyectore));
 
             equipo.Nombre = equipo.Nombre?.Trim() ?? "";
-            equipo.CodigoInventario =
-                equipo.CodigoInventario?.Trim() ?? "";
+
+            if (await _context.Equipos.AnyAsync(e => e.CodigoInventario == codigoReservado))
+            {
+                ModelState.AddModelError(
+                    nameof(Equipo.CodigoInventario),
+                    "El código de inventario ya está registrado.");
+            }
+
+
+            var estadoActivo = await _context.Estados.FirstOrDefaultAsync(e =>
+    e.IdEstado == 1 &&
+    e.Modulo != null &&
+    (e.Modulo.ToLower() == "equipo" ||
+     e.Modulo.ToLower() == "equipos"));
+
+            if (estadoActivo == null)
+            {
+                ModelState.AddModelError(
+                    "",
+                    "No se encontró el estado Activo para equipos.");
+            }
+            else
+            {
+                equipo.IdEstado = estadoActivo.IdEstado;
+            }
+
             equipo.Marca = equipo.Marca?.Trim();
-            equipo.Modelo = equipo.Modelo?.Trim();
 
             equipo.NumeroSerie = string.IsNullOrWhiteSpace(equipo.NumeroSerie)
                 ? null
@@ -707,27 +765,6 @@ namespace cmse.Controllers
                     "Selecciona un tipo de equipo válido.");
             }
 
-            bool estadoValido = await _context.Estados.AnyAsync(e =>
-                e.IdEstado == equipo.IdEstado &&
-                e.Modulo != null &&
-                (e.Modulo.ToLower() == "equipo" ||
-                 e.Modulo.ToLower() == "equipos"));
-
-            if (!estadoValido)
-            {
-                ModelState.AddModelError(
-                    nameof(equipo.IdEstado),
-                    "Selecciona un estado válido para equipos.");
-            }
-
-            if (!string.IsNullOrWhiteSpace(equipo.CodigoInventario) &&
-                await _context.Equipos.AnyAsync(
-                    e => e.CodigoInventario == equipo.CodigoInventario))
-            {
-                ModelState.AddModelError(
-                    nameof(equipo.CodigoInventario),
-                    "Ese código de inventario ya existe.");
-            }
 
             if (equipo.NumeroSerie != null &&
                 await _context.Equipos.AnyAsync(
@@ -910,6 +947,9 @@ namespace cmse.Controllers
 
             if (!ModelState.IsValid)
             {
+                equipo.CodigoInventario = codigoReservado;
+                ViewBag.TokenCodigoInventario = tokenCodigoInventario;
+
                 await CargarListasAsync();
                 return View(equipo);
             }
@@ -1036,6 +1076,8 @@ namespace cmse.Controllers
             _context.Equipos.Add(equipo);
 
             await _context.SaveChangesAsync();
+
+            HttpContext.Session.Remove(claveToken);
 
             TempData["Mensaje"] = "Equipo registrado correctamente.";
 
