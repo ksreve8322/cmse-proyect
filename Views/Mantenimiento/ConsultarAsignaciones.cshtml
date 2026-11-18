@@ -1,5 +1,4 @@
-﻿```razor
-@model IEnumerable<cmse.Repositories.Models.AsignacionesIncidencium>
+﻿@model IEnumerable<cmse.Repositories.Models.AsignacionesIncidencium>
 
 @{
     ViewData["Title"] = "Consultar incidencias asignadas";
@@ -112,45 +111,32 @@
 
     <div class="cmse-mantenimiento-listado-header">
         <h3>Incidencias asignadas</h3>
-        <p>
-            Selecciona una incidencia de la tabla para consultar sus detalles.
-        </p>
     </div>
 
-    @if (Model != null && Model.Any())
+    @if (Model != null && Model.Any() && esTecnico)
     {
-        <div class="text-center mt-4">
+        <div class="text-center mt-4 mb-3">
 
             <button type="button"
-                    id="btnConsultarIncidencia"
+                    id="btnActualizarEstado"
                     class="cmse-mantenimiento-boton"
                     disabled>
-                Consultar incidencia
+                Actualizar estado
             </button>
 
-            @if (esTecnico)
-            {
-                <button type="button"
-                        id="btnActualizarEstado"
-                        class="cmse-mantenimiento-boton"
-                        disabled>
-                    Actualizar estado
-                </button>
+            <button type="button"
+                    id="btnRegistrarDiagnostico"
+                    class="cmse-mantenimiento-boton"
+                    disabled>
+                Registrar diagnóstico
+            </button>
 
-                <button type="button"
-                        id="btnRegistrarDiagnostico"
-                        class="cmse-mantenimiento-boton"
-                        disabled>
-                    Registrar diagnóstico
-                </button>
-
-                <button type="button"
-                        id="btnRegistrarMantenimiento"
-                        class="cmse-mantenimiento-boton"
-                        disabled>
-                    Registrar mantenimiento
-                </button>
-            }
+            <button type="button"
+                    id="btnRegistrarMantenimiento"
+                    class="cmse-mantenimiento-boton"
+                    disabled>
+                Registrar mantenimiento
+            </button>
 
         </div>
     }
@@ -277,6 +263,18 @@
         }
 
     </div>
+
+    @if (Model != null && Model.Any())
+    {
+        <div class="text-center mt-4 mb-2">
+            <button type="button"
+                    id="btnConsultarIncidencia"
+                    class="cmse-mantenimiento-boton"
+                    disabled>
+                Consultar incidencia
+            </button>
+        </div>
+    }
 
     <div class="cmse-mantenimiento-regresar">
         <a asp-controller="Home"
@@ -729,4 +727,3 @@
         });
     </script>
 }
-```

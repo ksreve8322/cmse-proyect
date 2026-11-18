@@ -132,14 +132,14 @@
         <div style="display: flex; width: 100%; margin-top: 15px;">
             <a asp-action="RegistrarRepuestos"
                asp-route-id="@Model.IdMantenimiento"
-               class="cmse-modal-button"
+               class="cmse-mantenimiento-boton"
                style="width: 180px; text-align: center; text-decoration: none; box-sizing: border-box; margin-left: auto;">
                 Registrar repuestos
             </a>
         </div>
     </div>
 
-    <form asp-action="RegistrarMantenimiento" method="post">
+    <form asp-action="RegistrarMantenimiento" method="post" novalidate>
         @Html.AntiForgeryToken()
 
         <input type="hidden" name="idMantenimiento" value="@Model.IdMantenimiento" />
@@ -154,17 +154,21 @@
                           rows="6"
                           required
                           aria-required="true"
-                          placeholder="Describe las actividades realizadas y las observaciones..."></textarea>
+                          placeholder="Describe las actividades realizadas y las observaciones...">@Html.Raw(System.Net.WebUtility.HtmlEncode(ViewData.ModelState["actividades"]?.AttemptedValue))</textarea>
+
+                @Html.ValidationMessage("actividades", "", new { @class = "text-danger" })
             </div>
 
             <div class="cmse-form-group">
                 <label for="resultado">Resultado del mantenimiento *</label>
                 <select id="resultado" name="resultado" required aria-required="true">
                     <option value="">Seleccione el resultado</option>
-                    <option value="Satisfactorio">Satisfactorio</option>
-                    <option value="Con observaciones">Con observaciones</option>
-                    <option value="Requiere seguimiento">Requiere seguimiento</option>
+                    <option value="Satisfactorio" selected="@(ViewData.ModelState["resultado"]?.AttemptedValue == "Satisfactorio")">Satisfactorio</option>
+                    <option value="Con observaciones" selected="@(ViewData.ModelState["resultado"]?.AttemptedValue == "Con observaciones")">Con observaciones</option>
+                    <option value="Requiere seguimiento" selected="@(ViewData.ModelState["resultado"]?.AttemptedValue == "Requiere seguimiento")">Requiere seguimiento</option>
                 </select>
+
+                @Html.ValidationMessage("resultado", "", new { @class = "text-danger" })
             </div>
         </div>
 
@@ -172,13 +176,13 @@
              style="display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 12px; width: 100%; margin-top: 25px;">
 
             <button type="submit"
-                    class="cmse-modal-button"
+                    class="cmse-mantenimiento-boton"
                     style="width: 150px; text-align: center;">
                 Registrar
             </button>
 
             <a asp-action="ConsultarAsignaciones"
-               class="cmse-modal-button"
+               class="cmse-mantenimiento-cancelar"
                style="width: 150px; box-sizing: border-box; text-align: center; display: flex; justify-content: center; align-items: center; text-decoration: none;">
                 Cancelar
             </a>

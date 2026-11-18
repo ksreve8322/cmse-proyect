@@ -19,11 +19,12 @@
                     <form asp-controller="Incidencia"
                           asp-action="Create"
                           method="post"
-                          enctype="multipart/form-data">
+                          enctype="multipart/form-data"
+                          novalidate>
 
                         @Html.AntiForgeryToken()
 
-                        <div asp-validation-summary="All"
+                        <div asp-validation-summary="None"
                              class="text-danger mb-3">
                         </div>
 
@@ -40,6 +41,7 @@
                                    required
                                    placeholder="Ej. El computador no enciende"
                                    value="@(ViewData.ModelState["titulo"]?.AttemptedValue ?? "")" />
+                            @Html.ValidationMessage("titulo", "", new { @class = "text-danger" })
                         </div>
 
                         <div class="mb-3">
@@ -53,6 +55,7 @@
                                       rows="5"
                                       required
                                       placeholder="Explica qué sucede con el equipo...">@(ViewData.ModelState["descripcion"]?.AttemptedValue ?? "")</textarea>
+                            @Html.ValidationMessage("descripcion", "", new { @class = "text-danger" })
                         </div>
 
                         <div class="mb-3">
@@ -77,6 +80,7 @@
                                     Software
                                 </option>
                             </select>
+                            @Html.ValidationMessage("idTipoIncidencia", "", new { @class = "text-danger" })
                         </div>
 
                         <div class="mb-3">
@@ -102,6 +106,7 @@
                                     }
                                 }
                             </select>
+                            @Html.ValidationMessage("idEquipo", "", new { @class = "text-danger" })
                         </div>
 
                         <div class="mb-3">
@@ -115,6 +120,7 @@
                                    class="form-control"
                                    multiple
                                    accept=".jpg,.jpeg,.png,.pdf,.txt,.xml,.html" />
+                            @Html.ValidationMessage("archivos", "", new { @class = "text-danger" })
 
                             <small class="text-muted">
                                 Puedes adjuntar hasta 5 archivos.
