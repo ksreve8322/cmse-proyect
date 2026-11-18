@@ -355,14 +355,12 @@ namespace cmse.Controllers
             // Enviar el correo de bienvenida.
             try
             {
-                await _emailManager.EnviarCorreoPlantillaAsync(
-                    usuario.Correo,
-                    "Bienvenido a CMSE",
-                    "¡Tu correo ha sido verificado!",
-                    usuario.Nombres,
-                    "Tu cuenta se creó correctamente y tu correo fue verificado. " +
-                    "Ya puedes iniciar sesión en CMSE.",
-                    "Contacta al área de soporte de CMSE.");
+                await _emailManager.EnviarCorreoAsync(
+     usuario.Correo,
+     "Prueba de correo CMSE",
+     "Este es un correo de prueba enviado desde CMSE utilizando texto plano.",
+     false
+ );
 
                 if (idNotificacionCorreo > 0)
                 {
